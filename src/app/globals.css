@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: "Inter", sans-serif;
+}
+
+html {
+  scrollbar-gutter: stable;
+  /* scroll-behavior intentionally omitted — prevents inertial scroll interference on trackpad */
+}
+
+body {
+  background-color: #FAF9F7;
+  color: #1C1B19;
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(139, 156, 244, 0.18);
+  color: #1C1B19;
+}
+
+/* Scrollbar – minimal */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #F2F1EF;
+}
+::-webkit-scrollbar-thumb {
+  background: #B8B6B2;
+  border-radius: 9999px;
+}
+
+/* Smooth image rendering */
+img {
+  image-rendering: auto;
+}
+
+/* Focus ring – brand-matching, no blue */
+*:focus-visible {
+  outline: none;
+}
+
+/* Keyboard-accessible focus for interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 1px solid #3A3936;
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* Nav links – underline-only focus state */
+nav a:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-decoration-color: #B8B6B2;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
