@@ -20,7 +20,7 @@ export default function FutureHumanPage() {
             className="object-cover object-center"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-porcelain/90 via-porcelain/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-porcelain/95 via-porcelain/55 to-porcelain/10 md:from-porcelain/90 md:via-porcelain/30 md:to-transparent" />
           <div
             className="absolute inset-0 opacity-[0.035] mix-blend-overlay"
             style={{
@@ -39,9 +39,9 @@ export default function FutureHumanPage() {
           >
             <motion.span
               variants={fadeUp}
-              className="inline-flex items-center gap-3 text-[10px] tracking-ultrawide uppercase font-medium text-graphite-light"
+              className="inline-flex items-center gap-3 text-[10px] tracking-ultrawide uppercase font-medium text-graphite md:text-graphite-light"
             >
-              <span className="w-6 h-px bg-graphite-light" />
+              <span className="w-6 h-px bg-graphite md:bg-graphite-light" />
               Flagship Experience · London
             </motion.span>
             <motion.h1
@@ -105,7 +105,7 @@ export default function FutureHumanPage() {
               whileInView="visible"
               viewport={viewport}
               variants={scaleIn}
-              className="relative aspect-[3/4]"
+              className="relative aspect-square lg:aspect-[3/4]"
             >
               <Image
                 src="/images/elysium-ai/human-emotion.png"
@@ -179,7 +179,7 @@ export default function FutureHumanPage() {
               whileInView="visible"
               viewport={viewport}
               variants={scaleIn}
-              className="relative aspect-[3/4] order-1 lg:order-2"
+              className="relative aspect-square lg:aspect-[3/4] order-1 lg:order-2"
             >
               <Image
                 src="/images/elysium-ai/robot-ai-presence.png"

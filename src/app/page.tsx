@@ -72,7 +72,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-3.5 border border-graphite/60 text-graphite text-[11px] tracking-superwide uppercase font-medium hover:border-graphite transition-colors duration-200"
+                className="px-8 py-3.5 border border-graphite/80 sm:border-graphite/60 bg-porcelain/80 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none text-graphite text-[11px] tracking-superwide uppercase font-medium hover:border-graphite transition-colors duration-200"
               >
                 Request Private Access
               </Link>
@@ -98,7 +98,7 @@ export default function Home() {
       {/* ─────────────────────────────────────────
           2. STATEMENT
       ───────────────────────────────────────── */}
-      <section className="bg-porcelain py-20 lg:py-28">
+      <section className="bg-porcelain py-20 lg:py-28 border-b border-silver-light lg:border-b-0">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           {/* Section rule */}
           <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">
@@ -160,7 +160,7 @@ export default function Home() {
       {/* ─────────────────────────────────────────
           3. PLATFORM PREVIEW
       ───────────────────────────────────────── */}
-      <section className="bg-pearl py-20 lg:py-28 overflow-hidden">
+      <section className="bg-pearl py-20 lg:py-28 overflow-hidden border-b border-silver-light lg:border-b-0">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           {/* Section rule */}
           <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">
@@ -204,7 +204,7 @@ export default function Home() {
               whileInView="visible"
               viewport={viewport}
               variants={scaleIn}
-              className="relative aspect-[3/4] order-1 lg:order-2"
+              className="relative aspect-square lg:aspect-[3/4] order-1 lg:order-2"
             >
               <Image
                 src="/images/elysium-ai/hero-light-portal.png"
@@ -222,7 +222,7 @@ export default function Home() {
       {/* ─────────────────────────────────────────
           4. FUTURE HUMAN PREVIEW
       ───────────────────────────────────────── */}
-      <section className="bg-porcelain py-20 lg:py-28 overflow-hidden">
+      <section className="bg-porcelain py-20 lg:py-28 overflow-hidden border-b border-silver-light lg:border-b-0">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           {/* Section rule */}
           <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">
@@ -236,7 +236,7 @@ export default function Home() {
               whileInView="visible"
               viewport={viewport}
               variants={scaleIn}
-              className="relative aspect-[3/4]"
+              className="relative aspect-square lg:aspect-[3/4]"
             >
               <Image
                 src="/images/elysium-ai/future-human-stage.png"
@@ -285,7 +285,7 @@ export default function Home() {
       {/* ─────────────────────────────────────────
           5. AUDIENCE INTERACTION
       ───────────────────────────────────────── */}
-      <section className="bg-pearl py-20 lg:py-26">
+      <section className="bg-pearl py-20 lg:py-26 border-b border-silver-light lg:border-b-0">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           {/* Section rule */}
           <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">

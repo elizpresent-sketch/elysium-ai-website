@@ -147,7 +147,7 @@ export default function PlatformPage() {
                 src="/images/elysium-ai/platform-system.png"
                 alt="Elysium AI Platform System"
                 fill
-                className="object-cover"
+                className="object-contain lg:object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </motion.div>
@@ -222,7 +222,7 @@ export default function PlatformPage() {
               whileInView="visible"
               viewport={viewport}
               variants={scaleIn}
-              className="relative aspect-[3/4] order-1 lg:order-2"
+              className="relative aspect-square lg:aspect-[3/4] order-1 lg:order-2"
             >
               <Image
                 src="/images/elysium-ai/robot-ai-presence.png"
