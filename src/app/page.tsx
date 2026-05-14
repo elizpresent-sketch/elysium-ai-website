@@ -117,7 +117,7 @@ export default function Home() {
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight leading-[1.08] text-graphite"
             >
               Not a single show.
-              <br className="hidden sm:block" />
+              <br />
               A scalable entertainment system.
             </motion.h2>
             <motion.p
