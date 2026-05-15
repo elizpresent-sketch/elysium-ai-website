@@ -12,14 +12,18 @@ const config: Config = {
         sans: ["var(--font-inter)", "sans-serif"],
       },
       colors: {
-        porcelain: "#FAF9F7",
-        pearl: "#F2F1EF",
-        "silver-light": "#E5E3DF",
-        "silver-mid": "#B8B6B2",
-        "silver-dark": "#8A8884",
-        graphite: "#1C1B19",
-        "graphite-mid": "#3A3936",
-        "graphite-light": "#6B6A67",
+        // ── DARK CINEMATIC PALETTE ──────────────────────────────
+        // porcelain/pearl = dark backgrounds (inverted from light theme)
+        porcelain: "#0C0C0B",        // primary background — deep warm black
+        pearl: "#141413",             // alternate section background
+        "silver-light": "#232220",   // thin dividers / structural borders
+        "silver-mid": "#B8B6B2",     // secondary text / visible silver
+        "silver-dark": "#8A8884",    // muted labels, captions
+        // graphite = primary text (now near-white — fully inverted)
+        graphite: "#ECEAE6",          // primary text — warm near-white
+        "graphite-mid": "#C4C2BE",   // secondary headings
+        "graphite-light": "#9A9896", // body text on dark
+        // ── ACCENT ──────────────────────────────────────────────
         violet: {
           soft: "#8B9CF4",
           muted: "#6B7DE8",

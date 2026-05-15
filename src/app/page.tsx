@@ -22,7 +22,7 @@ export default function Home() {
             className="object-cover"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-porcelain/75 via-porcelain/30 to-porcelain/88" />
+          <div className="absolute inset-0 bg-gradient-to-b from-porcelain/80 via-porcelain/58 to-porcelain/92" />
           <div
             className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
             style={{
@@ -41,9 +41,9 @@ export default function Home() {
           >
             <motion.span
               variants={fadeUp}
-              className="inline-flex items-center gap-3 text-[10px] tracking-ultrawide uppercase font-medium text-graphite-light"
+              className="inline-flex items-center gap-3 text-[10px] tracking-ultrawide uppercase font-medium text-silver-dark"
             >
-              <span className="w-6 h-px bg-graphite-light" />
+              <span className="w-6 h-px bg-silver-dark" />
               Creative Technology · London
             </motion.span>
 
@@ -56,7 +56,7 @@ export default function Home() {
 
             <motion.p
               variants={fadeUp}
-              className="text-base md:text-lg text-graphite-light leading-relaxed max-w-xl"
+              className="text-base md:text-lg text-silver-mid leading-relaxed max-w-xl"
             >
               ELYSIUM AI is a UK-based creative-tech company developing AI-powered
               immersive entertainment experiences where human emotion, real-time

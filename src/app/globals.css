@@ -12,25 +12,25 @@ html {
 }
 
 body {
-  background-color: #FAF9F7;
-  color: #1C1B19;
+  background-color: #0C0C0B;
+  color: #ECEAE6;
 }
 
-/* Selection */
+/* Selection — violet tint on dark */
 ::selection {
-  background-color: rgba(139, 156, 244, 0.18);
-  color: #1C1B19;
+  background-color: rgba(139, 156, 244, 0.22);
+  color: #ECEAE6;
 }
 
-/* Scrollbar – minimal */
+/* Scrollbar — dark minimal */
 ::-webkit-scrollbar {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #F2F1EF;
+  background: #141413;
 }
 ::-webkit-scrollbar-thumb {
-  background: #B8B6B2;
+  background: #363432;
   border-radius: 9999px;
 }
 
@@ -39,7 +39,7 @@ img {
   image-rendering: auto;
 }
 
-/* Focus ring – brand-matching, no blue */
+/* Focus ring — silver on dark, no blue */
 *:focus-visible {
   outline: none;
 }
@@ -50,16 +50,16 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 1px solid #3A3936;
+  outline: 1px solid #C4C2BE;
   outline-offset: 3px;
   border-radius: 1px;
 }
 
-/* Nav links – underline-only focus state */
+/* Nav links — underline-only focus state */
 nav a:focus-visible {
   outline: none;
   text-decoration: underline;
-  text-decoration-color: #B8B6B2;
+  text-decoration-color: #6B6968;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
 }

@@ -54,7 +54,7 @@ export default function ContactForm() {
 
   const labelClass = "block text-[10px] tracking-superwide uppercase font-medium text-graphite-light mb-2";
   const inputClass =
-    "w-full bg-[#F7F7F5] sm:bg-transparent border border-silver-mid/70 sm:border-silver-light text-graphite placeholder:text-graphite-light sm:placeholder:text-silver-mid text-sm px-4 py-3.5 focus:outline-none focus:border-graphite transition-colors duration-200";
+    "w-full bg-white/[0.03] border border-silver-mid/35 text-graphite placeholder:text-silver-dark text-sm px-4 py-3.5 focus:outline-none focus:border-silver-mid transition-colors duration-200";
 
   if (submitted) {
     return (
