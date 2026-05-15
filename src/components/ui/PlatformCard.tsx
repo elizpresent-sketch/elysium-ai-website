@@ -16,10 +16,10 @@ export default function PlatformCard({ tag, title, description, light = false }:
       whileInView="visible"
       viewport={viewport}
       variants={fadeUp}
-      className={`group border-t pt-8 pb-6 transition-colors duration-300 ${
+      className={`group transition-all duration-300 ${
         light
-          ? "border-silver-light hover:border-silver-mid"
-          : "border-silver-light/20 hover:border-silver-light/40"
+          ? "p-8 bg-pearl hover:bg-ice"
+          : "border-t border-ice hover:border-ice-mid pt-8 pb-6"
       }`}
     >
       <span

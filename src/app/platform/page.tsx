@@ -95,8 +95,8 @@ export default function PlatformPage() {
           className="relative aspect-[21/9] w-full overflow-hidden"
         >
           <Image
-            src="/images/elysium-ai/hero-light-portal.png"
-            alt="Elysium AI Platform — Light Portal"
+            src="/images/elysium-ai/dark/02-platform-overview-stage.webp"
+            alt="Elysium AI Platform — Stage Overview"
             fill
             className="object-cover"
             sizes="100vw"
@@ -124,7 +124,7 @@ export default function PlatformPage() {
             </motion.h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-silver-light">
             {PLATFORM_COMPONENTS.map((card) => (
               <PlatformCard key={card.tag} {...card} light />
             ))}
@@ -144,8 +144,8 @@ export default function PlatformPage() {
               className="relative aspect-square"
             >
               <Image
-                src="/images/elysium-ai/platform-system.png"
-                alt="Elysium AI Platform System"
+                src="/images/elysium-ai/dark/04-technology-layer-interface.webp"
+                alt="Elysium AI Technology Layer"
                 fill
                 className="object-contain lg:object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -225,8 +225,8 @@ export default function PlatformPage() {
               className="relative aspect-square lg:aspect-[3/4] order-1 lg:order-2"
             >
               <Image
-                src="/images/elysium-ai/robot-ai-presence.png"
-                alt="Robotic AI Presence — Elysium AI"
+                src="/images/elysium-ai/dark/08-company-infrastructure.webp"
+                alt="AI Infrastructure — Elysium AI"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

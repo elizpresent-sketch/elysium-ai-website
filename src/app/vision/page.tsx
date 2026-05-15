@@ -80,10 +80,9 @@ export default function VisionPage() {
         className="relative aspect-[21/9] w-full overflow-hidden"
       >
         <Image
-          src="/images/elysium-ai/human-emotion.png"
-          alt="Human Emotion — Elysium AI Vision"
+          src="/images/elysium-ai/dark/10-visual-gallery-worlds.webp"
+          alt="Visual Worlds — Elysium AI Vision"
           fill
-          priority
           className="object-cover"
           sizes="100vw"
         />
@@ -134,7 +133,7 @@ export default function VisionPage() {
       </section>
 
       {/* ── PRINCIPLES ── */}
-      <section className="bg-pearl py-20 lg:py-26">
+      <section className="bg-porcelain py-20 lg:py-26">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <motion.div
             initial="hidden"
@@ -217,8 +216,8 @@ export default function VisionPage() {
               className="relative aspect-[4/3]"
             >
               <Image
-                src="/images/elysium-ai/immersive-architecture.png"
-                alt="Immersive Architecture — Elysium AI"
+                src="/images/elysium-ai/dark/08-company-infrastructure.webp"
+                alt="Elysium AI Infrastructure"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

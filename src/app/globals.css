@@ -12,14 +12,14 @@ html {
 }
 
 body {
-  background-color: #0C0C0B;
-  color: #ECEAE6;
+  background-color: #050607;
+  color: #E2E8EE;
 }
 
 /* Selection — violet tint on dark */
 ::selection {
   background-color: rgba(139, 156, 244, 0.22);
-  color: #ECEAE6;
+  color: #E2E8EE;
 }
 
 /* Scrollbar — dark minimal */
@@ -27,10 +27,10 @@ body {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #141413;
+  background: #080D12;
 }
 ::-webkit-scrollbar-thumb {
-  background: #363432;
+  background: #1C2530;
   border-radius: 9999px;
 }
 
@@ -50,7 +50,7 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 1px solid #C4C2BE;
+  outline: 1px solid #8E949A;
   outline-offset: 3px;
   border-radius: 1px;
 }
@@ -59,7 +59,7 @@ textarea:focus-visible {
 nav a:focus-visible {
   outline: none;
   text-decoration: underline;
-  text-decoration-color: #6B6968;
+  text-decoration-color: #4A5460;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
 }

@@ -64,21 +64,20 @@ export default function ContactPage() {
             className="relative aspect-[21/6] w-full overflow-hidden"
           >
             <Image
-              src="/images/elysium-ai/private-access.png"
+              src="/images/elysium-ai/dark/09-private-inquiry-access.webp"
               alt="Elysium AI — Private Access"
               fill
-              priority
               className="object-cover object-center"
               sizes="100vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-graphite/55 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-porcelain/70 to-transparent" />
             <div className="absolute inset-0 flex items-center px-10 lg:px-16">
               <motion.p
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={viewport}
                 transition={{ duration: 0.8, delay: 0.3 }}
-                className="text-lg md:text-xl font-light text-porcelain tracking-tight max-w-sm"
+                className="text-lg md:text-xl font-light text-graphite tracking-tight max-w-sm"
               >
                 Elysium AI operates by invitation and pre-qualification.
               </motion.p>

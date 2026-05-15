@@ -15,21 +15,14 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/hero-future-live.png"
+            src="/images/elysium-ai/dark/01-hero-ai-human-portrait.webp"
             alt="Elysium AI — Future of Live Entertainment"
             fill
             priority
-            className="object-cover"
+            className="object-cover object-center"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-porcelain/80 via-porcelain/58 to-porcelain/92" />
-          <div
-            className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
-            style={{
-              backgroundImage: "url('/images/elysium-ai/white-silver-texture-01.png')",
-              backgroundSize: "cover",
-            }}
-          />
+          <div className="absolute inset-0 bg-gradient-to-b from-porcelain/55 via-porcelain/30 to-porcelain/78" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 pt-36 pb-28">
@@ -207,7 +200,7 @@ export default function Home() {
               className="relative aspect-square lg:aspect-[3/4] order-1 lg:order-2"
             >
               <Image
-                src="/images/elysium-ai/hero-light-portal.png"
+                src="/images/elysium-ai/dark/02-platform-overview-stage.webp"
                 alt="Elysium AI Platform"
                 fill
                 className="object-cover"
@@ -239,7 +232,7 @@ export default function Home() {
               className="relative aspect-square lg:aspect-[3/4]"
             >
               <Image
-                src="/images/elysium-ai/future-human-stage.png"
+                src="/images/elysium-ai/dark/03-first-experience-portal-card.webp"
                 alt="Future Human — Elysium AI Flagship Experience"
                 fill
                 className="object-cover"
@@ -323,8 +316,8 @@ export default function Home() {
                 className="relative aspect-[3/4]"
               >
                 <Image
-                  src="/images/elysium-ai/london-launch.png"
-                  alt="London Launch — Elysium AI"
+                  src="/images/elysium-ai/dark/05-audience-system-silhouette.webp"
+                  alt="Audience System — Elysium AI"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 50vw, 33vw"
@@ -338,8 +331,8 @@ export default function Home() {
                 className="relative aspect-[3/4] mt-10"
               >
                 <Image
-                  src="/images/elysium-ai/audience-data.png"
-                  alt="Audience Interaction Data"
+                  src="/images/elysium-ai/dark/12-media-behind-scenes.webp"
+                  alt="Creative Production — Elysium AI"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 50vw, 33vw"
@@ -356,15 +349,14 @@ export default function Home() {
       <section className="relative py-28 lg:py-44 overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark-ring-stage.png"
+            src="/images/elysium-ai/dark/06-creative-production-stage.webp"
             alt="Elysium AI Stage"
             fill
             className="object-cover object-center"
             sizes="100vw"
           />
-          {/* Layered overlays: deep base + radial centre brighten for text clarity */}
-          <div className="absolute inset-0 bg-graphite/80" />
-          <div className="absolute inset-0 bg-gradient-to-b from-graphite/60 via-transparent to-graphite/60" />
+          <div className="absolute inset-0 bg-porcelain/65" />
+          <div className="absolute inset-0 bg-gradient-to-b from-porcelain/50 via-transparent to-porcelain/50" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 flex flex-col items-center text-center">
@@ -456,8 +448,8 @@ export default function Home() {
               className="relative aspect-[16/10]"
             >
               <Image
-                src="/images/elysium-ai/immersive-architecture.png"
-                alt="Immersive Architecture — Elysium AI"
+                src="/images/elysium-ai/dark/13-global-journey-map.webp"
+                alt="Global Journey — Elysium AI"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -473,14 +465,15 @@ export default function Home() {
       <section className="relative py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/white-silver-texture-02.png"
+            src="/images/elysium-ai/dark/07-partnerships-private-room.webp"
             alt=""
             fill
-            className="object-cover opacity-20"
+            className="object-cover object-center opacity-10"
             sizes="100vw"
+            quality={20}
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-pearl/82" />
+          <div className="absolute inset-0 bg-porcelain/90" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">

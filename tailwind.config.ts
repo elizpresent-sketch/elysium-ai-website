@@ -12,17 +12,20 @@ const config: Config = {
         sans: ["var(--font-inter)", "sans-serif"],
       },
       colors: {
-        // ── DARK CINEMATIC PALETTE ──────────────────────────────
-        // porcelain/pearl = dark backgrounds (inverted from light theme)
-        porcelain: "#0C0C0B",        // primary background — deep warm black
-        pearl: "#141413",             // alternate section background
-        "silver-light": "#232220",   // thin dividers / structural borders
-        "silver-mid": "#B8B6B2",     // secondary text / visible silver
-        "silver-dark": "#8A8884",    // muted labels, captions
-        // graphite = primary text (now near-white — fully inverted)
-        graphite: "#ECEAE6",          // primary text — warm near-white
-        "graphite-mid": "#C4C2BE",   // secondary headings
-        "graphite-light": "#9A9896", // body text on dark
+        // ── COLD CINEMATIC PALETTE ───────────────────────────────
+        // porcelain/pearl = dark backgrounds
+        porcelain: "#050607",          // primary background — true cold black
+        pearl: "#080D12",              // alternate section background — blue-black
+        "silver-light": "#1C2530",     // thin dividers / structural borders — cold blue-grey
+        "silver-mid": "#707880",       // muted placeholder / secondary labels
+        "silver-dark": "#6B7278",      // captions, tertiary text
+        // graphite = primary text (near-white, cold-tinted)
+        graphite: "#E2E8EE",           // primary text — cold near-white
+        "graphite-mid": "#C8CDD2",     // secondary headings — cold silver
+        "graphite-light": "#8E949A",   // body text — muted cold silver
+        // ── COLD GLASS BORDERS ──────────────────────────────────
+        ice: "rgba(180,200,220,0.10)",     // subtle cold glass border
+        "ice-mid": "rgba(180,200,220,0.22)", // hover / active cold border
         // ── ACCENT ──────────────────────────────────────────────
         violet: {
           soft: "#8B9CF4",

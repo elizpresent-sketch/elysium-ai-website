@@ -13,21 +13,14 @@ export default function FutureHumanPage() {
       <section className="relative min-h-[85vh] flex items-end overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/future-human-stage.png"
+            src="/images/elysium-ai/dark/03-first-experience-portal-wide.webp"
             alt="Future Human — Elysium AI"
             fill
             priority
             className="object-cover object-center"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-porcelain/95 via-porcelain/55 to-porcelain/10 md:from-porcelain/90 md:via-porcelain/30 md:to-transparent" />
-          <div
-            className="absolute inset-0 opacity-[0.035] mix-blend-overlay"
-            style={{
-              backgroundImage: "url('/images/elysium-ai/white-silver-texture-01.png')",
-              backgroundSize: "cover",
-            }}
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-porcelain/88 via-porcelain/40 to-porcelain/05 md:from-porcelain/80 md:via-porcelain/25 md:to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 pb-20 pt-40 w-full">
@@ -108,8 +101,8 @@ export default function FutureHumanPage() {
               className="relative aspect-square lg:aspect-[3/4]"
             >
               <Image
-                src="/images/elysium-ai/human-emotion.png"
-                alt="Human Emotion — Future Human"
+                src="/images/elysium-ai/dark/11-team-visionaries.webp"
+                alt="Visionaries — Future Human"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -182,10 +175,10 @@ export default function FutureHumanPage() {
               className="relative aspect-square lg:aspect-[3/4] order-1 lg:order-2"
             >
               <Image
-                src="/images/elysium-ai/robot-ai-presence.png"
-                alt="Robotic AI Presence — Future Human"
+                src="/images/elysium-ai/dark/06-creative-production-stage.webp"
+                alt="AI Creative Production — Future Human"
                 fill
-                className="object-cover object-top"
+                className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </motion.div>
@@ -205,8 +198,8 @@ export default function FutureHumanPage() {
               className="relative aspect-[4/3]"
             >
               <Image
-                src="/images/elysium-ai/audience-data.png"
-                alt="Audience Interaction — Future Human"
+                src="/images/elysium-ai/dark/05-audience-system-silhouette.webp"
+                alt="Audience System — Future Human"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -270,8 +263,8 @@ export default function FutureHumanPage() {
               className="lg:col-span-7 relative aspect-[16/10]"
             >
               <Image
-                src="/images/elysium-ai/london-launch.png"
-                alt="London Launch — Future Human"
+                src="/images/elysium-ai/dark/13-global-journey-map.webp"
+                alt="Global Journey — Future Human"
                 fill
                 className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 58vw"
