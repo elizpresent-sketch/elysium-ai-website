@@ -751,7 +751,7 @@ export default function Home() {
                 variants={fadeUp}
                 className="text-2xl md:text-3xl font-light tracking-tight leading-snug text-graphite"
               >
-                A platform format built to travel.
+                A platform network for international rollout.
               </motion.h2>
               <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
                 ELIZIUM AI is structured for launch, licensing and
