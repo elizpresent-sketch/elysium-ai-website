@@ -65,7 +65,7 @@ export default function ContactPage() {
           >
             <Image
               src="/images/elysium-ai/dark/09-private-inquiry-access.webp"
-              alt="Elysium AI — Private Access"
+              alt="Elizium AI — Private Access"
               fill
               className="object-cover object-center"
               sizes="100vw"
@@ -79,7 +79,7 @@ export default function ContactPage() {
                 transition={{ duration: 0.8, delay: 0.3 }}
                 className="text-lg md:text-xl font-light text-graphite tracking-tight max-w-sm"
               >
-                Elysium AI operates by invitation and pre-qualification.
+                Elizium AI operates by invitation and pre-qualification.
               </motion.p>
             </div>
           </motion.div>
@@ -118,7 +118,7 @@ export default function ContactPage() {
                   Process
                 </span>
                 <p className="text-sm text-graphite-light leading-relaxed">
-                  All submissions are reviewed by the Elysium AI core team. We
+                  All submissions are reviewed by the Elizium AI core team. We
                   respond to selected enquiries directly, typically within five
                   to ten working days.
                 </p>

@@ -13,13 +13,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Elysium AI — The Future of Live Entertainment",
-    template: "%s | Elysium AI",
+    default: "Elizium AI — The Future of Live Entertainment",
+    template: "%s | Elizium AI",
   },
   description:
-    "Elysium AI is a UK-based creative-tech company developing AI-powered immersive entertainment experiences where human emotion, real-time visual systems, robotics and artificial intelligence meet.",
+    "Elizium AI is a UK-based creative-tech company developing AI-powered immersive entertainment experiences where human emotion, real-time visual systems, robotics and artificial intelligence meet.",
   openGraph: {
-    title: "Elysium AI",
+    title: "Elizium AI",
     description: "The Future of Live Entertainment Is Becoming Intelligent.",
     type: "website",
     locale: "en_GB",

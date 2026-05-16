@@ -80,7 +80,7 @@ export default function PlatformPage() {
           <PageIntro
             label="The Platform"
             headline="A modular creative-tech platform for AI-powered immersive entertainment."
-            subheadline="ELYSIUM AI brings together AI-assisted creative systems, immersive visual architecture, audience interaction, robotics and scalable show logic into a single deployable format."
+            subheadline="ELIZIUM AI brings together AI-assisted creative systems, immersive visual architecture, audience interaction, robotics and scalable show logic into a single deployable format."
           />
         </div>
       </section>
@@ -96,7 +96,7 @@ export default function PlatformPage() {
         >
           <Image
             src="/images/elysium-ai/dark/02-platform-overview-stage.webp"
-            alt="Elysium AI Platform — Stage Overview"
+            alt="Elizium AI Platform — Stage Overview"
             fill
             className="object-cover"
             sizes="100vw"
@@ -145,7 +145,7 @@ export default function PlatformPage() {
             >
               <Image
                 src="/images/elysium-ai/dark/04-technology-layer-interface.webp"
-                alt="Elysium AI Technology Layer"
+                alt="Elizium AI Technology Layer"
                 fill
                 className="object-contain lg:object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -167,7 +167,7 @@ export default function PlatformPage() {
                 Designed for production. Built for scale.
               </motion.h2>
               <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed">
-                Every component of the ELYSIUM AI platform is designed with
+                Every component of the ELIZIUM AI platform is designed with
                 deployment in mind. From single-venue pilots to multi-territory
                 licensing arrangements — the system is modular, documented and
                 ready to operate at scale.
@@ -210,7 +210,7 @@ export default function PlatformPage() {
                 Artificial intelligence. Physical presence.
               </motion.h2>
               <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed">
-                The ELYSIUM AI platform integrates robotic systems that give
+                The ELIZIUM AI platform integrates robotic systems that give
                 artificial intelligence a physical form on stage — enabling
                 moments of genuine, unrepeatable encounter between human and
                 machine at the centre of each experience.
@@ -226,7 +226,7 @@ export default function PlatformPage() {
             >
               <Image
                 src="/images/elysium-ai/dark/08-company-infrastructure.webp"
-                alt="AI Infrastructure — Elysium AI"
+                alt="AI Infrastructure — Elizium AI"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -264,7 +264,7 @@ export default function PlatformPage() {
           <CTASection
             label="Private Access"
             headline="Request a platform briefing or licensing conversation."
-            body="For venues, promoters, investors and strategic partners. All enquiries reviewed by the Elysium AI core team."
+            body="For venues, promoters, investors and strategic partners. All enquiries reviewed by the Elizium AI core team."
             primaryHref="/contact"
             primaryLabel="Request Private Access"
             secondaryHref="/future-human"

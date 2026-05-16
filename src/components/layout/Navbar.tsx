@@ -46,7 +46,7 @@ export default function Navbar() {
               href="/"
               className="text-[11px] tracking-ultrawide uppercase font-semibold text-graphite hover:text-graphite-mid transition-colors duration-200"
             >
-              Elysium AI
+              Elizium AI
             </Link>
 
             {/* Desktop nav */}
@@ -116,7 +116,7 @@ export default function Navbar() {
               href="/"
               className="text-[10px] tracking-ultrawide uppercase font-semibold text-graphite mb-8"
             >
-              Elysium AI
+              Elizium AI
             </Link>
             {NAV_LINKS.map(({ label, href }, i) => (
               <motion.div

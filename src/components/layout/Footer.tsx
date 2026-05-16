@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+
 import { motion } from "framer-motion";
 import { fadeUp, stagger, viewport } from "@/lib/motion";
 
@@ -27,11 +28,11 @@ export default function Footer() {
               href="/"
               className="text-[11px] tracking-ultrawide uppercase font-semibold text-graphite"
             >
-              Elysium AI
+              Elizium AI
             </Link>
             <p className="text-sm text-graphite-light leading-relaxed">
-              A UK-based creative-tech company developing AI-powered immersive
-              entertainment experiences.
+              A UK-based creative-technology platform developing AI-powered
+              immersive experiences.
             </p>
             <p className="text-[10px] tracking-superwide uppercase text-silver-mid font-medium">
               Designed in London
@@ -78,14 +79,27 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={viewport}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-16 pt-6 border-t border-silver-light flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+          className="mt-16 pt-6 border-t border-silver-light flex flex-col gap-4"
         >
-          <p className="text-[11px] text-silver-dark">
-            © {new Date().getFullYear()} Elysium AI Ltd. All rights reserved.
-          </p>
-          <p className="text-[11px] text-silver-dark tracking-wider">
-            London, UK
-          </p>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <p className="text-[11px] text-silver-dark">
+              © {new Date().getFullYear()} Original Tema Ltd. All rights reserved.
+            </p>
+            <Link
+              href="/privacy"
+              className="text-[10px] tracking-wide text-silver-dark/60 hover:text-silver-dark transition-colors duration-200"
+            >
+              Privacy Policy
+            </Link>
+          </div>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-baseline gap-2 pt-3 border-t border-silver-light/40">
+            <p className="text-[10px] tracking-superwide uppercase text-silver-dark/60 font-medium">
+              Original Tema Ltd &nbsp;·&nbsp; Company No. 16376227 &nbsp;·&nbsp; London, United Kingdom
+            </p>
+            <p className="text-[10px] text-silver-dark/50 tracking-wide sm:text-right max-w-xs">
+              Elizium AI is developed by Original Tema Ltd as a UK-based immersive creative-technology platform.
+            </p>
+          </div>
         </motion.div>
       </div>
     </footer>

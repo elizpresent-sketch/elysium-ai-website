@@ -14,7 +14,7 @@ export default function FutureHumanPage() {
         <div className="absolute inset-0">
           <Image
             src="/images/elysium-ai/dark/03-first-experience-portal-wide.webp"
-            alt="Future Human — Elysium AI"
+            alt="Future Human — Elizium AI"
             fill
             priority
             className="object-cover object-center"
@@ -44,7 +44,7 @@ export default function FutureHumanPage() {
               Future Human
             </motion.h1>
             <motion.p variants={fadeUp} className="text-base md:text-lg text-graphite-light leading-relaxed">
-              The first ELYSIUM AI experience — staging the emotional encounter
+              The first ELIZIUM AI experience — staging the emotional encounter
               between humanity and artificial intelligence.
             </motion.p>
           </motion.div>
@@ -70,7 +70,7 @@ export default function FutureHumanPage() {
                 className="text-xl md:text-2xl font-light tracking-tight text-graphite leading-relaxed"
               >
                 FUTURE HUMAN is the first flagship London experience built to
-                demonstrate the ELYSIUM AI platform.
+                demonstrate the ELIZIUM AI platform.
               </motion.p>
               <motion.p variants={fadeUp} className="text-base text-graphite-light leading-relaxed">
                 It stages the emotional encounter between humanity and artificial
@@ -250,7 +250,7 @@ export default function FutureHumanPage() {
               <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
                 FUTURE HUMAN is developed to launch in London — a global centre for
                 creative technology, live experience and cultural innovation. From
-                London, the ELYSIUM AI platform is designed to license, adapt and
+                London, the ELIZIUM AI platform is designed to license, adapt and
                 travel to venues worldwide.
               </motion.p>
             </motion.div>

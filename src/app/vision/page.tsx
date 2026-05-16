@@ -20,7 +20,7 @@ const PRINCIPLES = [
   {
     number: "03",
     title: "Scale without dilution.",
-    body: "The ELYSIUM AI platform is built to travel without losing its essential quality. A modular system that maintains its integrity across venues and territories.",
+    body: "The ELIZIUM AI platform is built to travel without losing its essential quality. A modular system that maintains its integrity across venues and territories.",
   },
   {
     number: "04",
@@ -63,7 +63,7 @@ export default function VisionPage() {
               className="pt-4 border-t border-silver-light max-w-2xl"
             >
               <p className="text-base text-graphite-light leading-relaxed">
-                This is the founding principle of ELYSIUM AI — and the lens through
+                This is the founding principle of ELIZIUM AI — and the lens through
                 which every creative, technical and commercial decision is made.
               </p>
             </motion.div>
@@ -81,7 +81,7 @@ export default function VisionPage() {
       >
         <Image
           src="/images/elysium-ai/dark/10-visual-gallery-worlds.webp"
-          alt="Visual Worlds — Elysium AI Vision"
+          alt="Visual Worlds — Elizium AI Vision"
           fill
           className="object-cover"
           sizes="100vw"
@@ -108,7 +108,7 @@ export default function VisionPage() {
                 variants={fadeUp}
                 className="text-xl md:text-2xl font-light tracking-tight text-graphite leading-relaxed"
               >
-                ELYSIUM AI positions artificial intelligence not only as a production
+                ELIZIUM AI positions artificial intelligence not only as a production
                 tool, but as the subject of a live cultural encounter.
               </motion.p>
               <motion.p variants={fadeUp} className="text-base text-graphite-light leading-relaxed">
@@ -119,7 +119,7 @@ export default function VisionPage() {
               </motion.p>
               <motion.p variants={fadeUp} className="text-base text-graphite-light leading-relaxed">
                 Most of the industry is reaching for AI as a production tool — a way
-                to cut costs, generate assets, automate processes. ELYSIUM AI takes
+                to cut costs, generate assets, automate processes. ELIZIUM AI takes
                 a different position: AI is the most significant subject matter of
                 our time, and live entertainment is the right format to explore it.
               </motion.p>
@@ -198,7 +198,7 @@ export default function VisionPage() {
                 that no screen can replicate.
               </motion.p>
               <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
-                ELYSIUM AI sits at the intersection of three converging forces:
+                ELIZIUM AI sits at the intersection of three converging forces:
                 the maturation of AI technology, the post-pandemic premium on
                 live presence, and the cultural appetite for new formats.
               </motion.p>
@@ -217,7 +217,7 @@ export default function VisionPage() {
             >
               <Image
                 src="/images/elysium-ai/dark/08-company-infrastructure.webp"
-                alt="Elysium AI Infrastructure"
+                alt="Elizium AI Infrastructure"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -250,7 +250,7 @@ export default function VisionPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <CTASection
             label="Private Access"
-            headline="Interested in the vision behind Elysium AI?"
+            headline="Interested in the vision behind Elizium AI?"
             body="For investors, strategic advisors and cultural partners who want to understand where we're going — and why now."
             primaryHref="/contact"
             primaryLabel="Request Private Access"

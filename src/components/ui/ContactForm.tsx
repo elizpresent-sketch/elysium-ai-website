@@ -5,11 +5,10 @@ import { fadeUp, stagger, viewport } from "@/lib/motion";
 
 const INTEREST_OPTIONS = [
   "Investor",
-  "Partner",
-  "Venue",
-  "Sponsor",
+  "Venue Operator",
+  "Brand Partner",
+  "Technology Partner",
   "Press",
-  "Advisor",
   "Other",
 ] as const;
 
@@ -69,12 +68,8 @@ export default function ContactForm() {
           Received
         </span>
         <h3 className="text-2xl font-light tracking-tight text-graphite">
-          Thank you. We&apos;ll be in touch.
+          Thank you. Your inquiry has been received for review.
         </h3>
-        <p className="text-sm text-graphite-light leading-relaxed max-w-sm">
-          Your request has been recorded. A member of the Elysium AI team will
-          respond to selected enquiries directly.
-        </p>
       </motion.div>
     );
   }
@@ -133,16 +128,16 @@ export default function ContactForm() {
           />
         </div>
         <div>
-          <label htmlFor="interest" className={labelClass}>I am enquiring as a</label>
+          <label htmlFor="interest" className={labelClass}>I am enquiring as</label>
           <select
             id="interest"
             name="interest"
             required
             value={form.interest}
             onChange={handleChange}
-            className={`${inputClass} appearance-none cursor-pointer`}
+            className={`${inputClass} appearance-none cursor-pointer ${form.interest === "" ? "!text-silver-dark" : "text-graphite"}`}
           >
-            <option value="" disabled>Select interest type</option>
+            <option value="" disabled>Select one</option>
             {INTEREST_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>{opt}</option>
             ))}
@@ -158,7 +153,7 @@ export default function ContactForm() {
           name="message"
           rows={5}
           required
-          placeholder="Tell us about your interest in Elysium AI."
+          placeholder="Tell us about your interest in Elizium AI."
           value={form.message}
           onChange={handleChange}
           className={`${inputClass} resize-none`}
