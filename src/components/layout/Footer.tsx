@@ -14,7 +14,7 @@ const LINKS = [
 export default function Footer() {
   return (
     <footer className="bg-porcelain border-t border-silver-light">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16 lg:py-20">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16 lg:py-20">
         <motion.div
           initial="hidden"
           whileInView="visible"

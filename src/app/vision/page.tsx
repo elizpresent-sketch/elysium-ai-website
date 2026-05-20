@@ -6,6 +6,46 @@ import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
 import SectionLabel from "@/components/ui/SectionLabel";
 import CTASection from "@/components/ui/CTASection";
 
+// ─── shared constants ────────────────────────────────────────────────────────
+const W  = "max-w-[1440px] mx-auto px-6 lg:px-12";
+const BG = "#050505";
+
+// ─── FadeImage ───────────────────────────────────────────────────────────────
+interface FadeImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  position?: string;
+  fadeLeft?: number;
+  fadeRight?: number;
+  fadeTop?: number;
+  fadeBottom?: number;
+  sizes?: string;
+  priority?: boolean;
+}
+function FadeImage({
+  src, alt, className = "", position = "center center",
+  fadeLeft = 0, fadeRight = 0, fadeTop = 10, fadeBottom = 10,
+  sizes = "(max-width: 1024px) 100vw, 55vw", priority = false,
+}: FadeImageProps) {
+  const layers: string[] = [];
+  if (fadeTop > 0)    layers.push(`linear-gradient(to bottom, ${BG} 0%, transparent ${fadeTop}%)`);
+  if (fadeBottom > 0) layers.push(`linear-gradient(to top,    ${BG} 0%, transparent ${fadeBottom}%)`);
+  if (fadeLeft > 0)   layers.push(`linear-gradient(to right,  ${BG} 0%, transparent ${fadeLeft}%)`);
+  if (fadeRight > 0)  layers.push(`linear-gradient(to left,   ${BG} 0%, transparent ${fadeRight}%)`);
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      <Image src={src} alt={alt} fill priority={priority}
+        className="object-cover" style={{ objectPosition: position }} sizes={sizes} />
+      {layers.length > 0 && (
+        <div aria-hidden className="absolute inset-0 pointer-events-none z-10"
+          style={{ background: layers.join(", ") }} />
+      )}
+    </div>
+  );
+}
+
+// ─── data ────────────────────────────────────────────────────────────────────
 const PRINCIPLES = [
   {
     number: "01",
@@ -29,40 +69,82 @@ const PRINCIPLES = [
   },
 ];
 
+// ─── page ────────────────────────────────────────────────────────────────────
 export default function VisionPage() {
   return (
     <>
-      {/* ── HERO QUOTE ── */}
-      <section className="bg-porcelain pt-36 pb-20 lg:pb-28">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      {/* ── HERO QUOTE — cinematic full-bleed background, dark overlay, left text ── */}
+      <section
+        className="relative min-h-[88vh] lg:min-h-screen flex flex-col overflow-hidden"
+        style={{ background: BG }}
+      >
+        {/* Full-bleed background image — fades to black at edges via overlays */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/elysium-ai/dark/s2.png"
+            alt=""
+            fill
+            priority
+            className="object-cover"
+            style={{ objectPosition: "70% center" }}
+            sizes="100vw"
+            aria-hidden
+          />
+          {/* Left-protection gradient — keeps quote readable while letting portal show right */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(105deg,
+                ${BG} 0%, ${BG} 18%,
+                rgba(5,5,5,0.85) 38%,
+                rgba(5,5,5,0.40) 60%,
+                rgba(5,5,5,0.10) 80%,
+                transparent 100%)`,
+            }}
+          />
+          {/* Top fade */}
+          <div
+            className="absolute inset-x-0 top-0 h-44"
+            style={{ background: `linear-gradient(to bottom, ${BG} 0%, ${BG} 8%, rgba(5,5,5,0.65) 55%, transparent 100%)` }}
+          />
+          {/* Bottom fade */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-40"
+            style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.75) 55%, transparent 100%)` }}
+          />
+        </div>
+
+        {/* Content — strict left column overlay */}
+        <div className={`relative z-10 flex-1 flex items-center w-full ${W} pt-24 pb-12 lg:pt-32 lg:pb-20`}>
           <motion.div
             initial="hidden"
             animate="visible"
             variants={stagger}
-            className="flex flex-col gap-8"
+            className="w-full lg:max-w-[640px] flex flex-col gap-6 lg:gap-8"
           >
             <motion.span
               variants={fadeUp}
-              className="inline-flex items-center gap-3 text-[10px] tracking-ultrawide uppercase font-medium text-graphite-light"
+              className="inline-flex items-center gap-3 text-[10px] tracking-[0.28em] uppercase font-medium text-[#8E949A]"
             >
-              <span className="w-6 h-px bg-graphite-light" />
+              <span className="w-6 h-px bg-[#8E949A]" />
               Vision
             </motion.span>
 
             <motion.blockquote
               variants={fadeUp}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-graphite leading-[1.05] max-w-4xl"
+              className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
+              style={{ fontSize: "clamp(1.7rem, 4vw, 3.4rem)" }}
             >
               AI is not the show.
               <br />
-              <span className="text-graphite-mid">The human response is.</span>
+              <span className="text-[#6B7278]">The human response is.</span>
             </motion.blockquote>
 
             <motion.div
               variants={fadeUp}
-              className="pt-4 border-t border-silver-light max-w-2xl"
+              className="pt-4 border-t border-[#1C2530] max-w-xl"
             >
-              <p className="text-base text-graphite-light leading-relaxed">
+              <p className="text-[13px] text-[#AAB0B6] leading-relaxed">
                 This is the founding principle of ELIZIUM AI — and the lens through
                 which every creative, technical and commercial decision is made.
               </p>
@@ -71,28 +153,10 @@ export default function VisionPage() {
         </div>
       </section>
 
-      {/* ── HUMAN EMOTION IMAGE ── */}
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewport}
-        variants={scaleIn}
-        className="relative aspect-[21/9] w-full overflow-hidden"
-      >
-        <Image
-          src="/images/elysium-ai/dark/10-visual-gallery-worlds.webp"
-          alt="Visual Worlds — Elizium AI Vision"
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-porcelain/20 via-transparent to-porcelain/20" />
-      </motion.div>
-
       {/* ── THE ARGUMENT ── */}
-      <section className="bg-porcelain py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <section className="bg-porcelain py-10 lg:py-20">
+        <div className={W}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12">
             <div className="lg:col-span-4">
               <SectionLabel text="The Argument" />
             </div>
@@ -106,24 +170,24 @@ export default function VisionPage() {
             >
               <motion.p
                 variants={fadeUp}
-                className="text-xl md:text-2xl font-light tracking-tight text-graphite leading-relaxed"
+                className="font-display font-normal uppercase tracking-[0.07em] leading-[1.05] text-xl md:text-2xl text-[#E2E8EE]"
               >
                 ELIZIUM AI positions artificial intelligence not only as a production
                 tool, but as the subject of a live cultural encounter.
               </motion.p>
-              <motion.p variants={fadeUp} className="text-base text-graphite-light leading-relaxed">
+              <motion.p variants={fadeUp} className="text-[13px] text-[#AAB0B6] leading-relaxed">
                 The company uses immersive entertainment to make the human relationship
                 with AI visible, spatial and emotionally immediate — creating a new
                 category of live experience at the intersection of creative technology,
                 performance and cultural relevance.
               </motion.p>
-              <motion.p variants={fadeUp} className="text-base text-graphite-light leading-relaxed">
+              <motion.p variants={fadeUp} className="text-[13px] text-[#AAB0B6] leading-relaxed">
                 Most of the industry is reaching for AI as a production tool — a way
                 to cut costs, generate assets, automate processes. ELIZIUM AI takes
                 a different position: AI is the most significant subject matter of
                 our time, and live entertainment is the right format to explore it.
               </motion.p>
-              <motion.p variants={fadeUp} className="text-base text-graphite-light leading-relaxed">
+              <motion.p variants={fadeUp} className="text-[13px] text-[#AAB0B6] leading-relaxed">
                 The result is a platform designed for launch, licensing and global
                 expansion — with a flagship experience already in development.
               </motion.p>
@@ -133,25 +197,26 @@ export default function VisionPage() {
       </section>
 
       {/* ── PRINCIPLES ── */}
-      <section className="bg-porcelain py-20 lg:py-26">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-porcelain py-10 lg:py-20">
+        <div className={W}>
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
             variants={stagger}
-            className="flex flex-col gap-4 mb-12"
+            className="flex flex-col gap-4 mb-8 lg:mb-12"
           >
             <SectionLabel text="Design Principles" animate={false} />
             <motion.h2
               variants={fadeUp}
-              className="text-3xl md:text-4xl font-light tracking-tight text-graphite"
+              className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
+              style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
             >
               What we believe.
             </motion.h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-silver-light">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#1C2530]">
             {PRINCIPLES.map((p) => (
               <motion.div
                 key={p.number}
@@ -159,15 +224,15 @@ export default function VisionPage() {
                 whileInView="visible"
                 viewport={viewport}
                 variants={fadeUp}
-                className="bg-pearl p-10 flex flex-col gap-4"
+                className="bg-[#080808] p-10 flex flex-col gap-4"
               >
-                <span className="text-[10px] tracking-ultrawide text-violet-muted uppercase font-medium">
+                <span className="text-[10px] tracking-[0.28em] text-[#6B7278] uppercase font-medium">
                   {p.number}
                 </span>
-                <h3 className="text-lg font-medium tracking-tight text-graphite">
+                <h3 className="font-display font-normal uppercase tracking-[0.11em] leading-[0.97] text-lg text-[#E2E8EE]">
                   {p.title}
                 </h3>
-                <p className="text-sm text-graphite-light leading-relaxed">{p.body}</p>
+                <p className="text-[13px] text-[#AAB0B6] leading-relaxed">{p.body}</p>
               </motion.div>
             ))}
           </div>
@@ -175,52 +240,68 @@ export default function VisionPage() {
       </section>
 
       {/* ── MARKET CONTEXT ── */}
-      <section className="bg-porcelain py-20 lg:py-26">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+      <section className="bg-porcelain py-10 lg:py-20">
+        <div className={W}>
+          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-6 lg:gap-20 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={viewport}
               variants={stagger}
-              className="flex flex-col gap-6"
+              className="flex flex-col gap-5 lg:gap-6"
             >
               <SectionLabel text="Market Opportunity" animate={false} />
               <motion.h2
                 variants={fadeUp}
-                className="text-3xl md:text-4xl font-light tracking-tight leading-tight text-graphite"
+                className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
+                style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
               >
                 A new category of live experience.
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed">
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
                 The global live experience market is undergoing fundamental change.
                 Audiences are seeking meaningful, singular, non-repeatable encounters
                 that no screen can replicate.
               </motion.p>
-              <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
+
+              {/* Mobile-only image */}
+              <motion.div variants={scaleIn} className="lg:hidden">
+                <FadeImage
+                  src="/images/elysium-ai/dark/11about.png"
+                  alt="Elizium AI — Market Landscape"
+                  className="aspect-[4/3]"
+                  position="center 40%"
+                  fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                  sizes="100vw"
+                />
+              </motion.div>
+
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
                 ELIZIUM AI sits at the intersection of three converging forces:
                 the maturation of AI technology, the post-pandemic premium on
                 live presence, and the cultural appetite for new formats.
               </motion.p>
-              <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
                 We are not competing with existing formats. We are creating a
                 new one.
               </motion.p>
             </motion.div>
 
+            {/* Desktop-only image */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={viewport}
               variants={scaleIn}
-              className="relative aspect-[4/3]"
+              className="hidden lg:block"
             >
-              <Image
-                src="/images/elysium-ai/dark/08-company-infrastructure.webp"
-                alt="Elizium AI Infrastructure"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
+              <FadeImage
+                src="/images/elysium-ai/dark/11about.png"
+                alt="Elizium AI — Market Landscape"
+                className="aspect-[4/3]"
+                position="center 40%"
+                fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                sizes="58vw"
               />
             </motion.div>
           </div>
@@ -228,8 +309,8 @@ export default function VisionPage() {
       </section>
 
       {/* ── LONDON LINE ── */}
-      <section className="bg-pearl py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-[#080808] py-10 lg:py-20 border-t border-b border-[#1C2530]">
+        <div className={W}>
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -237,17 +318,17 @@ export default function VisionPage() {
             variants={fadeUp}
             className="flex items-center gap-8"
           >
-            <span className="text-2xl md:text-3xl font-light tracking-tight text-graphite">
+            <span className="font-display font-normal uppercase tracking-[0.11em] leading-[0.97] text-2xl md:text-3xl text-[#E2E8EE]">
               Designed in London. Built to travel.
             </span>
-            <span className="hidden md:block flex-1 h-px bg-silver-light" />
+            <span className="hidden md:block flex-1 h-px bg-[#1C2530]" />
           </motion.div>
         </div>
       </section>
 
       {/* ── CTA ── */}
-      <section className="bg-porcelain py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-porcelain py-10 lg:py-20 border-t border-[#1C2530]/50">
+        <div className={W}>
           <CTASection
             label="Private Access"
             headline="Interested in the vision behind Elizium AI?"

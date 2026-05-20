@@ -30,7 +30,7 @@ export default function PlatformCard({ tag, title, description, light = false }:
         {tag}
       </span>
       <h3
-        className={`text-lg font-medium tracking-tight mb-3 ${
+        className={`font-display font-normal uppercase tracking-[0.11em] leading-[0.97] text-lg mb-3 ${
           light ? "text-graphite" : "text-porcelain"
         }`}
       >

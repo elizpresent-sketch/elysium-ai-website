@@ -10,12 +10,14 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
+        // Playfair Display — luxury editorial high-contrast serif
+        display: ["var(--font-display)", "Georgia", "serif"],
       },
       colors: {
-        // ── COLD CINEMATIC PALETTE ───────────────────────────────
-        // porcelain/pearl = dark backgrounds
-        porcelain: "#050607",          // primary background — true cold black
-        pearl: "#080D12",              // alternate section background — blue-black
+        // ── PURE BLACK CINEMATIC PALETTE ────────────────────────
+        // True near-blacks — no blue tint
+        porcelain: "#050505",          // primary background — true near-black
+        pearl: "#080808",              // alternate background — same near-black
         "silver-light": "#1C2530",     // thin dividers / structural borders — cold blue-grey
         "silver-mid": "#707880",       // muted placeholder / secondary labels
         "silver-dark": "#6B7278",      // captions, tertiary text

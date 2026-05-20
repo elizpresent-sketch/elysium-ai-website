@@ -5,6 +5,33 @@ import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
 import SectionLabel from "@/components/ui/SectionLabel";
 import ContactForm from "@/components/ui/ContactForm";
 
+const BG = "#050505";
+
+interface FadeImageProps {
+  src: string; alt: string; className?: string; position?: string;
+  fadeLeft?: number; fadeRight?: number; fadeTop?: number; fadeBottom?: number;
+  sizes?: string;
+}
+function FadeImage({ src, alt, className = "", position = "center center",
+  fadeLeft = 0, fadeRight = 0, fadeTop = 10, fadeBottom = 10,
+  sizes = "100vw" }: FadeImageProps) {
+  const layers: string[] = [];
+  if (fadeTop > 0)    layers.push(`linear-gradient(to bottom, ${BG} 0%, transparent ${fadeTop}%)`);
+  if (fadeBottom > 0) layers.push(`linear-gradient(to top,    ${BG} 0%, transparent ${fadeBottom}%)`);
+  if (fadeLeft > 0)   layers.push(`linear-gradient(to right,  ${BG} 0%, transparent ${fadeLeft}%)`);
+  if (fadeRight > 0)  layers.push(`linear-gradient(to left,   ${BG} 0%, transparent ${fadeRight}%)`);
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      <Image src={src} alt={alt} fill className="object-cover"
+        style={{ objectPosition: position }} sizes={sizes} />
+      {layers.length > 0 && (
+        <div aria-hidden className="absolute inset-0 pointer-events-none z-10"
+          style={{ background: layers.join(", ") }} />
+      )}
+    </div>
+  );
+}
+
 const WHO_FOR = [
   "Investors",
   "Venue Operators",
@@ -18,8 +45,8 @@ export default function ContactPage() {
   return (
     <>
       {/* ── HEADER ── */}
-      <section className="bg-porcelain pt-36 pb-10 lg:pb-12">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-porcelain pt-24 pb-8 lg:pt-36 lg:pb-20">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -36,16 +63,17 @@ export default function ContactPage() {
 
             <motion.h1
               variants={fadeUp}
-              className="text-4xl sm:text-5xl md:text-6xl font-light tracking-tight text-graphite leading-[1.05]"
+              className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-graphite"
+              style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
             >
               Request Private Access
             </motion.h1>
 
-            <motion.p variants={fadeUp} className="text-base text-graphite-light leading-relaxed">
+            <motion.p variants={fadeUp} className="text-[14px] text-graphite-light leading-relaxed">
               For partners, investors, venues, sponsors, press and strategic
               collaborators.
             </motion.p>
-            <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
+            <motion.p variants={fadeUp} className="text-[13px] text-graphite-light leading-relaxed">
               Selected enquiries are reviewed for strategic fit, launch potential
               and long-term collaboration.
             </motion.p>
@@ -53,43 +81,29 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ── PRIVATE ACCESS IMAGE — compact ── */}
-      <section className="bg-porcelain pb-12">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            variants={scaleIn}
-            className="relative aspect-[21/6] w-full overflow-hidden"
-          >
-            <Image
-              src="/images/elysium-ai/dark/09-private-inquiry-access.webp"
-              alt="Elizium AI — Private Access"
-              fill
-              className="object-cover object-center"
-              sizes="100vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-porcelain/70 to-transparent" />
-            <div className="absolute inset-0 flex items-center px-10 lg:px-16">
-              <motion.p
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={viewport}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="text-lg md:text-xl font-light text-graphite tracking-tight max-w-sm"
-              >
-                Elizium AI operates by invitation and pre-qualification.
-              </motion.p>
-            </div>
-          </motion.div>
-        </div>
+      {/* ── PRIVATE ACCESS IMAGE ── */}
+      <section className="bg-porcelain pb-6 lg:pb-14">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewport}
+          variants={scaleIn}
+        >
+          <FadeImage
+            src="/images/elysium-ai/dark/09.png"
+            alt="Elizium AI — Private Access"
+            className="aspect-[16/9] lg:aspect-[21/7]"
+            position="center 30%"
+            fadeLeft={8} fadeTop={6} fadeBottom={6} fadeRight={6}
+            sizes="100vw"
+          />
+        </motion.div>
       </section>
 
       {/* ── FORM + SIDEBAR ── */}
-      <section className="bg-pearl py-14 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-20">
+      <section className="bg-pearl py-10 lg:py-20">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20">
             {/* Sidebar */}
             <motion.div
               initial="hidden"

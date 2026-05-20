@@ -4,11 +4,53 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
 import SectionLabel from "@/components/ui/SectionLabel";
-import PageIntro from "@/components/ui/PageIntro";
 import PlatformCard from "@/components/ui/PlatformCard";
 import FeatureGrid from "@/components/ui/FeatureGrid";
 import CTASection from "@/components/ui/CTASection";
 
+// ─── shared constants ────────────────────────────────────────────────────────
+const W   = "max-w-[1440px] mx-auto px-6 lg:px-12";
+const BG  = "#050505";
+
+// ─── FadeImage ───────────────────────────────────────────────────────────────
+interface FadeImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  position?: string;
+  fadeLeft?: number;
+  fadeRight?: number;
+  fadeTop?: number;
+  fadeBottom?: number;
+  sizes?: string;
+  priority?: boolean;
+  objectFit?: "cover" | "contain";
+}
+function FadeImage({
+  src, alt, className = "", position = "center center",
+  fadeLeft = 0, fadeRight = 0, fadeTop = 10, fadeBottom = 10,
+  sizes = "(max-width: 1024px) 100vw, 55vw", priority = false,
+  objectFit = "cover",
+}: FadeImageProps) {
+  const layers: string[] = [];
+  if (fadeTop > 0)    layers.push(`linear-gradient(to bottom, ${BG} 0%, transparent ${fadeTop}%)`);
+  if (fadeBottom > 0) layers.push(`linear-gradient(to top,    ${BG} 0%, transparent ${fadeBottom}%)`);
+  if (fadeLeft > 0)   layers.push(`linear-gradient(to right,  ${BG} 0%, transparent ${fadeLeft}%)`);
+  if (fadeRight > 0)  layers.push(`linear-gradient(to left,   ${BG} 0%, transparent ${fadeRight}%)`);
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      <Image src={src} alt={alt} fill priority={priority}
+        className={objectFit === "contain" ? "object-contain" : "object-cover"}
+        style={{ objectPosition: position }} sizes={sizes} />
+      {layers.length > 0 && (
+        <div aria-hidden className="absolute inset-0 pointer-events-none z-10"
+          style={{ background: layers.join(", ") }} />
+      )}
+    </div>
+  );
+}
+
+// ─── data ────────────────────────────────────────────────────────────────────
 const PLATFORM_COMPONENTS = [
   {
     tag: "Layer 01",
@@ -71,54 +113,96 @@ const FEATURE_ITEMS = [
   },
 ];
 
+// ─── page ────────────────────────────────────────────────────────────────────
 export default function PlatformPage() {
   return (
     <>
-      {/* ── PAGE INTRO ── */}
-      <section className="bg-porcelain pt-40 pb-24 lg:pb-32">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <PageIntro
-            label="The Platform"
-            headline="A modular creative-tech platform for AI-powered immersive entertainment."
-            subheadline="ELIZIUM AI brings together AI-assisted creative systems, immersive visual architecture, audience interaction, robotics and scalable show logic into a single deployable format."
+      {/* ── HERO — full-bleed cinematic background, left text overlay (mirrors /future-human) ── */}
+      <section
+        className="relative min-h-[88vh] lg:min-h-screen flex flex-col overflow-hidden"
+        style={{ background: BG }}
+      >
+        {/* Cinematic background image — fills the hero */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/elysium-ai/dark/creatingworlds.png"
+            alt=""
+            fill
+            priority
+            className="object-cover"
+            style={{ objectPosition: "65% center" }}
+            sizes="100vw"
+            aria-hidden
           />
+          {/* Left-protection diagonal gradient — keeps text readable while letting the stage breathe on the right */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(105deg,
+                ${BG} 0%, ${BG} 18%,
+                rgba(5,5,5,0.85) 38%,
+                rgba(5,5,5,0.40) 60%,
+                rgba(5,5,5,0.10) 80%,
+                transparent 100%)`,
+            }}
+          />
+          {/* Top + bottom fades */}
+          <div
+            className="absolute inset-x-0 top-0 h-44"
+            style={{ background: `linear-gradient(to bottom, ${BG} 0%, ${BG} 8%, rgba(5,5,5,0.65) 55%, transparent 100%)` }}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 h-40"
+            style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.75) 55%, transparent 100%)` }}
+          />
+        </div>
+
+        {/* Content — left column overlay */}
+        <div className={`relative z-10 flex-1 flex items-center w-full ${W} pt-24 pb-12 lg:pt-32 lg:pb-20`}>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={stagger}
+            className="w-full lg:max-w-[680px] flex flex-col gap-5 lg:gap-7"
+          >
+            <motion.span
+              variants={fadeUp}
+              className="inline-flex items-center gap-3 text-[10px] tracking-[0.28em] uppercase font-medium text-[#8E949A]"
+            >
+              <span className="w-6 h-px bg-[#8E949A]" />
+              The Platform
+            </motion.span>
+            <motion.h1
+              variants={fadeUp}
+              className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
+              style={{ fontSize: "clamp(1.9rem, 5vw, 4.4rem)" }}
+            >
+              A modular creative-tech platform for AI-powered immersive entertainment.
+            </motion.h1>
+            <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed max-w-xl">
+              ELIZIUM AI brings together AI-assisted creative systems, immersive visual
+              architecture, audience interaction, robotics and scalable show logic into
+              a single deployable format.
+            </motion.p>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── FULL-BLEED IMAGE ── */}
-      <section className="bg-porcelain pb-0">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewport}
-          variants={scaleIn}
-          className="relative aspect-[21/9] w-full overflow-hidden"
-        >
-          <Image
-            src="/images/elysium-ai/dark/02-platform-overview-stage.webp"
-            alt="Elizium AI Platform — Stage Overview"
-            fill
-            className="object-cover"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-porcelain/20 to-transparent" />
-        </motion.div>
-      </section>
-
       {/* ── PLATFORM COMPONENTS ── */}
-      <section className="bg-porcelain py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-porcelain py-10 lg:py-20">
+        <div className={W}>
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
             variants={stagger}
-            className="flex flex-col gap-4 mb-16"
+            className="flex flex-col gap-4 mb-8 lg:mb-14"
           >
             <SectionLabel text="Architecture" animate={false} />
             <motion.h2
               variants={fadeUp}
-              className="text-3xl md:text-4xl font-light tracking-tight text-graphite max-w-xl"
+              className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE] max-w-xl"
+              style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
             >
               Six integrated layers. One coherent system.
             </motion.h2>
@@ -132,47 +216,46 @@ export default function PlatformPage() {
         </div>
       </section>
 
-      {/* ── PLATFORM SYSTEM IMAGE ── */}
-      <section className="bg-pearl py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={scaleIn}
-              className="relative aspect-square"
-            >
-              <Image
-                src="/images/elysium-ai/dark/04-technology-layer-interface.webp"
-                alt="Elizium AI Technology Layer"
-                fill
-                className="object-contain lg:object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </motion.div>
-
+      {/* ── SYSTEM DESIGN ── */}
+      <section className="bg-pearl py-10 lg:py-20">
+        <div className={W}>
+          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-6 lg:gap-20 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={viewport}
               variants={stagger}
-              className="flex flex-col gap-6"
+              className="flex flex-col gap-5 lg:gap-6"
             >
               <SectionLabel text="System Design" animate={false} />
               <motion.h2
                 variants={fadeUp}
-                className="text-3xl md:text-4xl font-light tracking-tight leading-tight text-graphite"
+                className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
+                style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
               >
                 Designed for production. Built for scale.
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed">
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
                 Every component of the ELIZIUM AI platform is designed with
                 deployment in mind. From single-venue pilots to multi-territory
                 licensing arrangements — the system is modular, documented and
                 ready to operate at scale.
               </motion.p>
-              <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
+
+              {/* Mobile-only vertical tech element — portrait, full visibility, blends to black */}
+              <motion.div variants={scaleIn} className="lg:hidden flex justify-center">
+                <FadeImage
+                  src="/images/elysium-ai/dark/tech-final.png"
+                  alt="Elizium AI Technology Architecture"
+                  className="aspect-[3/4] w-full max-w-[360px]"
+                  position="center center"
+                  fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
+                  sizes="100vw"
+                  objectFit="contain"
+                />
+              </motion.div>
+
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
                 Technical specifications, venue requirements and licensing
                 frameworks are available to qualified partners and venue operators
                 on request.
@@ -180,36 +263,69 @@ export default function PlatformPage() {
               <motion.div variants={fadeUp}>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-3 text-[11px] tracking-superwide uppercase font-medium text-graphite hover:text-graphite-mid transition-colors group"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-medium text-[#E2E8EE] hover:text-[#8E949A] transition-colors group"
                 >
                   Request Technical Briefing
-                  <span className="w-8 h-px bg-graphite group-hover:w-12 transition-all duration-300" />
+                  <span className="w-8 h-px bg-[#E2E8EE] group-hover:w-12 transition-all duration-300" />
                 </Link>
               </motion.div>
+            </motion.div>
+
+            {/* Desktop-only vertical tech element — portrait container, object-contain, sits on pure black */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              variants={scaleIn}
+              className="hidden lg:flex justify-center"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/tech-final.png"
+                alt="Elizium AI Technology Architecture"
+                className="aspect-[3/4] w-full max-w-[520px]"
+                position="center center"
+                fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                objectFit="contain"
+              />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ── ROBOTICS SECTION ── */}
-      <section className="bg-porcelain py-24 lg:py-32 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      {/* ── ROBOTICS ── */}
+      <section className="bg-porcelain py-10 lg:py-20 overflow-hidden">
+        <div className={W}>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-16 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={viewport}
               variants={stagger}
-              className="flex flex-col gap-6 order-2 lg:order-1"
+              className="flex flex-col gap-5 lg:gap-6"
             >
               <SectionLabel text="Robotics & AI Embodiment" animate={false} />
               <motion.h2
                 variants={fadeUp}
-                className="text-3xl md:text-4xl font-light tracking-tight leading-tight text-graphite"
+                className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
+                style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
               >
                 Artificial intelligence. Physical presence.
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed">
+
+              {/* Mobile-only image — strong cinematic field directly under heading */}
+              <motion.div variants={scaleIn} className="lg:hidden">
+                <FadeImage
+                  src="/images/elysium-ai/dark/creatingworlds.png"
+                  alt="AI Presence on Stage — Elizium AI"
+                  className="aspect-[4/3]"
+                  position="center center"
+                  fadeRight={0} fadeTop={0} fadeBottom={0} fadeLeft={0}
+                  sizes="100vw"
+                />
+              </motion.div>
+
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
                 The ELIZIUM AI platform integrates robotic systems that give
                 artificial intelligence a physical form on stage — enabling
                 moments of genuine, unrepeatable encounter between human and
@@ -217,19 +333,21 @@ export default function PlatformPage() {
               </motion.p>
             </motion.div>
 
+            {/* Desktop-only image — equal column, full cinematic presence */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={viewport}
               variants={scaleIn}
-              className="relative aspect-square lg:aspect-[3/4] order-1 lg:order-2"
+              className="hidden lg:block"
             >
-              <Image
-                src="/images/elysium-ai/dark/08-company-infrastructure.webp"
-                alt="AI Infrastructure — Elizium AI"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
+              <FadeImage
+                src="/images/elysium-ai/dark/creatingworlds.png"
+                alt="AI Presence on Stage — Elizium AI"
+                className="aspect-[4/3]"
+                position="center center"
+                fadeRight={0} fadeTop={0} fadeBottom={0} fadeLeft={0}
+                sizes="50vw"
               />
             </motion.div>
           </div>
@@ -237,19 +355,20 @@ export default function PlatformPage() {
       </section>
 
       {/* ── FEATURE GRID ── */}
-      <section className="bg-pearl py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-pearl py-10 lg:py-20">
+        <div className={W}>
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
             variants={stagger}
-            className="flex flex-col gap-4 mb-12"
+            className="flex flex-col gap-4 mb-8 lg:mb-12"
           >
             <SectionLabel text="Platform Properties" animate={false} />
             <motion.h2
               variants={fadeUp}
-              className="text-3xl md:text-4xl font-light tracking-tight text-graphite"
+              className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
+              style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
             >
               Built for the real world.
             </motion.h2>
@@ -259,8 +378,8 @@ export default function PlatformPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="bg-porcelain py-28 lg:py-40">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-porcelain py-10 lg:py-20 border-t border-[#1C2530]/50">
+        <div className={W}>
           <CTASection
             label="Private Access"
             headline="Request a platform briefing or licensing conversation."

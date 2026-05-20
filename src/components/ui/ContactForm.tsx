@@ -67,7 +67,7 @@ export default function ContactForm() {
           <span className="w-6 h-px bg-violet-muted" />
           Received
         </span>
-        <h3 className="text-2xl font-light tracking-tight text-graphite">
+        <h3 className="font-display font-normal uppercase tracking-[0.11em] leading-[0.97] text-2xl text-graphite">
           Thank you. Your inquiry has been received for review.
         </h3>
       </motion.div>

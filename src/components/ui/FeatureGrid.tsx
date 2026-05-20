@@ -43,7 +43,7 @@ export default function FeatureGrid({ items, columns = 3, light = true }: Featur
             {item.label}
           </span>
           <h3
-            className={`text-base font-medium tracking-tight ${
+            className={`font-display font-normal uppercase tracking-[0.11em] leading-[0.97] text-base ${
               light ? "text-graphite" : "text-porcelain"
             }`}
           >

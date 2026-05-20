@@ -37,7 +37,7 @@ export default function PageIntro({
 
       <motion.h1
         variants={fadeUp}
-        className={`text-4xl md:text-5xl lg:text-6xl font-light tracking-tight leading-[1.05] max-w-3xl ${
+        className={`font-display font-normal uppercase tracking-[0.11em] leading-[0.97] text-4xl md:text-5xl lg:text-6xl max-w-3xl ${
           dark ? "text-porcelain" : "text-graphite"
         }`}
       >

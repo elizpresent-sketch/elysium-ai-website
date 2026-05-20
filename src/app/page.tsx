@@ -1,11 +1,224 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
-import SectionLabel from "@/components/ui/SectionLabel";
-import CTASection from "@/components/ui/CTASection";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+const W = "max-w-[1440px] mx-auto px-6 lg:px-12";
+const BG = "#050505";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COUNT-UP HOOK
+// Numbers animate from 0 → target once when element enters viewport.
+// Uses requestAnimationFrame + cubic ease-out — no dependencies needed.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function useCountUp(end: number, duration = 2800) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+
+  useEffect(() => {
+    if (!inView) return;
+    const t0 = performance.now();
+    const run = (now: number) => {
+      const p = Math.min((now - t0) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setCount(Math.round(eased * end));
+      if (p < 1) requestAnimationFrame(run);
+    };
+    requestAnimationFrame(run);
+  }, [inView, end, duration]);
+
+  return { count, ref };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STAT COUNTER — animated number tile with inView trigger
+// ─────────────────────────────────────────────────────────────────────────────
+
+function StatCounter({
+  end,
+  suffix = "",
+  label,
+  size = "lg",
+}: {
+  end: number;
+  suffix?: string;
+  label: string;
+  size?: "sm" | "lg";
+}) {
+  const { count, ref } = useCountUp(end);
+  return (
+    <div ref={ref} className="flex flex-col gap-1.5 py-3 lg:py-5 border-t border-[#1C2530]/50 pr-4">
+      <span
+        className={`font-display font-normal leading-none text-[#E2E8EE] tracking-[0.08em] ${
+          size === "lg"
+            ? "text-[3rem] lg:text-[3.6rem]"
+            : "text-[1.8rem] lg:text-[2.2rem]"
+        }`}
+      >
+        {count}
+        {suffix}
+      </span>
+      <span className="text-[9px] tracking-[0.26em] uppercase text-[#969CA2] font-medium leading-snug">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FADE IMAGE — images dissolve into the black background at every edge
+// fadeLeft/Right/Top/Bottom = % of the image dimension to fade
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface FadeImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  position?: string;
+  fadeLeft?: number;
+  fadeRight?: number;
+  fadeTop?: number;
+  fadeBottom?: number;
+  sizes?: string;
+  priority?: boolean;
+  objectFit?: "cover" | "contain";
+}
+
+function FadeImage({
+  src,
+  alt,
+  className = "",
+  position = "center center",
+  fadeLeft = 0,
+  fadeRight = 0,
+  fadeTop = 10,
+  fadeBottom = 10,
+  sizes = "(max-width: 1024px) 100vw, 55vw",
+  priority = false,
+  objectFit = "cover",
+}: FadeImageProps) {
+  const layers: string[] = [];
+  if (fadeTop > 0)
+    layers.push(`linear-gradient(to bottom, ${BG} 0%, transparent ${fadeTop}%)`);
+  if (fadeBottom > 0)
+    layers.push(`linear-gradient(to top, ${BG} 0%, transparent ${fadeBottom}%)`);
+  if (fadeLeft > 0)
+    layers.push(`linear-gradient(to right, ${BG} 0%, transparent ${fadeLeft}%)`);
+  if (fadeRight > 0)
+    layers.push(`linear-gradient(to left, ${BG} 0%, transparent ${fadeRight}%)`);
+
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        priority={priority}
+        className={objectFit === "contain" ? "object-contain" : "object-cover"}
+        style={{ objectPosition: position }}
+        sizes={sizes}
+      />
+      {layers.length > 0 && (
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{ background: layers.join(", ") }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PLACEHOLDER — black gradient placeholder for missing/future images
+// ─────────────────────────────────────────────────────────────────────────────
+
+function Placeholder({ className = "", label = "" }: { className?: string; label?: string }) {
+  return (
+    <div
+      className={`relative flex items-end p-3 overflow-hidden ${className}`}
+      style={{
+        background:
+          "linear-gradient(135deg, #0a0a0a 0%, #111214 50%, #080808 100%)",
+        border: "1px solid rgba(255,255,255,0.04)",
+      }}
+    >
+      {label && (
+        <span className="text-[7px] tracking-[0.25em] uppercase text-[#2a2f35] font-medium">
+          {label}
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SECTION HEAD — compact top rule + label + number
+// ─────────────────────────────────────────────────────────────────────────────
+
+function SectionHead({ label, num }: { label: string; num: string }) {
+  return (
+    <div className="flex items-center justify-between border-t border-[#1C2530]/60 pt-3 mb-4 lg:mb-8">
+      <span className="text-[9px] tracking-[0.36em] uppercase font-medium text-[#969CA2]">
+        {label}
+      </span>
+      <span className="text-[9px] tracking-[0.36em] font-normal text-[#6B7278]/40">
+        {num}
+      </span>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RULE — thin architectural divider
+// ─────────────────────────────────────────────────────────────────────────────
+
+function Rule({ w = "w-8", className = "" }: { w?: string; className?: string }) {
+  return <div className={`h-px bg-[#1C2530]/60 ${w} ${className}`} />;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MODULE BOX — framed bottom-row capability chip
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ModBox({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="flex items-center px-4 py-3.5"
+      style={{ border: "1px solid rgba(255,255,255,0.18)" }}
+    >
+      <span className="text-[10px] tracking-[0.22em] uppercase text-[#B0B6BC] font-medium leading-tight">
+        {children}
+      </span>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GALLERY IMAGES — used in §10 Media/Gallery multi-tile grid
+// ─────────────────────────────────────────────────────────────────────────────
+
+const GALLERY = [
+  { src: "/images/elysium-ai/dark/03-first-experience-portal-wide.webp",  alt: "Portal Experience" },
+  { src: "/images/elysium-ai/dark/05-audience-system-silhouette.webp",    alt: "Audience System" },
+  { src: "/images/elysium-ai/dark/06-creative-production-stage.webp",     alt: "Creative Production" },
+  { src: "/images/elysium-ai/dark/07-partnerships-private-room.webp",     alt: "Partnerships" },
+  { src: "/images/elysium-ai/dark/09-private-inquiry-access.webp",        alt: "Private Inquiry" },
+  { src: "/images/elysium-ai/dark/10-visual-gallery-worlds.webp",         alt: "Worlds We Create" },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FAQ DATA
+// ─────────────────────────────────────────────────────────────────────────────
 
 const FAQS = [
   {
@@ -30,147 +243,207 @@ const FAQS = [
   },
 ];
 
+// ═════════════════════════════════════════════════════════════════════════════
+// PAGE
+// ═════════════════════════════════════════════════════════════════════════════
+
 export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
     <>
-      {/* ─────────────────────────────────────────
-          1. HERO
-      ───────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0">
+      {/* ═══════════════════════════════════════════════════════════════════
+          01 · HOME / HERO
+          Mobile: portrait visual dominates top, text card below.
+          Desktop: full-bleed cinematic image with text overlay on the left.
+      ═══════════════════════════════════════════════════════════════════ */}
+
+      {/* ── Mobile hero — portrait first (matches PDF "should be") ── */}
+      <section className="lg:hidden relative flex flex-col overflow-hidden pt-14" style={{ background: BG }}>
+        {/* Cinematic AI-human portrait — fills upper portion of the screen */}
+        <div className="relative w-full" style={{ height: "62vh", minHeight: 360 }}>
           <Image
-            src="/images/elysium-ai/dark/01-hero-ai-human-portrait.webp"
-            alt="Elizium AI — Future of Live Entertainment"
+            src="/images/elysium-ai/dark/hero-current-expanded.png"
+            alt="Elizium AI — AI-Human"
             fill
             priority
-            className="object-cover object-center"
+            className="object-cover"
+            style={{ objectPosition: "78% center" }}
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-porcelain/55 via-porcelain/30 to-porcelain/78" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 pt-36 pb-28">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-            className="flex flex-col gap-8 max-w-3xl"
-          >
-            <motion.span
-              variants={fadeUp}
-              className="inline-flex items-center gap-3 text-[10px] tracking-ultrawide uppercase font-medium text-silver-dark"
-            >
-              <span className="w-6 h-px bg-silver-dark" />
-              Creative Technology · London
-            </motion.span>
-
-            <motion.h1
-              variants={fadeUp}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.75rem] font-light tracking-wide uppercase leading-[1.08] text-graphite"
-            >
-              The future of live entertainment is becoming intelligent.
-            </motion.h1>
-
-            <motion.p
-              variants={fadeUp}
-              className="text-base md:text-lg text-silver-mid leading-relaxed max-w-xl"
-            >
-              ELIZIUM AI is a UK-based creative-tech company developing AI-powered
-              immersive entertainment experiences where human emotion, real-time
-              visual systems, robotics and artificial intelligence meet.
-            </motion.p>
-
-            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 pt-2">
-              <Link
-                href="/platform"
-                className="px-8 py-3.5 bg-graphite text-porcelain text-[11px] tracking-superwide uppercase font-medium hover:bg-graphite-mid transition-colors duration-200"
-              >
-                Explore the Platform
-              </Link>
-              <Link
-                href="/contact"
-                className="px-8 py-3.5 border border-graphite/80 sm:border-graphite/60 bg-porcelain/80 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none text-graphite text-[11px] tracking-superwide uppercase font-medium hover:border-graphite transition-colors duration-200"
-              >
-                Request Private Access
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* ── PLATFORM STATUS — pinned to hero bottom ── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="absolute bottom-0 left-0 right-0 border-t border-b border-silver-light bg-porcelain/80 backdrop-blur-md overflow-hidden"
-        >
-          {/* Breathing radial gradient — quiet atmosphere layer */}
-          <motion.div
-            aria-hidden="true"
+          {/* Bottom + edge fades into pure black so text card sits cleanly */}
+          <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background:
-                "radial-gradient(ellipse 50% 120% at 15% 50%, rgba(180,200,220,0.06) 0%, transparent 70%)",
+              background: `linear-gradient(to bottom, transparent 0%, transparent 55%, rgba(5,5,5,0.65) 80%, ${BG} 100%)`,
             }}
-            animate={{ opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
           />
+          <div
+            className="absolute inset-x-0 top-0 h-16 pointer-events-none"
+            style={{ background: `linear-gradient(to bottom, ${BG} 0%, rgba(5,5,5,0.5) 50%, transparent 100%)` }}
+          />
+        </div>
 
-          {/* Light sweep — once every ~11 seconds */}
-          <motion.div
-            aria-hidden="true"
-            className="absolute inset-y-0 pointer-events-none"
+        {/* Text card */}
+        <motion.div
+          initial="hidden" animate="visible" variants={stagger}
+          className="relative z-10 -mt-14 px-6 pb-10 flex flex-col gap-5"
+        >
+          <motion.h1
+            variants={fadeUp}
+            className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em]"
+            style={{ fontSize: "clamp(1.85rem, 9vw, 2.5rem)" }}
+          >
+            Immersive
+            <br />AI‑Human
+            <br />Platform
+          </motion.h1>
+
+          <motion.p variants={fadeUp} className="text-[13px] text-[#B0B8C0] leading-relaxed">
+            A future-facing creative-technology platform exploring the relationship
+            between artificial intelligence, human performance and immersive audience
+            systems.
+          </motion.p>
+
+          <motion.div variants={fadeUp} className="flex flex-col gap-2.5 pt-1">
+            <Link
+              href="/platform"
+              className="w-full inline-flex items-center justify-between gap-3 px-5 py-3.5 border border-[#E2E8EE]/70 text-[#E2E8EE] text-[9px] tracking-[0.3em] uppercase font-medium"
+            >
+              Enter Platform <span className="w-4 h-px bg-current" />
+            </Link>
+            <Link
+              href="/contact"
+              className="w-full inline-flex items-center justify-between gap-3 px-5 py-3.5 border border-[#1C2530]/70 text-[#969CA2] text-[9px] tracking-[0.3em] uppercase font-medium"
+            >
+              Private Inquiry <span className="w-4 h-px bg-current opacity-50" />
+            </Link>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* ── Desktop hero — preserved cinematic side-by-side composition ── */}
+      <section className="hidden lg:flex relative min-h-screen flex-col overflow-hidden" style={{ background: BG }}>
+
+        {/* Full-bleed image — figure sits right of centre */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/elysium-ai/dark/hero-current-expanded.png"
+            alt=""
+            fill
+            priority
+            className="object-cover"
+            style={{ objectPosition: "85% center" }}
+            sizes="100vw"
+            aria-hidden
+          />
+          <div
+            className="absolute inset-0"
             style={{
-              width: "220px",
-              background:
-                "linear-gradient(to right, transparent 0%, rgba(180,200,220,0.045) 50%, transparent 100%)",
-            }}
-            animate={{ x: ["-220px", "calc(100vw + 220px)"] }}
-            transition={{
-              duration: 4.5,
-              repeat: Infinity,
-              repeatDelay: 6.5,
-              ease: "linear",
-              delay: 2.5,
+              background: `linear-gradient(105deg,
+                ${BG} 0%, ${BG} 28%,
+                rgba(5,5,5,0.96) 44%,
+                rgba(5,5,5,0.70) 60%,
+                rgba(5,5,5,0.24) 78%,
+                transparent 100%)`,
             }}
           />
+          <div
+            className="absolute inset-x-0 top-0 h-52"
+            style={{ background: `linear-gradient(to bottom, ${BG} 0%, ${BG} 8%, rgba(5,5,5,0.7) 55%, transparent 100%)` }}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 h-48"
+            style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.8) 55%, transparent 100%)` }}
+          />
+        </div>
 
-          {/* Content — z-10 so it sits above atmosphere layers */}
-          <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 py-5">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-10">
-              {/* Label */}
-              <div className="flex items-center gap-3 flex-shrink-0">
-                <span className="text-[9px] tracking-ultrawide uppercase font-semibold text-graphite whitespace-nowrap">
-                  Platform Status
+        <div className={`relative z-10 flex-1 flex items-center w-full ${W} pt-32 pb-14`}>
+          <div className="w-full max-w-[520px]">
+            <motion.div initial="hidden" animate="visible" variants={stagger} className="flex flex-col gap-6">
+
+              <motion.div variants={fadeUp} className="flex flex-col gap-2">
+                <span className="text-[8.5px] tracking-[0.38em] uppercase font-medium text-[#7B8188] flex items-center gap-3">
+                  <span className="w-5 h-px bg-[#6B7278]/55" />
+                  Not a show. A platform.
                 </span>
-                <span className="hidden sm:block w-px h-3 bg-silver-light" />
-              </div>
-              {/* Items */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-3 flex-1">
+                <div className="w-8 h-px bg-[#1C2530]/60" />
+              </motion.div>
+
+              <motion.h1
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.11em]"
+                style={{ fontSize: "clamp(3rem, 8vw, 5.75rem)" }}
+              >
+                Immersive
+                <br />AI‑Human
+                <br />Platform
+              </motion.h1>
+
+              <motion.p variants={fadeUp} className="text-[14px] text-[#B0B8C0] leading-relaxed max-w-[400px]">
+                A future-facing creative-technology platform exploring the
+                relationship between artificial intelligence, human performance and
+                immersive audience systems.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="flex flex-wrap gap-1.5">
+                {["AI-Human Interaction", "Emotional Storytelling", "Live Performance", "Immersive Environment", "Proof-of-Concept Platform"].map((t) => (
+                  <span
+                    key={t}
+                    className="border border-[#1C2530]/60 px-2.5 py-1 text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188] font-medium"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </motion.div>
+
+              <motion.div variants={fadeUp} className="flex flex-row gap-3 pt-1">
+                <Link
+                  href="/platform"
+                  className="inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#E2E8EE]/70 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300"
+                >
+                  Enter Platform <span className="w-4 h-px bg-current" />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#1C2530]/55 text-[#969CA2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+                >
+                  Private Inquiry
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ delay: 0.9, duration: 0.8 }}
+          className="relative z-10 border-t border-[#1C2530]/50"
+          style={{ background: "rgba(5,5,5,0.92)", backdropFilter: "blur(14px)" }}
+        >
+          <div className={`${W} py-3.5`}>
+            <div className="flex items-center gap-8">
+              <span className="text-[8px] tracking-[0.38em] uppercase font-semibold text-[#7B8188] whitespace-nowrap flex-shrink-0">
+                Platform Status
+              </span>
+              <span className="block w-px h-3 bg-[#1C2530] flex-shrink-0" />
+              <div className="grid grid-cols-4 gap-x-7 gap-y-2 flex-1">
                 {[
-                  { label: "Platform Online",                   delay: 0,   duration: 3.2 },
-                  { label: "Private Access Active",             delay: 1.1, duration: 4.0 },
-                  { label: "AI Systems Initialising",           delay: 2.0, duration: 3.6 },
-                  { label: "Global Expansion Framework Active", delay: 0.5, duration: 4.4 },
-                ].map(({ label, delay, duration }) => (
-                  <div key={label} className="flex items-center gap-2.5">
+                  { label: "Platform Online",                   d: 0,   dur: 3.2 },
+                  { label: "Private Access Active",             d: 1.1, dur: 4.0 },
+                  { label: "AI Systems Initialising",           d: 2.0, dur: 3.6 },
+                  { label: "Global Expansion Framework Active", d: 0.5, dur: 4.4 },
+                ].map(({ label, d, dur }) => (
+                  <div key={label} className="flex items-center gap-2">
                     <motion.span
-                      className="w-1.5 h-1.5 rounded-full bg-graphite-mid flex-shrink-0"
+                      className="w-1 h-1 rounded-full bg-[#C8CDD2] flex-shrink-0"
                       animate={{
-                        opacity: [0.4, 0.95, 0.4],
-                        boxShadow: [
-                          "0 0 0px 0px rgba(180,200,220,0)",
-                          "0 0 5px 1px rgba(180,200,220,0.38)",
-                          "0 0 0px 0px rgba(180,200,220,0)",
-                        ],
+                        opacity: [0.25, 0.9, 0.25],
+                        boxShadow: ["0 0 0px rgba(180,200,220,0)", "0 0 4px 1px rgba(180,200,220,0.28)", "0 0 0px rgba(180,200,220,0)"],
                       }}
-                      transition={{ duration, delay, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{ duration: dur, delay: d, repeat: Infinity, ease: "easeInOut" }}
                     />
-                    <span className="text-[9px] tracking-superwide uppercase text-graphite-mid leading-tight">
-                      {label}
-                    </span>
+                    <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188] leading-tight">{label}</span>
                   </div>
                 ))}
               </div>
@@ -179,459 +452,587 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ─────────────────────────────────────────
-          2. STATEMENT
-      ───────────────────────────────────────── */}
-      <section className="bg-porcelain py-20 lg:py-28 border-b border-silver-light lg:border-b-0">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">
-            <SectionLabel text="The Platform" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">01</span>
+      {/* ═══════════════════════════════════════════════════════════════════
+          02 · PLATFORM OVERVIEW
+          Image: 02-platform-overview-stage.webp — right column, portal visual
+          Layout: 40/60 text/image split + bottom stat row
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
+        <div className={W}>
+          <SectionHead label="Platform Overview" num="02" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-14 items-center">
+
+            {/* Left — heading + intro + (mobile compact list + image) + (desktop ruled list) */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-4 lg:gap-5"
+            >
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
+              >
+                Not a show.
+                <br />A platform.
+              </motion.h2>
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+                ELIZIUM is a scalable immersive platform that combines performance, technology,
+                storytelling and audience interaction systems.
+              </motion.p>
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+                Our mission is to create the future of experience.
+              </motion.p>
+
+              {/* Mobile-only compact list (dot rows, tighter) */}
+              <motion.ul variants={fadeUp} className="lg:hidden flex flex-col gap-0 mt-1">
+                {[
+                  "Immersive Live Experiences",
+                  "AI-Human Storytelling",
+                  "Audience Interaction Systems",
+                  "Creative Technology",
+                  "Partnerships",
+                  "Global Expansion",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-3 py-2 border-t border-[#1C2530]/35"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-[#969CA2]/60 flex-shrink-0" />
+                    <span className="text-[10px] tracking-[0.22em] uppercase text-[#A8AEB4] font-medium">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+                <li className="border-t border-[#1C2530]/35" />
+              </motion.ul>
+
+              {/* Mobile-only portal image — sits at end of section as strong vertical visual */}
+              <motion.div variants={scaleIn} className="lg:hidden mt-2">
+                <FadeImage
+                  src="/images/elysium-ai/dark/globexp.png"
+                  alt="Elizium AI — Platform Stage"
+                  className="aspect-[3/4]"
+                  position="center center"
+                  fadeLeft={3} fadeTop={3} fadeBottom={4} fadeRight={3}
+                  sizes="100vw"
+                />
+              </motion.div>
+
+              {/* Desktop-only ruled numbered list */}
+              <motion.div variants={fadeUp} className="hidden lg:flex flex-col gap-0 mt-1">
+                {[
+                  "Immersive Live Experiences",
+                  "AI-Human Storytelling",
+                  "Audience Interaction Systems",
+                  "Creative Technology",
+                  "Partnerships",
+                  "Global Expansion",
+                ].map((item, i) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-4 py-3 border-t border-[#1C2530]/38"
+                  >
+                    <span className="text-[7.5px] tracking-[0.38em] text-[#6B7278]/32 font-medium flex-shrink-0">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-[10px] tracking-[0.25em] uppercase text-[#969CA2] font-medium">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+                <div className="border-t border-[#1C2530]/38" />
+              </motion.div>
+            </motion.div>
+
+            {/* Desktop-only stage + portal visual */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/globexp.png"
+                alt="Elizium AI — Platform Stage"
+                className="aspect-[4/3]"
+                position="center center"
+                fadeLeft={3} fadeTop={3} fadeBottom={3} fadeRight={3}
+                sizes="50vw"
+              />
+            </motion.div>
           </div>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            variants={stagger}
-            className="flex flex-col gap-8 max-w-4xl"
-          >
-            <motion.h2
-              variants={fadeUp}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight leading-[1.08] text-graphite"
-            >
-              Not a single show.
-              <br />
-              A scalable entertainment system.
-            </motion.h2>
-            <motion.p
-              variants={fadeUp}
-              className="text-base md:text-lg text-graphite-light leading-relaxed max-w-2xl"
-            >
-              ELIZIUM AI is a modular creative-tech platform for AI-powered immersive
-              entertainment. It brings together AI-assisted creative systems, immersive
-              visual architecture, audience interaction, robotics and scalable show logic
-              into a format designed for launch, licensing and global expansion.
-            </motion.p>
-          </motion.div>
 
-
-          {/* Divider with stat strip */}
+          {/* Bottom stat strip */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            variants={stagger}
-            className="mt-16 pt-10 border-t border-silver-light grid grid-cols-2 md:grid-cols-4 gap-8"
+            initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+            className="border-t border-[#1C2530]/45 grid grid-cols-2 md:grid-cols-4"
           >
             {[
               { stat: "AI-Powered", label: "Real-time creative systems" },
-              { stat: "Modular", label: "Scalable show architecture" },
-              { stat: "Live", label: "Audience interaction loops" },
-              { stat: "Global", label: "Built to license and travel" },
-            ].map((item) => (
-              <motion.div key={item.stat} variants={fadeUp} className="flex flex-col gap-2">
-                <span className="text-xl md:text-2xl font-light tracking-tight text-graphite">
-                  {item.stat}
-                </span>
-                <span className="text-[11px] text-graphite-light leading-snug">{item.label}</span>
+              { stat: "Modular",    label: "Scalable show architecture" },
+              { stat: "Live",       label: "Audience interaction loops" },
+              { stat: "Global",     label: "Built to license and travel" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.stat} variants={fadeUp}
+                className={`flex flex-col gap-1.5 py-3 md:py-5 ${i > 0 ? "md:border-l border-[#1C2530]/38 md:pl-5" : ""}`}
+              >
+                <span className="font-display font-normal text-xl md:text-2xl text-[#E2E8EE] tracking-[0.10em]">{item.stat}</span>
+                <span className="text-[8.5px] tracking-[0.25em] uppercase text-[#7B8188] leading-snug">{item.label}</span>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────
-          3. PLATFORM PREVIEW
-      ───────────────────────────────────────── */}
-      <section className="bg-pearl py-20 lg:py-28 overflow-hidden border-b border-silver-light lg:border-b-0">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">
-            <SectionLabel text="Platform" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">02</span>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            {/* Text — left */}
+      {/* ═══════════════════════════════════════════════════════════════════
+          03 · FIRST FLAGSHIP EXPERIENCE
+          Image: 03-first-experience-portal-card.webp — right, portal visual
+          Layout: compact 2/3 text/image split panel
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
+        <div className={W}>
+          <SectionHead label="First Flagship Experience" num="03" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-14 items-center">
+
+            {/* Text + mobile image */}
             <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="flex flex-col gap-6 order-2 lg:order-1"
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-4 lg:gap-5"
             >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                The First Experience
+              </motion.span>
               <motion.h2
                 variants={fadeUp}
-                className="text-3xl md:text-4xl font-light tracking-tight leading-tight text-graphite"
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
               >
-                A modular system built for the world&apos;s stages.
+                The Beginning
+                <br />of a New Era
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed">
-                AI-assisted creative systems, immersive visual architecture,
-                real-time audience interaction, robotics and scalable show logic —
-                all engineered to launch, license and travel globally.
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+                Our first AI-human immersive experience is the foundation of the ELIZIUM
+                platform and the first step into a future where technology and humanity
+                create together.
               </motion.p>
-              <motion.div variants={fadeUp} className="pt-2">
-                <Link
-                  href="/platform"
-                  className="inline-flex items-center gap-3 text-[11px] tracking-superwide uppercase font-semibold text-graphite hover:text-graphite-mid transition-colors group"
-                >
-                  Explore the Platform
-                  <span className="w-8 h-px bg-graphite group-hover:w-12 transition-all duration-300" />
-                </Link>
+
+              {/* Mobile-only image */}
+              <motion.div variants={scaleIn} className="lg:hidden">
+                <FadeImage
+                  src="/images/elysium-ai/dark/s2.png"
+                  alt="Future Human — Elizium AI Flagship"
+                  className="aspect-[4/3]"
+                  position="center center"
+                  fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                  sizes="100vw"
+                />
               </motion.div>
-            </motion.div>
 
-            {/* Image — right */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={scaleIn}
-              className="relative aspect-square lg:aspect-[3/4] order-1 lg:order-2"
-            >
-              <Image
-                src="/images/elysium-ai/dark/02-platform-overview-stage.webp"
-                alt="Elizium AI Platform"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-pearl/30 to-transparent" />
-            </motion.div>
-          </div>
-        </div>
-      </section>
+              <motion.div variants={fadeUp} className="flex flex-col gap-0">
+                {["AI-Human Interaction", "Emotional Storytelling", "Live Performance", "Immersive Environment", "Proof-of-Concept Platform"].map((cap) => (
+                  <div key={cap} className="flex items-center gap-3 py-2 border-t border-[#1C2530]/45">
+                    <span className="w-0.5 h-0.5 bg-[#6B7278]/55 rounded-full flex-shrink-0" />
+                    <span className="text-[8.5px] tracking-[0.22em] uppercase text-[#969CA2] font-medium">{cap}</span>
+                  </div>
+                ))}
+                <div className="border-t border-[#1C2530]/45" />
+              </motion.div>
 
-      {/* ─────────────────────────────────────────
-          4. FUTURE HUMAN PREVIEW
-      ───────────────────────────────────────── */}
-      <section className="bg-porcelain py-20 lg:py-28 overflow-hidden border-b border-silver-light lg:border-b-0">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="flex items-center gap-2.5 mb-3">
-            <span className="w-4 h-px bg-silver-dark/25 flex-shrink-0" />
-            <span className="text-[8px] tracking-[0.38em] uppercase text-silver-dark/38 font-medium">Access Layer Active</span>
-          </div>
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">
-            <SectionLabel text="Flagship Experience" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">03</span>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            {/* Image — left */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={scaleIn}
-              className="relative aspect-square lg:aspect-[3/4]"
-            >
-              <Image
-                src="/images/elysium-ai/dark/03-first-experience-portal-card.webp"
-                alt="Future Human — Elizium AI Flagship Experience"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </motion.div>
-
-            {/* Text — right */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="flex flex-col gap-6"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="text-3xl md:text-4xl font-light tracking-tight leading-tight text-graphite"
-              >
-                Future Human
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed">
-                FUTURE HUMAN is the first flagship London experience built to
-                demonstrate the ELIZIUM AI platform. It stages the emotional
-                encounter between humanity and artificial intelligence through
-                immersive visuals, live audience interaction and a robotic AI
-                presence.
-              </motion.p>
-              <motion.div variants={fadeUp} className="pt-2">
+              <motion.div variants={fadeUp}>
                 <Link
                   href="/future-human"
-                  className="inline-flex items-center gap-3 text-[11px] tracking-superwide uppercase font-semibold text-graphite hover:text-graphite-mid transition-colors group"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-5 py-3 border border-[#1C2530]/55 text-[#C8CDD2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
                 >
-                  Discover Future Human
-                  <span className="w-8 h-px bg-graphite group-hover:w-12 transition-all duration-300" />
+                  Discover the Experience <span className="w-4 h-px bg-current" />
                 </Link>
               </motion.div>
+            </motion.div>
+
+            {/* Desktop-only — AI face + portal ring */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/s2.png"
+                alt="Future Human — Elizium AI Flagship"
+                className="aspect-[4/3]"
+                position="center center"
+                fadeLeft={8} fadeTop={6} fadeBottom={6} fadeRight={4}
+                sizes="50vw"
+              />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────
-          5. AUDIENCE INTERACTION
-      ───────────────────────────────────────── */}
-      <section className="bg-pearl py-20 lg:py-26 border-b border-silver-light lg:border-b-0">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="flex items-center gap-2.5 mb-3">
-            <span className="w-4 h-px bg-silver-dark/25 flex-shrink-0" />
-            <span className="text-[8px] tracking-[0.38em] uppercase text-silver-dark/38 font-medium">Audience Pathway Locked</span>
-          </div>
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">
-            <SectionLabel text="Audience Interaction" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">04</span>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* Text */}
+      {/* ═══════════════════════════════════════════════════════════════════
+          (Duplicate Technology Layer section removed — its scope is now
+           covered solely by §12 "Technology Behind Elizium" below.)
+      ═══════════════════════════════════════════════════════════════════ */}
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          05 · AUDIENCE SYSTEM
+          Images: 05-audience-system-silhouette.webp + 12-media-behind-scenes.webp
+          Layout: text left, staggered image pair right, boxed modules bottom
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="Audience System" num="05" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
+
+            {/* Text + mobile image + mobile compact list */}
             <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="lg:col-span-4 flex flex-col gap-6"
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-5 flex flex-col gap-4 lg:gap-5"
             >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                The Audience Becomes Part of the System
+              </motion.span>
               <motion.h2
                 variants={fadeUp}
-                className="text-3xl md:text-4xl font-light tracking-tight leading-tight text-graphite"
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
               >
-                The audience is part of the system.
+                The audience
+                <br />becomes part
+                <br />of the ecosystem.
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
-                Through opt-in interaction and live response systems, audience input
-                becomes part of the visual and narrative architecture of the experience.
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+                The interaction continues after the event. Each audience member enters
+                their own digital path.
               </motion.p>
+
+              {/* Mobile-only image — sits right under intro for a card-like composition */}
+              <motion.div variants={scaleIn} className="lg:hidden mt-1">
+                <FadeImage
+                  src="/images/elysium-ai/dark/auddddd.png"
+                  alt="Audience System — Elizium AI"
+                  className="aspect-[4/5]"
+                  position="center center"
+                  fadeTop={0} fadeBottom={0} fadeLeft={0} fadeRight={0}
+                  sizes="100vw"
+                  objectFit="cover"
+                />
+              </motion.div>
+
+              {/* Mobile-only compact list per PDF target */}
+              <motion.ul variants={fadeUp} className="lg:hidden flex flex-col gap-0 mt-1">
+                {[
+                  "QR Entry",
+                  "Personal Pathway",
+                  "Post-Event Interaction",
+                  "Private Invitations",
+                  "Audience Feedback",
+                  "Access to Future Experiences",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-3 py-2 border-t border-[#1C2530]/35"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-[#969CA2]/60 flex-shrink-0" />
+                    <span className="text-[10px] tracking-[0.22em] uppercase text-[#A8AEB4] font-medium">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+                <li className="border-t border-[#1C2530]/35" />
+              </motion.ul>
+
+              {/* Desktop-only two-column feature rows */}
+              <motion.div variants={fadeUp} className="hidden lg:flex flex-col gap-0">
+                {[
+                  { a: "QR Entry",              b: "Private Invitations" },
+                  { a: "Personal Pathway",       b: "Audience Feedback" },
+                  { a: "Post-Event Interaction", b: "Access to Future Experiences" },
+                ].map(({ a, b }) => (
+                  <div key={a} className="grid grid-cols-2 gap-x-3 py-2.5 border-t border-[#1C2530]/45">
+                    <span className="text-[8.5px] tracking-[0.2em] uppercase text-[#969CA2] font-medium">{a}</span>
+                    <span className="text-[8.5px] tracking-[0.2em] uppercase text-[#7B8188] font-medium">{b}</span>
+                  </div>
+                ))}
+                <div className="border-t border-[#1C2530]/45" />
+              </motion.div>
+
+              {/* Desktop-only boxed modules (removed on mobile per reference) */}
+              <motion.div variants={fadeUp} className="hidden lg:grid grid-cols-2 gap-1.5 mt-1">
+                {["Opt-In Interaction", "Live Response", "Digital Pathway", "Personal Archive"].map((t) => (
+                  <ModBox key={t}>{t}</ModBox>
+                ))}
+              </motion.div>
             </motion.div>
 
-            {/* Image grid */}
-            <div className="lg:col-span-8 grid grid-cols-2 gap-4">
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                variants={scaleIn}
-                className="relative aspect-[3/4]"
+            {/* Desktop-only cinematic audience image */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block lg:col-span-7"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/auddddd.png"
+                alt="Audience System — Elizium AI"
+                className="aspect-[4/5]"
+                position="center center"
+                fadeTop={0} fadeBottom={0} fadeLeft={0} fadeRight={0}
+                sizes="58vw"
+                objectFit="cover"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          06 · CREATIVE PRODUCTION
+          Image: 06-creative-production-stage.webp — right column (NOT a wallpaper)
+          Layout: text+stats left, contained stage image right, bottom icon row
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
+        <div className={W}>
+          <SectionHead label="Creative Production" num="06" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-14 items-center">
+
+            {/* Left — text + animated stat row */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-4"
+            >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                Cinematic Production for Future Culture
+              </motion.span>
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
               >
-                <Image
-                  src="/images/elysium-ai/dark/05-audience-system-silhouette.webp"
-                  alt="Audience System — Elizium AI"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 50vw, 33vw"
+                Cinematic production
+                <br />for the future
+                <br />of culture.
+              </motion.h2>
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed max-w-sm">
+                We create immersive worlds where performance, technology and storytelling work as one unified system.
+              </motion.p>
+
+              {/* Non-interactive rows — replaces stat counters + module grid */}
+              <motion.ul variants={fadeUp} className="flex flex-col gap-0 mt-2">
+                {[
+                  "Live Experiences",
+                  "Brand Collaborations",
+                  "Immersive Installations",
+                  "AI-Human Performances",
+                  "International Tours",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center justify-between gap-4 py-3 border-t border-[#1C2530]/45"
+                  >
+                    <span className="text-[10px] tracking-[0.25em] uppercase text-[#A8AEB4] font-medium">
+                      {item}
+                    </span>
+                    <span aria-hidden className="text-[#6B7278]/50 text-[12px] leading-none">›</span>
+                  </li>
+                ))}
+                <li className="border-t border-[#1C2530]/45" />
+              </motion.ul>
+            </motion.div>
+
+            {/* Desktop-only — wide stage / spotlight visual */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/creatingworlds.png"
+                alt="Creative Production — Elizium AI"
+                className="aspect-[4/3]"
+                position="center center"
+                fadeLeft={3} fadeTop={3} fadeBottom={3} fadeRight={3}
+                sizes="50vw"
+              />
+            </motion.div>
+          </div>
+
+          {/* Mobile-only cinematic image at the bottom of the section, per reference */}
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+            className="lg:hidden mt-6"
+          >
+            <FadeImage
+              src="/images/elysium-ai/dark/creatingworlds.png"
+              alt="Creative Production — Elizium AI"
+              className="aspect-[4/3]"
+              position="center center"
+              fadeLeft={3} fadeTop={3} fadeBottom={3} fadeRight={3}
+              sizes="100vw"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          07 · PARTNERSHIPS
+          Layout: heading left, cinematic handshake top-right, stats row below
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="Partnerships" num="07" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
+
+            {/* Left — text + mobile image */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-5 flex flex-col gap-4 lg:gap-5"
+            >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                For Brands, Partners and Institutions
+              </motion.span>
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
+              >
+                Together
+                <br />We Build
+                <br />the Future
+              </motion.h2>
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed max-w-sm">
+                We collaborate with visionary brands, cultural institutions and technology
+                companies to build the future of experiences.
+              </motion.p>
+
+              {/* Mobile-only image */}
+              <motion.div variants={scaleIn} className="lg:hidden mt-1">
+                <FadeImage
+                  src="/images/elysium-ai/dark/s6.png"
+                  alt="Partnership — Elizium AI"
+                  className="aspect-[4/3]"
+                  position="center 35%"
+                  fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                  sizes="100vw"
                 />
               </motion.div>
+
+              {/* Mobile-only stats grid — sits below image so partnership numbers are close to text */}
+              <div className="grid grid-cols-2 gap-0 lg:hidden">
+                <StatCounter end={50} suffix="+" label="Brand Partners" />
+                <StatCounter end={20} suffix="+" label="Cultural Institutions" />
+                <StatCounter end={10} suffix="+" label="Technology Partnerships" />
+                <div className="flex flex-col gap-1.5 py-3 border-t border-[#1C2530]/50 pr-4">
+                  <span className="font-display font-normal text-[1.8rem] leading-none text-[#E2E8EE] tracking-[0.08em]">
+                    Global
+                  </span>
+                  <span className="text-[9px] tracking-[0.26em] uppercase text-[#969CA2] font-medium leading-snug">
+                    Collaboration Network
+                  </span>
+                </div>
+              </div>
+
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/contact"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-5 py-3 border border-[#1C2530]/55 text-[#C8CDD2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+                >
+                  Partnership Inquiry <span className="w-4 h-px bg-current" />
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Right — desktop handshake image + stats */}
+            <div className="hidden lg:flex lg:col-span-7 flex-col gap-0">
               <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                variants={scaleIn}
-                className="relative aspect-[3/4] mt-10"
+                initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
               >
-                <Image
-                  src="/images/elysium-ai/dark/12-media-behind-scenes.webp"
-                  alt="Creative Production — Elizium AI"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 50vw, 33vw"
+                <FadeImage
+                  src="/images/elysium-ai/dark/s6.png"
+                  alt="Partnership — Elizium AI"
+                  className="aspect-[16/9]"
+                  position="center 35%"
+                  fadeLeft={8} fadeTop={8} fadeBottom={10} fadeRight={6}
+                  sizes="58vw"
                 />
               </motion.div>
+
+              <div className="grid grid-cols-2 gap-0 -mt-2">
+                <StatCounter end={50} suffix="+" label="Brand Partners" />
+                <StatCounter end={20} suffix="+" label="Cultural Institutions" />
+                <StatCounter end={10} suffix="+" label="Technology Partnerships" />
+                <div className="flex flex-col gap-1.5 py-3 lg:py-5 border-t border-[#1C2530]/50 pr-4">
+                  <span className="font-display font-normal text-[3rem] lg:text-[3.6rem] leading-none text-[#E2E8EE] tracking-[0.08em]">
+                    Global
+                  </span>
+                  <span className="text-[9px] tracking-[0.26em] uppercase text-[#969CA2] font-medium leading-snug">
+                    Collaboration Network
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────
-          6. DARK CONTRAST — VISION QUOTE
-      ───────────────────────────────────────── */}
-      <section className="relative py-28 lg:py-44 overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/elysium-ai/dark/06-creative-production-stage.webp"
-            alt="Elizium AI Stage"
-            fill
-            className="object-cover object-center"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-porcelain/65" />
-          <div className="absolute inset-0 bg-gradient-to-b from-porcelain/50 via-transparent to-porcelain/50" />
-        </div>
+      {/* ═══════════════════════════════════════════════════════════════════
+          08 · COMPANY FOUNDATION
+          Layout: company identity left, numbered pillar list right — no background image
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="pt-10 pb-10 lg:pt-28 lg:pb-20 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="Company Foundation" num="08" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 flex flex-col items-center text-center">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            variants={stagger}
-            className="flex flex-col items-center gap-10"
-          >
-            <motion.span
-              variants={fadeUp}
-              className="inline-flex items-center gap-4 text-[9px] tracking-ultrawide uppercase font-medium text-silver-dark"
-            >
-              <span className="w-10 h-px bg-silver-dark/60" />
-              Vision
-              <span className="w-10 h-px bg-silver-dark/60" />
-            </motion.span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-16 items-start">
 
-            <motion.blockquote
-              variants={fadeUp}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-tight text-white leading-[1.12] max-w-3xl"
-            >
-              AI is not the show.
-              <br />
-              The human response is.
-            </motion.blockquote>
-
-            <motion.div variants={fadeUp} className="pt-2">
-              <Link
-                href="/vision"
-                className="inline-flex items-center gap-3 text-[10px] tracking-superwide uppercase font-semibold text-silver-mid hover:text-white transition-colors duration-300 group"
-              >
-                Explore the Vision
-                <span className="w-8 h-px bg-silver-mid/60 group-hover:bg-white group-hover:w-12 transition-all duration-300" />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────
-          7. DESIGNED IN LONDON / BUILT TO TRAVEL
-      ───────────────────────────────────────── */}
-      <section className="bg-porcelain py-20 lg:py-28 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-10">
-            <SectionLabel text="Global Format" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">05</span>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left — identity block */}
             <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="flex flex-col gap-6"
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-5 flex flex-col gap-5"
             >
+              <motion.div variants={fadeUp} className="flex flex-col gap-1">
+                <span className="text-[8.5px] tracking-[0.38em] uppercase font-medium text-[#969CA2]">Built by</span>
+                <span className="text-[10px] tracking-[0.3em] uppercase font-medium text-[#E2E8EE]">Original Tema Ltd</span>
+                <span className="text-[7.5px] tracking-[0.25em] uppercase text-[#6B7278]/50 font-medium mt-0.5">UK Creative-Tech Platform Company</span>
+              </motion.div>
+
               <motion.h2
                 variants={fadeUp}
-                className="text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-tight text-graphite"
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.75rem, 3.8vw, 3.8rem)" }}
               >
-                Designed in London.
-                <br />
-                Built to travel.
+                A Platform
+                <br />with a Vision
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed max-w-md">
-                The ELIZIUM AI platform is engineered from the ground up for
-                portability — built to scale from intimate venues to landmark
-                cultural institutions across the world.
-              </motion.p>
-              <motion.div variants={fadeUp}>
-                <Link
-                  href="/platform"
-                  className="inline-flex items-center gap-3 text-[11px] tracking-superwide uppercase font-semibold text-graphite hover:text-graphite-mid transition-colors group"
-                >
-                  View the Platform
-                  <span className="w-8 h-px bg-graphite group-hover:w-12 transition-all duration-300" />
-                </Link>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={scaleIn}
-              className="relative aspect-[16/10]"
-            >
-              <Image
-                src="/images/elysium-ai/dark/13-global-journey-map.webp"
-                alt="Global Journey — Elizium AI"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────
-          8. COMPANY INFRASTRUCTURE
-      ───────────────────────────────────────── */}
-      <section
-        className="relative py-20 lg:py-28 overflow-hidden bg-pearl"
-      >
-        {/* Whisper of blue-black depth — barely perceptible */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse 80% 100% at 65% 50%, rgba(10,22,46,0.07) 0%, transparent 65%)",
-          }}
-        />
-        {/* Soft edge blend — dissolves into adjacent sections */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(5,6,7,0.45) 0%, transparent 18%, transparent 82%, rgba(5,6,7,0.45) 100%)",
-          }}
-        />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light/40 pt-6 mb-12 lg:mb-16">
-            <SectionLabel text="Company" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">06</span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
-            {/* Left — company identity */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="lg:col-span-5 flex flex-col gap-7"
-            >
-              <motion.div variants={fadeUp} className="flex flex-col gap-1.5">
-                <span className="text-[9px] tracking-ultrawide uppercase font-semibold text-graphite-light">
-                  Original Tema Ltd
-                </span>
-                <span className="text-[8px] tracking-superwide uppercase text-silver-dark/60 font-medium">
-                  UK Creative-Tech Platform Company
-                </span>
-              </motion.div>
-
-              <motion.p variants={fadeUp} className="text-sm md:text-base text-graphite-light leading-relaxed">
-                ELIZIUM AI is developed by Original Tema Ltd as an immersive
-                creative-technology platform for AI-human live experiences,
-                audience interaction systems and international expansion.
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed">
+                ELIZIUM AI is developed under Original Tema Ltd — a UK creative-technology
+                company building immersive platforms and experiences.
               </motion.p>
 
-              <motion.div variants={fadeUp} className="pt-1">
-                <Link
-                  href="/platform"
-                  className="inline-flex items-center gap-3 text-[10px] tracking-superwide uppercase font-medium text-silver-dark hover:text-graphite transition-colors duration-200 group"
-                >
-                  Platform Overview
-                  <span className="w-6 h-px bg-silver-dark group-hover:w-10 group-hover:bg-graphite transition-all duration-300" />
-                </Link>
+              {/* Company data rows */}
+              <motion.div variants={fadeUp} className="flex flex-col gap-0 mt-1">
+                {[
+                  { k: "Company Number", v: "16876027" },
+                  { k: "Registered In",  v: "United Kingdom" },
+                  { k: "Foundation",     v: "Creative Technology — Platform Development" },
+                ].map(({ k, v }) => (
+                  <div key={k} className="grid grid-cols-[2fr_3fr] gap-4 py-2.5 border-t border-[#1C2530]/45">
+                    <span className="text-[8.5px] tracking-[0.2em] uppercase text-[#8A9098] font-medium">{k}</span>
+                    <span className="text-[8.5px] tracking-[0.1em] text-[#A0A6AC] font-medium">{v}</span>
+                  </div>
+                ))}
+                <div className="border-t border-[#1C2530]/45" />
               </motion.div>
             </motion.div>
 
-            {/* Right — infrastructure pillars */}
+            {/* Right — infrastructure pillar list */}
             <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-x-10"
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-7 flex flex-col"
             >
               {[
                 { n: "01", label: "Immersive Infrastructure" },
@@ -641,244 +1042,618 @@ export default function Home() {
                 { n: "05", label: "Scalable Live Experience Format" },
               ].map((item) => (
                 <motion.div
-                  key={item.n}
-                  variants={fadeUp}
-                  className="flex items-baseline gap-4 py-4 border-t border-silver-light/50"
+                  key={item.n} variants={fadeUp}
+                  className="flex items-baseline gap-5 py-4 border-t border-[#1C2530]/40"
                 >
-                  <span className="text-[8px] tracking-ultrawide uppercase text-silver-dark/40 font-medium flex-shrink-0">
-                    {item.n}
-                  </span>
-                  <span className="text-[11px] tracking-superwide uppercase text-graphite-light font-medium leading-snug">
-                    {item.label}
-                  </span>
+                  <span className="text-[7.5px] tracking-[0.38em] uppercase text-[#6B7278]/28 font-medium flex-shrink-0">{item.n}</span>
+                  <span className="text-[10.5px] tracking-[0.25em] uppercase text-[#969CA2] font-medium leading-snug">{item.label}</span>
                 </motion.div>
               ))}
+              <div className="border-t border-[#1C2530]/40" />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────
-          9. FOUNDING DIRECTION
-      ───────────────────────────────────────── */}
-      <section className="bg-porcelain py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-12 lg:mb-16">
-            <SectionLabel text="Founding Direction" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">07</span>
-          </div>
+      {/* ═══════════════════════════════════════════════════════════════════
+          09 · PRIVATE INQUIRY
+          Image: 09-private-inquiry-access.webp — right column
+          Layout: heading + architectural form fields left, visual right (NOT a wallpaper)
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
+        <div className={W}>
+          <SectionHead label="Private Inquiry" num="09" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
-            {/* Left — heading + statement */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-14 items-start">
+
+            {/* Left — heading + form fields */}
             <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="lg:col-span-5 flex flex-col gap-6"
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-4"
             >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                For Partnerships, Collaborations &amp; Sponsorships
+              </motion.span>
               <motion.h2
                 variants={fadeUp}
-                className="text-2xl md:text-3xl font-light tracking-tight leading-snug text-graphite"
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
               >
-                A focused directing core built around specialist collaboration.
+                Let&apos;s Build
+                <br />the Future
+                <br />Together
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
-                ELIZIUM AI is developed through a focused founding direction,
-                combining platform leadership, creative direction, production
-                logic and future technology collaboration. The structure is
-                designed to remain lean while bringing in specialist partners
-                across performance, robotics, immersive visuals, sound,
-                audience systems and international production.
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed">
+                For partnerships, collaborations, sponsorships and private opportunities.
+                Send us your inquiry.
               </motion.p>
-            </motion.div>
 
-            {/* Right — role structure */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="lg:col-span-7 flex flex-col"
-            >
-              {[
-                { n: "01", label: "Founder & Platform Director" },
-                { n: "02", label: "Creative Direction" },
-                { n: "03", label: "Technology & Systems" },
-                { n: "04", label: "Production & Partnership Network" },
-              ].map((item) => (
-                <motion.div
-                  key={item.n}
-                  variants={fadeUp}
-                  className="flex items-center gap-6 py-5 border-t border-silver-light"
-                >
-                  <span className="text-[8px] tracking-ultrawide uppercase text-silver-dark/38 font-medium flex-shrink-0">
-                    {item.n}
-                  </span>
-                  <span className="text-sm tracking-wide text-graphite-light font-light">
-                    {item.label}
-                  </span>
-                </motion.div>
-              ))}
-              <div className="border-t border-silver-light" />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────
-          10. GLOBAL EXPANSION
-      ───────────────────────────────────────── */}
-      <section className="bg-pearl py-20 lg:py-28 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-12 lg:mb-16">
-            <SectionLabel text="Global Expansion" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">08</span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* Left — text */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="lg:col-span-4 flex flex-col gap-6"
-            >
-              <motion.h2
-                variants={fadeUp}
-                className="text-2xl md:text-3xl font-light tracking-tight leading-snug text-graphite"
-              >
-                A platform network for international rollout.
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed">
-                ELIZIUM AI is structured for launch, licensing and
-                international rollout, beginning with London as the founding
-                market and expanding through selected cultural, commercial
-                and venue partnerships.
-              </motion.p>
-              <motion.p
-                variants={fadeUp}
-                className="text-[9px] tracking-superwide uppercase text-silver-dark/50 font-medium leading-relaxed border-t border-silver-light pt-4"
-              >
-                Expansion is planned as a platform network, not a traditional tour.
-              </motion.p>
-            </motion.div>
-
-            {/* Right — expansion video */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={viewport}
-              transition={{ duration: 1.2, ease: "easeOut", delay: 0.15 }}
-              className="lg:col-span-8 flex flex-col gap-5"
-            >
-              {/* Video container */}
-              <div className="relative aspect-video overflow-hidden">
-                <video
-                  src="/videos/elizium-global-expansion.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                {/* Bottom gradient — readability for city labels */}
-                <div
-                  className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
-                  style={{
-                    background: "linear-gradient(to top, rgba(8,13,18,0.82) 0%, transparent 100%)",
-                  }}
-                />
-                {/* City labels — overlaid at bottom of video */}
-                <div className="absolute inset-x-0 bottom-0 px-5 pb-4 flex items-end gap-0">
-                  {[
-                    { city: "London", note: "Founding" },
-                    { city: "Dubai" },
-                    { city: "Singapore" },
-                    { city: "Berlin" },
-                    { city: "Los Angeles" },
-                  ].map(({ city, note }, i) => (
-                    <div key={city} className="flex items-center">
-                      {i > 0 && (
-                        <span className="mx-3 w-4 h-px bg-silver-dark/30 flex-shrink-0" />
-                      )}
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-[7px] tracking-[0.22em] uppercase text-graphite-mid/70 font-medium leading-none">
-                          {city}
-                        </span>
-                        {note && (
-                          <span className="text-[5.5px] tracking-[0.18em] uppercase text-silver-dark/45 leading-none">
-                            {note}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+              {/* Real form fields — architectural ruled rows */}
+              <motion.div variants={fadeUp} className="flex flex-col gap-0 mt-2">
+                {[
+                  { id: "inq-name",    label: "Full Name",              type: "text",  placeholder: "Your name" },
+                  { id: "inq-company", label: "Company / Organisation", type: "text",  placeholder: "Company or institution" },
+                  { id: "inq-email",   label: "Email Address",          type: "email", placeholder: "your@email.com" },
+                  { id: "inq-inquiry", label: "Type of Inquiry",        type: "text",  placeholder: "Partnership, Investment, Press…" },
+                ].map(({ id, label, type, placeholder }) => (
+                  <div key={id} className="flex flex-col border-t border-[#1C2530]/50 pt-3 pb-1 gap-1.5">
+                    <label htmlFor={id} className="text-[8.5px] tracking-[0.28em] uppercase text-[#8A9098] font-medium">
+                      {label}
+                    </label>
+                    <input
+                      id={id}
+                      type={type}
+                      placeholder={placeholder}
+                      className="bg-transparent text-[12px] tracking-[0.06em] text-[#C8CDD2] placeholder:text-[#7B8188]/75 focus:outline-none w-full pb-2.5 border-b border-[#2A3340]/70 focus:border-[#8A9098]/60 transition-colors duration-200"
+                    />
+                  </div>
+                ))}
+                <div className="flex flex-col border-t border-[#1C2530]/50 pt-3 pb-1 gap-1.5">
+                  <label htmlFor="inq-message" className="text-[8.5px] tracking-[0.28em] uppercase text-[#8A9098] font-medium">
+                    Your Message
+                  </label>
+                  <textarea
+                    id="inq-message"
+                    rows={3}
+                    placeholder="Brief description of your inquiry…"
+                    className="bg-transparent text-[12px] tracking-[0.06em] text-[#C8CDD2] placeholder:text-[#7B8188]/75 focus:outline-none w-full pb-2.5 resize-none border-b border-[#2A3340]/70 focus:border-[#8A9098]/60 transition-colors duration-200"
+                  />
                 </div>
-              </div>
+                <div className="border-t border-[#1C2530]/50 mt-1" />
+              </motion.div>
+
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/contact"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#E2E8EE]/65 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300"
+                >
+                  Request Access <span className="w-4 h-px bg-current" />
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Right — cinematic inquiry visual, desktop only. Sticky next to the tall form. */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block lg:sticky lg:top-28"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/09.png"
+                alt="Private Inquiry — Elizium AI"
+                className="aspect-[4/5]"
+                position="center 30%"
+                fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                sizes="50vw"
+              />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────
-          11. FAQ
-      ───────────────────────────────────────── */}
-      <section className="bg-porcelain py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          {/* Section rule */}
-          <div className="flex items-center justify-between border-t border-silver-light pt-6 mb-12 lg:mb-16">
-            <SectionLabel text="Questions" animate={false} />
-            <span className="text-[10px] text-silver-mid font-light tracking-superwide">09</span>
-          </div>
+      {/* ═══════════════════════════════════════════════════════════════════
+          10 · MEDIA / GALLERY
+          Image: grid10.png — full generated gallery board, landscape
+          Layout: label + heading above, full-width cinematic image below
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="Media / Gallery" num="10" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-            {/* Left — label */}
+          {/* Side-by-side: text label/heading/link left, gallery right */}
+          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-6 lg:gap-12 items-center">
+
             <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="lg:col-span-4 flex flex-col gap-3"
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-4 lg:gap-5"
+            >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                Platform Visuals
+              </motion.span>
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
+              >
+                Worlds
+                <br />We Create
+              </motion.h2>
+              <Rule />
+
+              {/* Mobile-only — tall 2×3 vertical gallery (heading above, button below) */}
+              <motion.div variants={fadeUp} className="lg:hidden grid grid-cols-2 gap-1.5 mt-2">
+                {GALLERY.slice(0, 6).map((g) => (
+                  <div key={g.src} className="relative aspect-[3/4] overflow-hidden">
+                    <Image
+                      src={g.src}
+                      alt={g.alt}
+                      fill
+                      className="object-cover"
+                      sizes="50vw"
+                    />
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* Button sits below the grid on mobile and below the heading on desktop */}
+              <motion.div variants={fadeUp} className="mt-2 lg:mt-0">
+                <Link
+                  href="/vision"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-5 py-3 border border-[#1C2530]/55 text-[#C8CDD2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+                >
+                  View Full Gallery <span className="w-4 h-px bg-current" />
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Desktop-only full gallery mosaic */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/grid10.png"
+                alt="Elizium AI — Visual Gallery"
+                className="aspect-[16/9]"
+                position="center center"
+                fadeLeft={6} fadeRight={6} fadeTop={6} fadeBottom={6}
+                sizes="58vw"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          11 · ABOUT PLATFORM
+          Image: 08-company-infrastructure.webp — right (globe/abstract)
+          Layout: text left, globe image right, Vision/Mission/Focus/Impact strip bottom
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
+        <div className={W}>
+          <SectionHead label="About Platform" num="11" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-14 items-center">
+
+            {/* Text + mobile image */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-4"
             >
               <motion.h2
                 variants={fadeUp}
-                className="text-2xl md:text-3xl font-light tracking-tight leading-snug text-graphite"
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 3.8vw, 3.8rem)" }}
               >
-                Questions Before Entry
+                About
+                <br />Elizium AI
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm text-graphite-light leading-relaxed hyphens-none break-normal">
-                {"Strategic and philosophical questions about the platform, its direction and what it is being built to become."}
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed max-w-lg">
+                ELIZIUM AI is a future-facing creative-technology platform exploring the
+                relationship between artificial intelligence, human performance and immersive
+                audience systems.
               </motion.p>
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed max-w-lg">
+                We build experiences that inspire, connect and transform.
+              </motion.p>
+
+              {/* Mobile-only image */}
+              <motion.div variants={scaleIn} className="lg:hidden mt-1">
+                <FadeImage
+                  src="/images/elysium-ai/dark/11about.png"
+                  alt="About Elizium AI"
+                  className="aspect-[4/3]"
+                  position="center center"
+                  fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                  sizes="100vw"
+                />
+              </motion.div>
+
+              {/* Bottom boxed Vision / Mission / Focus / Impact modules */}
+              <motion.div
+                variants={fadeUp}
+                className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mt-2"
+              >
+                {[
+                  { k: "Vision",  v: "Future Experiences" },
+                  { k: "Mission", v: "Human-AI Connection" },
+                  { k: "Focus",   v: "Immersive Platforms" },
+                  { k: "Impact",  v: "Global Culture" },
+                ].map(({ k, v }) => (
+                  <div
+                    key={k}
+                    className="flex flex-col gap-1 p-3"
+                    style={{ border: "1px solid rgba(255,255,255,0.06)" }}
+                  >
+                    <span className="text-[7.5px] tracking-[0.3em] uppercase text-[#6B7278]/45 font-medium">{k}</span>
+                    <span className="text-[9px] tracking-[0.18em] uppercase text-[#969CA2] font-medium leading-snug">{v}</span>
+                  </div>
+                ))}
+              </motion.div>
             </motion.div>
 
-            {/* Right — accordion rows */}
+            {/* Desktop-only globe / platform visual */}
             <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="lg:col-span-8 flex flex-col"
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block"
             >
+              <FadeImage
+                src="/images/elysium-ai/dark/11about.png"
+                alt="About Elizium AI"
+                className="aspect-[4/3]"
+                position="center center"
+                fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                sizes="50vw"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          12 · TECHNOLOGY
+          Layout: heading/copy left, capability rows right, bottom module row
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="Technology" num="12" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-center">
+
+            {/* Left — heading + copy + numbered list (mobile image is desktop-only here to avoid duplicating §04) */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-5 flex flex-col gap-4 lg:gap-5"
+            >
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 3.8vw, 3.8rem)" }}
+              >
+                Technology
+                <br />Behind Elizium
+              </motion.h2>
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+                Our technology infrastructure enables immersive, interactive and personalised
+                experiences at every level.
+              </motion.p>
+              <motion.div variants={fadeUp} className="flex flex-col gap-0">
+                {[
+                  { n: "01", label: "AI Systems",               desc: "Real-time AI reasoning and response layers" },
+                  { n: "02", label: "Interaction Layer",         desc: "Audience input mapped to visual and narrative systems" },
+                  { n: "03", label: "Audience Data & CRM",       desc: "Opt-in data collection and personal pathway management" },
+                  { n: "04", label: "Access & Security",         desc: "Private invitation and entry control systems" },
+                  { n: "05", label: "Scalable Infrastructure",   desc: "Modular architecture for global venue deployment" },
+                ].map((item) => (
+                  <div key={item.n} className="flex items-start gap-5 py-3 border-t border-[#1C2530]/40">
+                    <span className="text-[7.5px] tracking-[0.38em] uppercase text-[#6B7278]/28 font-medium flex-shrink-0 pt-0.5">{item.n}</span>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-[9.5px] tracking-[0.25em] uppercase text-[#969CA2] font-medium">{item.label}</span>
+                      <span className="text-[13px] text-[#707880] leading-snug">{item.desc}</span>
+                    </div>
+                  </div>
+                ))}
+                <div className="border-t border-[#1C2530]/40" />
+              </motion.div>
+            </motion.div>
+
+            {/* Desktop-only vertical tech element — portrait container so the full asset is visible */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:flex lg:col-span-7 justify-center"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/tech-final.png"
+                alt="Technology Behind Elizium — Vertical Architecture"
+                className="aspect-[3/4] w-full max-w-[520px]"
+                position="center center"
+                fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                objectFit="contain"
+              />
+            </motion.div>
+          </div>
+
+          {/* Bottom module row */}
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+            className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mt-6"
+          >
+            {["Secure Systems", "Real-Time Interaction", "Global Scalability", "Future Ready"].map((t) => (
+              <motion.div key={t} variants={fadeUp}><ModBox>{t}</ModBox></motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          13 · GLOBAL EXPANSION
+          Video: elizium-global-expansion.mp4 — right column
+          Layout: text + city rows left, video right, city location boxes bottom
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
+        <div className={W}>
+          <SectionHead label="Global Expansion" num="13" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
+
+            {/* Text + city list */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-4 flex flex-col gap-4 lg:gap-5"
+            >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                Global Expansion
+              </motion.span>
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 3.8vw, 3.8rem)" }}
+              >
+                A Global
+                <br />Journey
+              </motion.h2>
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+                ELIZIUM AI is expanding to major cities worldwide, building a global network
+                of immersive platforms and experiences.
+              </motion.p>
+
+              {/* Mobile-only image */}
+              <motion.div variants={scaleIn} className="lg:hidden mt-1">
+                <FadeImage
+                  src="/images/elysium-ai/dark/13ge.png"
+                  alt="Elizium AI — Global Expansion Map"
+                  className="aspect-[4/3]"
+                  position="center center"
+                  fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                  sizes="100vw"
+                />
+              </motion.div>
+
+              {/* City rows */}
+              <motion.div variants={fadeUp} className="flex flex-col gap-0 mt-1">
+                {[
+                  { city: "London",      country: "United Kingdom", note: "Founding" },
+                  { city: "Dubai",       country: "UAE" },
+                  { city: "Singapore",   country: "Singapore" },
+                  { city: "Berlin",      country: "Germany" },
+                  { city: "Los Angeles", country: "USA" },
+                ].map(({ city, country, note }) => (
+                  <div key={city} className="flex items-center justify-between py-2.5 border-t border-[#1C2530]/45">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-[9.5px] tracking-[0.2em] uppercase text-[#969CA2] font-medium">{city}</span>
+                      {note && (
+                        <span className="text-[7px] tracking-[0.2em] uppercase text-[#6B7278]/40 border border-[#1C2530]/40 px-1.5 py-0.5">
+                          {note}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[7.5px] tracking-[0.15em] uppercase text-[#6B7278]/40">{country}</span>
+                  </div>
+                ))}
+                <div className="border-t border-[#1C2530]/45" />
+              </motion.div>
+
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/platform"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-5 py-2.5 border border-[#1C2530]/55 text-[#C8CDD2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+                >
+                  View All Locations <span className="w-4 h-px bg-current" />
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Desktop-only global map image — 13ge.png */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block lg:col-span-8"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/13ge.png"
+                alt="Elizium AI — Global Expansion Map"
+                className="aspect-[16/9]"
+                position="center center"
+                fadeLeft={10} fadeTop={6} fadeBottom={6} fadeRight={4}
+                sizes="65vw"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          14 · TEAM / FOUNDING DIRECTION
+          Three-card layout: portrait area + name + role.
+          Real team portraits are not in the project yet — placeholder dark
+          gradient portrait cells are used until proper portraits are added.
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
+        <div className={W}>
+          <SectionHead label="Team" num="14" />
+
+          {/* Heading + intro */}
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+            className="flex flex-col gap-4 lg:gap-5 max-w-xl"
+          >
+            <motion.h2
+              variants={fadeUp}
+              className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+              style={{ fontSize: "clamp(1.7rem, 3.8vw, 3.8rem)" }}
+            >
+              Founding
+              <br />Direction
+            </motion.h2>
+            <Rule />
+            <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+              ELIZIUM AI is led by a team of visionaries, creatives and technologists
+              bringing the future of experiences to life.
+            </motion.p>
+          </motion.div>
+
+          {/* Three team cards */}
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4 mt-8 lg:mt-12"
+          >
+            {[
+              { name: "Liza Volkova",        role: "Founder & Platform Director" },
+              { name: "Creative Direction",  role: "Art & Experience" },
+              { name: "Technology Direction", role: "Systems & AI" },
+            ].map(({ name, role }) => (
+              <motion.div
+                key={name}
+                variants={fadeUp}
+                className="flex flex-col border border-[#1C2530]/55 bg-[#080808]"
+              >
+                {/* Portrait area — placeholder dark gradient, ready to receive a real portrait */}
+                <div
+                  className="relative aspect-[3/4] overflow-hidden border-b border-[#1C2530]/55"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse at 50% 38%, rgba(120,130,140,0.16) 0%, rgba(40,46,52,0.10) 35%, rgba(8,8,8,1) 78%)",
+                  }}
+                  aria-hidden
+                />
+                <div className="flex flex-col gap-2 px-5 py-6 lg:px-7 lg:py-8 text-center">
+                  <span className="text-[10px] tracking-[0.28em] uppercase font-medium text-[#E2E8EE]">
+                    {name}
+                  </span>
+                  <span className="text-[8.5px] tracking-[0.22em] uppercase text-[#7B8188] font-medium leading-snug">
+                    {role}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* MEET THE TEAM button */}
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={viewport} variants={fadeUp}
+            className="mt-6 lg:mt-10"
+          >
+            <Link
+              href="/contact"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-3.5 border border-[#1C2530]/55 text-[#C8CDD2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+            >
+              Meet the Team <span className="w-4 h-px bg-current" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          15 · CONTACT
+          Layout: contact details left, FAQ accordion right
+          Bottom: ELIZIUM wordmark strip
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="Contact" num="15" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-start">
+
+            {/* Left — heading + contact rows */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-6 flex flex-col gap-4 lg:gap-5"
+            >
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
+              >
+                Let&apos;s Build
+                <br />the Future
+                <br />Together
+              </motion.h2>
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-md">
+                Get in touch for partnerships, collaborations, media inquiries or
+                private opportunities.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="flex flex-col gap-0 mt-1">
+                {[
+                  { k: "Email",        v: "admin@elizium.co.uk" },
+                  { k: "Partnerships", v: "partnerships@elizium.co.uk" },
+                  { k: "Press",        v: "press@elizium.co.uk" },
+                  { k: "Phone",        v: "+44 7746 271397" },
+                  { k: "Location",     v: "London, United Kingdom" },
+                ].map(({ k, v }) => (
+                  <div key={k} className="grid grid-cols-[2fr_3fr] gap-4 py-2.5 border-t border-[#1C2530]/45">
+                    <span className="text-[8.5px] tracking-[0.25em] uppercase text-[#8A9098] font-medium">{k}</span>
+                    <span className="text-[8.5px] tracking-[0.1em] text-[#A0A6AC] font-medium">{v}</span>
+                  </div>
+                ))}
+                <div className="border-t border-[#1C2530]/45" />
+              </motion.div>
+
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/contact"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 bg-[#E2E8EE] text-[#050505] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#C8CDD2] transition-colors duration-300"
+                >
+                  Send Message
+                </Link>
+                <Link
+                  href="/contact"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 border border-[#1C2530]/55 text-[#969CA2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+                >
+                  Private Access
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            {/* Right — FAQ accordion */}
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-6 flex flex-col"
+            >
+              <div className="border-t border-[#1C2530]/40 pt-3 mb-4">
+                <span className="text-[8.5px] tracking-[0.38em] uppercase text-[#8A9098] font-medium">Questions Before Entry</span>
+              </div>
+
               {FAQS.map((item, i) => (
-                <motion.div key={i} variants={fadeUp} className="border-t border-silver-light">
+                <motion.div key={i} variants={fadeUp} className="border-t border-[#1C2530]/35">
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex items-start justify-between gap-6 py-5 text-left group"
+                    className="w-full flex items-start justify-between gap-6 py-3.5 text-left group"
                     aria-expanded={openFaq === i}
                   >
-                    <div className="flex items-start gap-5 flex-1">
-                      <span className="text-[8px] tracking-ultrawide uppercase text-silver-dark/38 font-medium flex-shrink-0 pt-0.5">
+                    <div className="flex items-start gap-4 flex-1">
+                      <span className="text-[7.5px] tracking-[0.38em] uppercase text-[#6B7278]/28 font-medium flex-shrink-0 pt-0.5">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <span className="text-sm font-light text-graphite group-hover:text-graphite-mid transition-colors duration-200 leading-snug">
+                      <span className="text-[12px] font-light text-[#C8CDD2] group-hover:text-[#E2E8EE] transition-colors duration-200 leading-snug">
                         {item.q}
                       </span>
                     </div>
-                    <span className="text-[14px] text-silver-dark/40 font-extralight flex-shrink-0 mt-0.5 transition-colors duration-200 group-hover:text-silver-dark/70">
+                    <span className="text-[13px] text-[#6B7278]/32 font-extralight flex-shrink-0 mt-0.5 group-hover:text-[#6B7278]/65 transition-colors">
                       {openFaq === i ? "−" : "+"}
                     </span>
                   </button>
@@ -886,14 +1661,14 @@ export default function Home() {
                   <AnimatePresence initial={false}>
                     {openFaq === i && (
                       <motion.div
-                        key="answer"
+                        key="ans"
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                         className="overflow-hidden"
                       >
-                        <p className="text-sm text-graphite-light leading-relaxed pl-9 pb-6 max-w-xl">
+                        <p className="text-[13px] text-[#707880] leading-relaxed pl-8 pb-4 max-w-sm">
                           {item.a}
                         </p>
                       </motion.div>
@@ -901,43 +1676,32 @@ export default function Home() {
                   </AnimatePresence>
                 </motion.div>
               ))}
-              <div className="border-t border-silver-light" />
+              <div className="border-t border-[#1C2530]/35" />
             </motion.div>
           </div>
-        </div>
-      </section>
 
-      {/* ─────────────────────────────────────────
-          12. PRIVATE ACCESS CTA
-      ───────────────────────────────────────── */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/elysium-ai/dark/07-partnerships-private-room.webp"
-            alt=""
-            fill
-            className="object-cover object-center opacity-10"
-            sizes="100vw"
-            quality={20}
-            aria-hidden="true"
-          />
-          <div className="absolute inset-0 bg-porcelain/90" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="flex items-center gap-2.5 mb-6">
-            <span className="w-4 h-px bg-silver-dark/25 flex-shrink-0" />
-            <span className="text-[8px] tracking-[0.38em] uppercase text-silver-dark/38 font-medium">Private System Node Ready</span>
-          </div>
-          <CTASection
-            label="Private Access"
-            headline="For partners, investors, venues, sponsors, press and strategic collaborators."
-            body="Selected enquiries are reviewed for strategic fit, launch potential and long-term collaboration."
-            primaryHref="/contact"
-            primaryLabel="Request Private Access"
-            secondaryHref="/platform"
-            secondaryLabel="Explore the Platform"
-          />
+          {/* ELIZIUM wordmark strip */}
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={viewport} variants={fadeUp}
+            className="mt-8 lg:mt-16 pt-6 border-t border-[#1C2530]/40 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4"
+          >
+            <div className="flex flex-col gap-1">
+              <span
+                className="font-display font-normal uppercase text-[#E2E8EE]/12 leading-none tracking-[0.20em]"
+                style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
+              >
+                Elizium
+              </span>
+              <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278]/45 font-medium">
+                Immersive AI-Human Platform
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-x-6 gap-y-1">
+              {["Future Platform", "AI-Human Technology", "Immersive Experiences", "Audience Systems", "Global Expansion"].map((t) => (
+                <span key={t} className="text-[7.5px] tracking-[0.22em] uppercase text-[#6B7278]/38 font-medium">{t}</span>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
     </>

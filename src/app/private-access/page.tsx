@@ -62,13 +62,13 @@ export default function PrivateAccessPage() {
   return (
     <>
       {/* ── HEADER ── */}
-      <section className="bg-porcelain pt-36 pb-16 lg:pb-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-porcelain pt-24 pb-8 lg:pt-36 lg:pb-20">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={stagger}
-            className="flex flex-col gap-6 max-w-2xl"
+            className="flex flex-col gap-5 lg:gap-6 max-w-2xl"
           >
             <motion.span
               variants={fadeUp}
@@ -80,16 +80,17 @@ export default function PrivateAccessPage() {
 
             <motion.h1
               variants={fadeUp}
-              className="text-4xl sm:text-5xl md:text-6xl font-light tracking-tight text-graphite leading-[1.05]"
+              className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-graphite"
+              style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
             >
               Private Access
             </motion.h1>
 
-            <motion.p variants={fadeUp} className="text-base text-graphite-light leading-relaxed">
+            <motion.p variants={fadeUp} className="text-[14px] text-graphite-light leading-relaxed">
               For partners, investors, venues, sponsors and strategic collaborators.
             </motion.p>
 
-            <motion.p variants={fadeUp} className="text-sm text-silver-dark leading-relaxed">
+            <motion.p variants={fadeUp} className="text-[13px] text-silver-dark leading-relaxed">
               Selected inquiries are reviewed for strategic fit, launch potential
               and long-term collaboration.
             </motion.p>
@@ -98,8 +99,8 @@ export default function PrivateAccessPage() {
       </section>
 
       {/* ── ACCESS GATE ── */}
-      <section className="bg-pearl py-14 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      <section className="bg-pearl py-10 lg:py-20">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="max-w-md">
             <motion.div
               initial="hidden"
@@ -157,7 +158,7 @@ export default function PrivateAccessPage() {
                 <button
                   type="submit"
                   disabled={loading || granted || code.length === 0}
-                  className="px-8 py-3.5 bg-graphite text-porcelain text-[11px] tracking-superwide uppercase font-medium hover:bg-graphite-mid transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed w-fit"
+                  className="w-full sm:w-auto px-8 py-3.5 bg-graphite text-porcelain text-[11px] tracking-superwide uppercase font-medium hover:bg-graphite-mid transition-colors duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {loading ? "Verifying…" : granted ? "Access Granted" : "Enter Private Access"}
                 </button>
@@ -191,7 +192,7 @@ export default function PrivateAccessPage() {
           >
             {/* Access confirmed banner */}
             <section className="bg-porcelain border-y border-silver-light">
-              <div className="max-w-7xl mx-auto px-6 lg:px-10 py-5">
+              <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-5">
                 <div className="flex items-center gap-4">
                   <span className="w-1 h-1 rounded-full bg-graphite-light/40" />
                   <span className="text-[9px] tracking-ultrawide uppercase text-silver-dark/70 font-medium">
@@ -202,8 +203,8 @@ export default function PrivateAccessPage() {
             </section>
 
             {/* Content sections */}
-            <section className="bg-porcelain py-20 lg:py-32">
-              <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <section className="bg-porcelain py-10 lg:py-20">
+              <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
                 <motion.div
                   initial="hidden"
                   animate="visible"
@@ -215,7 +216,7 @@ export default function PrivateAccessPage() {
                       key={s.number}
                       variants={fadeUp}
                       transition={{ delay: i * 0.06 }}
-                      className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 py-12 lg:py-16 ${
+                      className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 py-8 lg:py-16 ${
                         i < SECTIONS.length - 1 ? "border-b border-silver-light" : ""
                       }`}
                     >
@@ -224,7 +225,7 @@ export default function PrivateAccessPage() {
                         <span className="text-[10px] tracking-ultrawide text-violet-muted uppercase font-medium">
                           {s.number}
                         </span>
-                        <h2 className="text-xl md:text-2xl font-light tracking-tight text-graphite">
+                        <h2 className="font-display font-normal uppercase tracking-[0.11em] leading-[0.97] text-xl md:text-2xl text-graphite">
                           {s.title}
                         </h2>
                       </div>

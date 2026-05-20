@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
+// 5 items — each maps to a unique href so only one can be active at a time
 const NAV_LINKS = [
-  { label: "Platform", href: "/platform" },
-  { label: "Future Human", href: "/future-human" },
-  { label: "Vision", href: "/vision" },
-  { label: "Contact", href: "/contact" },
+  { label: "Platform",     href: "/platform" },
+  { label: "Experience",   href: "/future-human" },
+  { label: "Partnerships", href: "/private-access" },
+  { label: "Media",        href: "/vision" },
+  { label: "Contact",      href: "/contact" },
 ];
 
 export default function Navbar() {
@@ -22,7 +24,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
@@ -30,37 +31,43 @@ export default function Navbar() {
   return (
     <>
       <motion.header
-        initial={{ opacity: 0, y: -16 }}
+        initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "bg-porcelain/97 backdrop-blur-lg border-b border-ice-mid"
-            : "bg-porcelain/85 backdrop-blur-md border-b border-ice"
+            ? "border-b border-[#1C2530]/70"
+            : "border-b border-[#1C2530]/35"
         }`}
+        style={{
+          background: scrolled
+            ? "rgba(5,5,5,0.97)"
+            : "rgba(5,5,5,0.88)",
+          backdropFilter: "blur(14px)",
+        }}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="max-w-[1440px] mx-auto px-8 lg:px-12">
+          <div className="flex items-center justify-between h-14">
             {/* Wordmark */}
             <Link
               href="/"
-              className="text-[11px] tracking-ultrawide uppercase font-semibold text-graphite hover:text-graphite-mid transition-colors duration-200"
+              className="text-[10px] tracking-[0.35em] uppercase font-semibold text-[#E2E8EE] hover:text-[#C8CDD2] transition-colors duration-200 flex-shrink-0"
             >
-              Elizium AI
+              Elizium
             </Link>
 
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-8">
+            {/* Desktop nav — compact multi-item */}
+            <nav className="hidden lg:flex items-center gap-6">
               {NAV_LINKS.map(({ label, href }) => {
-                const active = pathname === href || pathname.startsWith(href + "/");
+                const active = pathname === href;
                 return (
                   <Link
-                    key={href}
+                    key={label + href}
                     href={href}
-                    className={`text-[11px] tracking-superwide uppercase font-medium transition-colors duration-200 ${
+                    className={`text-[8.5px] tracking-[0.25em] uppercase font-medium transition-colors duration-200 whitespace-nowrap ${
                       active
-                        ? "text-graphite"
-                        : "text-graphite-light hover:text-graphite"
+                        ? "text-[#E2E8EE]"
+                        : "text-[#6B7278] hover:text-[#C8CDD2]"
                     }`}
                   >
                     {label}
@@ -69,11 +76,11 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Desktop CTA */}
-            <div className="hidden md:flex items-center gap-4">
+            {/* Private Access button */}
+            <div className="hidden lg:flex items-center flex-shrink-0">
               <Link
                 href="/contact"
-                className="text-[10px] tracking-superwide uppercase font-medium px-5 py-2.5 border border-graphite text-graphite hover:bg-graphite hover:text-porcelain transition-all duration-300"
+                className="text-[8px] tracking-[0.25em] uppercase font-medium px-4 py-2 border border-[#E2E8EE]/50 text-[#E2E8EE] hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300"
               >
                 Private Access
               </Link>
@@ -83,19 +90,19 @@ export default function Navbar() {
             <button
               onClick={() => setMenuOpen((o) => !o)}
               aria-label="Toggle menu"
-              className="md:hidden flex flex-col gap-1.5 p-1"
+              className="lg:hidden flex flex-col gap-1.5 p-1"
             >
               <motion.span
-                animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-                className="block w-5 h-px bg-graphite origin-center transition-all"
+                animate={menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+                className="block w-5 h-px bg-[#E2E8EE] origin-center"
               />
               <motion.span
                 animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
-                className="block w-5 h-px bg-graphite"
+                className="block w-5 h-px bg-[#E2E8EE]"
               />
               <motion.span
-                animate={menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
-                className="block w-5 h-px bg-graphite origin-center transition-all"
+                animate={menuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
+                className="block w-5 h-px bg-[#E2E8EE] origin-center"
               />
             </button>
           </div>
@@ -109,25 +116,26 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 bg-porcelain flex flex-col items-start justify-center px-8 gap-8 md:hidden"
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-40 flex flex-col items-start justify-center px-8 gap-6 lg:hidden"
+            style={{ background: "#050505" }}
           >
             <Link
               href="/"
-              className="text-[10px] tracking-ultrawide uppercase font-semibold text-graphite mb-8"
+              className="text-[9px] tracking-[0.35em] uppercase font-semibold text-[#E2E8EE] mb-6"
             >
               Elizium AI
             </Link>
             {NAV_LINKS.map(({ label, href }, i) => (
               <motion.div
-                key={href}
-                initial={{ opacity: 0, x: -16 }}
+                key={label}
+                initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.07, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ delay: i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Link
                   href={href}
-                  className="text-3xl font-light tracking-tight text-graphite hover:text-graphite-light transition-colors"
+                  className="text-2xl font-display font-light tracking-tight text-[#E2E8EE] hover:text-[#8E949A] transition-colors uppercase"
                 >
                   {label}
                 </Link>
@@ -136,14 +144,14 @@ export default function Navbar() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="mt-8"
+              transition={{ delay: 0.35 }}
+              className="mt-6"
             >
               <Link
                 href="/contact"
-                className="text-[10px] tracking-superwide uppercase font-medium px-6 py-3 border border-graphite text-graphite"
+                className="text-[9px] tracking-[0.25em] uppercase font-medium px-6 py-3 border border-[#E2E8EE]/50 text-[#E2E8EE]"
               >
-                Request Private Access
+                Private Access
               </Link>
             </motion.div>
           </motion.div>
