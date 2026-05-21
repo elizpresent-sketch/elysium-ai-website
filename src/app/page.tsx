@@ -332,7 +332,7 @@ export default function Home() {
         {/* Full-bleed image — figure sits right of centre */}
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/willhero.png"
+            src="/images/elysium-ai/dark/hero-current-expanded.png"
             alt=""
             fill
             priority
