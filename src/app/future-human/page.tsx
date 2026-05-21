@@ -25,12 +25,13 @@ interface FadeImageProps {
   sizes?: string;
   priority?: boolean;
   objectFit?: "cover" | "contain";
+  loading?: "lazy" | "eager";
 }
 function FadeImage({
   src, alt, className = "", position = "center center",
   fadeLeft = 0, fadeRight = 0, fadeTop = 10, fadeBottom = 10,
   sizes = "100vw", priority = false,
-  objectFit = "cover",
+  objectFit = "cover", loading = "lazy",
 }: FadeImageProps) {
   const layers: string[] = [];
   if (fadeTop > 0)    layers.push(`linear-gradient(to bottom, ${BG} 0%, transparent ${fadeTop}%)`);
@@ -40,6 +41,7 @@ function FadeImage({
   return (
     <div className={`relative overflow-hidden ${className}`}>
       <Image src={src} alt={alt} fill priority={priority}
+        loading={priority ? undefined : loading}
         className={objectFit === "contain" ? "object-contain" : "object-cover"}
         style={{ objectPosition: position }} sizes={sizes} />
       {layers.length > 0 && (
@@ -260,12 +262,13 @@ export default function FutureHumanPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/11-team-visionaries.webp"
+                  src="/images/elysium-ai/dark/01-hero-ai-human-portrait.png"
                   alt="Human Emotion — Future Human"
                   className="aspect-[4/3]"
                   position="center 30%"
                   fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
                   sizes="100vw"
+                  loading="eager"
                 />
               </motion.div>
 
@@ -281,12 +284,13 @@ export default function FutureHumanPage() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/11-team-visionaries.webp"
+                src="/images/elysium-ai/dark/01-hero-ai-human-portrait.png"
                 alt="Human Emotion — Future Human"
                 className="aspect-[4/3]"
                 position="center 30%"
                 fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
                 sizes="50vw"
+                loading="eager"
               />
             </motion.div>
           </div>
@@ -308,12 +312,14 @@ export default function FutureHumanPage() {
               className="hidden lg:block lg:order-1"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/creatingworlds.png"
+                src="/images/elysium-ai/dark/private-access-standing-new.png"
                 alt="AI Presence — Future Human"
                 className="aspect-[4/3]"
                 position="center center"
                 fadeLeft={3} fadeTop={3} fadeBottom={3} fadeRight={3}
                 sizes="50vw"
+                objectFit="contain"
+                loading="eager"
               />
             </motion.div>
 
@@ -343,12 +349,14 @@ export default function FutureHumanPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/creatingworlds.png"
+                  src="/images/elysium-ai/dark/private-access-standing-new.png"
                   alt="AI Presence — Future Human"
                   className="aspect-[4/3]"
                   position="center center"
                   fadeLeft={3} fadeTop={3} fadeBottom={3} fadeRight={3}
                   sizes="100vw"
+                  objectFit="contain"
+                  loading="eager"
                 />
               </motion.div>
 
@@ -379,11 +387,11 @@ export default function FutureHumanPage() {
           04 — AUDIENCE INTERACTION
           Uses s4.png (audience silhouette system)
       ══════════════════════════════════════════════════════════════ */}
-      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+      <section style={{ background: BG }} className="py-8 lg:py-14 border-t border-[#1C2530]/50">
         <div className={W}>
           <SectionHead label="Audience Interaction" num="04" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-4 lg:gap-8 items-center">
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
               className="flex flex-col gap-4 lg:gap-5"
@@ -408,13 +416,13 @@ export default function FutureHumanPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/auddddd.png"
+                  src="/images/elysium-ai/dark/audience-system-network-new.png"
                   alt="Audience Interaction — Future Human"
-                  className="aspect-[4/5]"
+                  className="aspect-[4/3]"
                   position="center center"
                   fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
                   sizes="100vw"
-                  objectFit="cover"
+                  objectFit="contain"
                 />
               </motion.div>
 
@@ -439,13 +447,13 @@ export default function FutureHumanPage() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/auddddd.png"
+                src="/images/elysium-ai/dark/audience-system-network-new.png"
                 alt="Audience Interaction — Future Human"
                 className="aspect-[4/5]"
                 position="center center"
                 fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
                 sizes="50vw"
-                objectFit="cover"
+                objectFit="contain"
               />
             </motion.div>
           </div>
@@ -454,7 +462,7 @@ export default function FutureHumanPage() {
 
       {/* ══════════════════════════════════════════════════════════════
           05 — LONDON LAUNCH
-          Uses 13ge.png (global map / route lines)
+          Uses global-map-pure-black.png
       ══════════════════════════════════════════════════════════════ */}
       <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
         <div className={W}>
@@ -487,12 +495,13 @@ export default function FutureHumanPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/13ge.png"
+                  src="/images/elysium-ai/dark/global-map-pure-black.png"
                   alt="Global Journey — Future Human"
                   className="aspect-[4/3]"
                   position="center center"
-                  fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                  fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
                   sizes="100vw"
+                  objectFit="contain"
                 />
               </motion.div>
 
@@ -510,12 +519,13 @@ export default function FutureHumanPage() {
               className="hidden lg:block lg:col-span-8"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/13ge.png"
+                src="/images/elysium-ai/dark/global-map-pure-black.png"
                 alt="Global Journey — Future Human"
                 className="aspect-[16/9]"
                 position="center center"
-                fadeLeft={10} fadeTop={6} fadeBottom={6} fadeRight={4}
+                fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
                 sizes="65vw"
+                objectFit="contain"
               />
             </motion.div>
           </div>

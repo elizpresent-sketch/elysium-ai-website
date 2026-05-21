@@ -3,7 +3,6 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeUp, stagger, viewport } from "@/lib/motion";
-import SectionLabel from "@/components/ui/SectionLabel";
 
 const ACCESS_CODE = "ELIZIUM2026";
 
@@ -61,8 +60,8 @@ export default function PrivateAccessPage() {
 
   return (
     <>
-      {/* ── HEADER ── */}
-      <section className="bg-porcelain pt-24 pb-8 lg:pt-36 lg:pb-20">
+      {/* ── HEADER — text only ── */}
+      <section className="bg-porcelain pt-24 pb-8 lg:pt-32 lg:pb-12">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <motion.div
             initial="hidden"
@@ -99,7 +98,7 @@ export default function PrivateAccessPage() {
       </section>
 
       {/* ── ACCESS GATE ── */}
-      <section className="bg-pearl py-10 lg:py-20">
+      <section className="bg-pearl py-6 lg:py-10">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="max-w-md">
             <motion.div

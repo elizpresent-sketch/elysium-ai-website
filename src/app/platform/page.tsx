@@ -25,12 +25,13 @@ interface FadeImageProps {
   sizes?: string;
   priority?: boolean;
   objectFit?: "cover" | "contain";
+  loading?: "lazy" | "eager";
 }
 function FadeImage({
   src, alt, className = "", position = "center center",
   fadeLeft = 0, fadeRight = 0, fadeTop = 10, fadeBottom = 10,
   sizes = "(max-width: 1024px) 100vw, 55vw", priority = false,
-  objectFit = "cover",
+  objectFit = "cover", loading = "lazy",
 }: FadeImageProps) {
   const layers: string[] = [];
   if (fadeTop > 0)    layers.push(`linear-gradient(to bottom, ${BG} 0%, transparent ${fadeTop}%)`);
@@ -40,6 +41,7 @@ function FadeImage({
   return (
     <div className={`relative overflow-hidden ${className}`}>
       <Image src={src} alt={alt} fill priority={priority}
+        loading={priority ? undefined : loading}
         className={objectFit === "contain" ? "object-contain" : "object-cover"}
         style={{ objectPosition: position }} sizes={sizes} />
       {layers.length > 0 && (
@@ -117,12 +119,12 @@ const FEATURE_ITEMS = [
 export default function PlatformPage() {
   return (
     <>
-      {/* ── HERO — full-bleed cinematic background, left text overlay (mirrors /future-human) ── */}
+      {/* ── HERO — full-bleed cinematic background, left text overlay ── */}
       <section
-        className="relative min-h-[88vh] lg:min-h-screen flex flex-col overflow-hidden"
+        className="relative min-h-screen flex flex-col overflow-hidden"
         style={{ background: BG }}
       >
-        {/* Cinematic background image — fills the hero */}
+        {/* Cinematic background image */}
         <div className="absolute inset-0">
           <Image
             src="/images/elysium-ai/dark/creatingworlds.png"
@@ -134,21 +136,19 @@ export default function PlatformPage() {
             sizes="100vw"
             aria-hidden
           />
-          {/* Left-protection diagonal gradient — keeps text readable while letting the stage breathe on the right */}
           <div
             className="absolute inset-0"
             style={{
               background: `linear-gradient(105deg,
-                ${BG} 0%, ${BG} 18%,
-                rgba(5,5,5,0.85) 38%,
-                rgba(5,5,5,0.40) 60%,
-                rgba(5,5,5,0.10) 80%,
+                ${BG} 0%, ${BG} 16%,
+                rgba(5,5,5,0.88) 34%,
+                rgba(5,5,5,0.42) 58%,
+                rgba(5,5,5,0.12) 78%,
                 transparent 100%)`,
             }}
           />
-          {/* Top + bottom fades */}
           <div
-            className="absolute inset-x-0 top-0 h-44"
+            className="absolute inset-x-0 top-0 h-48"
             style={{ background: `linear-gradient(to bottom, ${BG} 0%, ${BG} 8%, rgba(5,5,5,0.65) 55%, transparent 100%)` }}
           />
           <div
@@ -157,36 +157,75 @@ export default function PlatformPage() {
           />
         </div>
 
-        {/* Content — left column overlay */}
-        <div className={`relative z-10 flex-1 flex items-center w-full ${W} pt-24 pb-12 lg:pt-32 lg:pb-20`}>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-            className="w-full lg:max-w-[680px] flex flex-col gap-5 lg:gap-7"
-          >
-            <motion.span
-              variants={fadeUp}
-              className="inline-flex items-center gap-3 text-[10px] tracking-[0.28em] uppercase font-medium text-[#8E949A]"
+        {/* Content */}
+        <div className={`relative z-10 flex-1 flex items-center w-full ${W} pt-24 pb-8 lg:pt-32 lg:pb-14`}>
+          <div className="w-full lg:max-w-[560px]">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={stagger}
+              className="flex flex-col gap-5 lg:gap-6"
             >
-              <span className="w-6 h-px bg-[#8E949A]" />
-              The Platform
-            </motion.span>
-            <motion.h1
-              variants={fadeUp}
-              className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
-              style={{ fontSize: "clamp(1.9rem, 5vw, 4.4rem)" }}
-            >
-              A modular creative-tech platform for AI-powered immersive entertainment.
-            </motion.h1>
-            <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed max-w-xl">
-              ELIZIUM AI brings together AI-assisted creative systems, immersive visual
-              architecture, audience interaction, robotics and scalable show logic into
-              a single deployable format.
-            </motion.p>
-          </motion.div>
+              <motion.div variants={fadeUp} className="flex flex-col gap-2">
+                <span className="text-[8.5px] tracking-[0.38em] uppercase font-medium text-[#7B8188] flex items-center gap-3">
+                  <span className="w-5 h-px bg-[#7B8188]/55" />
+                  The Platform
+                </span>
+                <div className="w-8 h-px bg-[#1C2530]/60" />
+              </motion.div>
+              <motion.h1
+                variants={fadeUp}
+                className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
+                style={{ fontSize: "clamp(1.8rem, 4vw, 3.8rem)" }}
+              >
+                Modular.
+                <br />AI-powered.
+                <br />Immersive.
+              </motion.h1>
+              <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-[400px]">
+                ELIZIUM AI brings together AI-assisted creative systems, immersive visual
+                architecture, audience interaction and scalable show logic into a single
+                deployable platform.
+              </motion.p>
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 pt-1">
+                <Link
+                  href="/contact"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#E2E8EE]/70 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300"
+                >
+                  Request Private Access <span className="w-4 h-px bg-current" />
+                </Link>
+                <Link
+                  href="/future-human"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#1C2530]/55 text-[#969CA2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+                >
+                  See Future Human
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
         </div>
+
       </section>
+
+      {/* ── PLATFORM LABEL STRIP ── */}
+      <div
+        className="border-t border-[#1C2530]/50"
+        style={{ background: BG }}
+      >
+        <div className={`${W} py-3`}>
+          <div className="flex items-center gap-6">
+            <span className="text-[8px] tracking-[0.38em] uppercase font-semibold text-[#7B8188] whitespace-nowrap">
+              The Platform
+            </span>
+            <span className="hidden sm:block w-px h-3 bg-[#1C2530]" />
+            <div className="flex flex-wrap gap-x-6 gap-y-1">
+              {["Modular Architecture", "AI-Powered Systems", "Global Deployment", "Live Interaction"].map((t) => (
+                <span key={t} className="text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188]">{t}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ── PLATFORM COMPONENTS ── */}
       <section className="bg-porcelain py-10 lg:py-20">
@@ -244,15 +283,15 @@ export default function PlatformPage() {
 
               {/* Mobile-only vertical tech element — portrait, full visibility, blends to black */}
               <motion.div variants={scaleIn} className="lg:hidden flex justify-center">
-                <FadeImage
-                  src="/images/elysium-ai/dark/tech-final.png"
-                  alt="Elizium AI Technology Architecture"
-                  className="aspect-[3/4] w-full max-w-[360px]"
-                  position="center center"
-                  fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
-                  sizes="100vw"
-                  objectFit="contain"
-                />
+                <div className="relative aspect-[3/4] w-full max-w-[360px]">
+                  <Image
+                    src="/images/elysium-ai/dark/tech-final.png"
+                    alt="Elizium AI — Technology System"
+                    fill
+                    className="object-contain"
+                    sizes="360px"
+                  />
+                </div>
               </motion.div>
 
               <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
@@ -279,15 +318,15 @@ export default function PlatformPage() {
               variants={scaleIn}
               className="hidden lg:flex justify-center"
             >
-              <FadeImage
-                src="/images/elysium-ai/dark/tech-final.png"
-                alt="Elizium AI Technology Architecture"
-                className="aspect-[3/4] w-full max-w-[520px]"
-                position="center center"
-                fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                objectFit="contain"
-              />
+              <div className="relative aspect-[3/4] w-full max-w-[520px]">
+                <Image
+                  src="/images/elysium-ai/dark/tech-final.png"
+                  alt="Elizium AI — Technology System"
+                  fill
+                  className="object-contain"
+                  sizes="520px"
+                />
+              </div>
             </motion.div>
           </div>
         </div>
@@ -296,7 +335,7 @@ export default function PlatformPage() {
       {/* ── ROBOTICS ── */}
       <section className="bg-porcelain py-10 lg:py-20 overflow-hidden">
         <div className={W}>
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[4fr_8fr] gap-6 lg:gap-14 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -313,7 +352,7 @@ export default function PlatformPage() {
                 Artificial intelligence. Physical presence.
               </motion.h2>
 
-              {/* Mobile-only image — strong cinematic field directly under heading */}
+              {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
                   src="/images/elysium-ai/dark/creatingworlds.png"
@@ -322,6 +361,7 @@ export default function PlatformPage() {
                   position="center center"
                   fadeRight={0} fadeTop={0} fadeBottom={0} fadeLeft={0}
                   sizes="100vw"
+                  objectFit="contain"
                 />
               </motion.div>
 
@@ -333,7 +373,7 @@ export default function PlatformPage() {
               </motion.p>
             </motion.div>
 
-            {/* Desktop-only image — equal column, full cinematic presence */}
+            {/* Desktop-only image — wider column, full image visible */}
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -347,7 +387,8 @@ export default function PlatformPage() {
                 className="aspect-[4/3]"
                 position="center center"
                 fadeRight={0} fadeTop={0} fadeBottom={0} fadeLeft={0}
-                sizes="50vw"
+                sizes="66vw"
+                objectFit="contain"
               />
             </motion.div>
           </div>

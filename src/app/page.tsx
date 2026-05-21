@@ -91,6 +91,7 @@ interface FadeImageProps {
   sizes?: string;
   priority?: boolean;
   objectFit?: "cover" | "contain";
+  loading?: "lazy" | "eager";
 }
 
 function FadeImage({
@@ -105,6 +106,7 @@ function FadeImage({
   sizes = "(max-width: 1024px) 100vw, 55vw",
   priority = false,
   objectFit = "cover",
+  loading = "lazy",
 }: FadeImageProps) {
   const layers: string[] = [];
   if (fadeTop > 0)
@@ -123,6 +125,7 @@ function FadeImage({
         alt={alt}
         fill
         priority={priority}
+        loading={priority ? undefined : loading}
         className={objectFit === "contain" ? "object-contain" : "object-cover"}
         style={{ objectPosition: position }}
         sizes={sizes}
@@ -249,6 +252,7 @@ const FAQS = [
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [inquiryType, setInquiryType] = useState<string | null>(null);
 
   return (
     <>
@@ -263,12 +267,12 @@ export default function Home() {
         {/* Cinematic AI-human portrait — fills upper portion of the screen */}
         <div className="relative w-full" style={{ height: "62vh", minHeight: 360 }}>
           <Image
-            src="/images/elysium-ai/dark/hero-current-expanded.png"
+            src="/images/elysium-ai/dark/willhero.png"
             alt="Elizium AI — AI-Human"
             fill
             priority
             className="object-cover"
-            style={{ objectPosition: "78% center" }}
+            style={{ objectPosition: "50% center" }}
             sizes="100vw"
           />
           {/* Bottom + edge fades into pure black so text card sits cleanly */}
@@ -328,12 +332,12 @@ export default function Home() {
         {/* Full-bleed image — figure sits right of centre */}
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/hero-current-expanded.png"
+            src="/images/elysium-ai/dark/willhero.png"
             alt=""
             fill
             priority
             className="object-cover"
-            style={{ objectPosition: "85% center" }}
+            style={{ objectPosition: "center center" }}
             sizes="100vw"
             aria-hidden
           />
@@ -517,6 +521,7 @@ export default function Home() {
                   position="center center"
                   fadeLeft={3} fadeTop={3} fadeBottom={4} fadeRight={3}
                   sizes="100vw"
+                  loading="eager"
                 />
               </motion.div>
 
@@ -558,6 +563,7 @@ export default function Home() {
                 position="center center"
                 fadeLeft={3} fadeTop={3} fadeBottom={3} fadeRight={3}
                 sizes="50vw"
+                loading="eager"
               />
             </motion.div>
           </div>
@@ -565,17 +571,17 @@ export default function Home() {
           {/* Bottom stat strip */}
           <motion.div
             initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-            className="border-t border-[#1C2530]/45 grid grid-cols-2 md:grid-cols-4"
+            className="grid grid-cols-2 md:grid-cols-4 mt-6 border-t border-l border-[#1C2530]/45"
           >
             {[
               { stat: "AI-Powered", label: "Real-time creative systems" },
               { stat: "Modular",    label: "Scalable show architecture" },
               { stat: "Live",       label: "Audience interaction loops" },
               { stat: "Global",     label: "Built to license and travel" },
-            ].map((item, i) => (
+            ].map((item) => (
               <motion.div
                 key={item.stat} variants={fadeUp}
-                className={`flex flex-col gap-1.5 py-3 md:py-5 ${i > 0 ? "md:border-l border-[#1C2530]/38 md:pl-5" : ""}`}
+                className="flex flex-col gap-2 px-4 py-4 md:py-6 border-r border-b border-[#1C2530]/45"
               >
                 <span className="font-display font-normal text-xl md:text-2xl text-[#E2E8EE] tracking-[0.10em]">{item.stat}</span>
                 <span className="text-[8.5px] tracking-[0.25em] uppercase text-[#7B8188] leading-snug">{item.label}</span>
@@ -628,6 +634,7 @@ export default function Home() {
                   position="center center"
                   fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
                   sizes="100vw"
+                  loading="eager"
                 />
               </motion.div>
 
@@ -663,6 +670,7 @@ export default function Home() {
                 position="center center"
                 fadeLeft={8} fadeTop={6} fadeBottom={6} fadeRight={4}
                 sizes="50vw"
+                loading="eager"
               />
             </motion.div>
           </div>
@@ -711,13 +719,13 @@ export default function Home() {
               {/* Mobile-only image — sits right under intro for a card-like composition */}
               <motion.div variants={scaleIn} className="lg:hidden mt-1">
                 <FadeImage
-                  src="/images/elysium-ai/dark/auddddd.png"
+                  src="/images/elysium-ai/dark/audience-system-network-new.png"
                   alt="Audience System — Elizium AI"
-                  className="aspect-[4/5]"
+                  className="aspect-[4/3]"
                   position="center center"
                   fadeTop={0} fadeBottom={0} fadeLeft={0} fadeRight={0}
                   sizes="100vw"
-                  objectFit="cover"
+                  objectFit="contain"
                 />
               </motion.div>
 
@@ -773,13 +781,13 @@ export default function Home() {
               className="hidden lg:block lg:col-span-7"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/auddddd.png"
+                src="/images/elysium-ai/dark/audience-system-network-new.png"
                 alt="Audience System — Elizium AI"
                 className="aspect-[4/5]"
                 position="center center"
                 fadeTop={0} fadeBottom={0} fadeLeft={0} fadeRight={0}
                 sizes="58vw"
-                objectFit="cover"
+                objectFit="contain"
               />
             </motion.div>
           </div>
@@ -1057,45 +1065,42 @@ export default function Home() {
 
       {/* ═══════════════════════════════════════════════════════════════════
           09 · PRIVATE INQUIRY
-          Image: 09-private-inquiry-access.webp — right column
-          Layout: heading + architectural form fields left, visual right (NOT a wallpaper)
+          Form only — no image. Controlled narrow column on desktop.
       ═══════════════════════════════════════════════════════════════════ */}
-      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 overflow-hidden">
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
         <div className={W}>
           <SectionHead label="Private Inquiry" num="09" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-14 items-start">
-
-            {/* Left — heading + form fields */}
+          <div className="max-w-[600px]">
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
               className="flex flex-col gap-4"
             >
               <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
-                For Partnerships, Collaborations &amp; Sponsorships
+                Private Inquiry
               </motion.span>
               <motion.h2
                 variants={fadeUp}
                 className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
                 style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
               >
-                Let&apos;s Build
-                <br />the Future
-                <br />Together
+                For partners,
+                <br />sponsors and
+                <br />collaborators.
               </motion.h2>
               <Rule />
               <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed">
-                For partnerships, collaborations, sponsorships and private opportunities.
-                Send us your inquiry.
+                Request access to the full presentation and explore
+                collaboration opportunities.
               </motion.p>
 
-              {/* Real form fields — architectural ruled rows */}
+              {/* Form fields */}
               <motion.div variants={fadeUp} className="flex flex-col gap-0 mt-2">
                 {[
-                  { id: "inq-name",    label: "Full Name",              type: "text",  placeholder: "Your name" },
-                  { id: "inq-company", label: "Company / Organisation", type: "text",  placeholder: "Company or institution" },
-                  { id: "inq-email",   label: "Email Address",          type: "email", placeholder: "your@email.com" },
-                  { id: "inq-inquiry", label: "Type of Inquiry",        type: "text",  placeholder: "Partnership, Investment, Press…" },
+                  { id: "inq-name",    label: "Full Name", type: "text",  placeholder: "Your name" },
+                  { id: "inq-company", label: "Company",   type: "text",  placeholder: "Company or institution" },
+                  { id: "inq-role",    label: "Role",      type: "text",  placeholder: "Your role or title" },
+                  { id: "inq-email",   label: "Email",     type: "email", placeholder: "your@email.com" },
                 ].map(({ id, label, type, placeholder }) => (
                   <div key={id} className="flex flex-col border-t border-[#1C2530]/50 pt-3 pb-1 gap-1.5">
                     <label htmlFor={id} className="text-[8.5px] tracking-[0.28em] uppercase text-[#8A9098] font-medium">
@@ -1109,9 +1114,34 @@ export default function Home() {
                     />
                   </div>
                 ))}
+
+                {/* Type of Inquiry — selectable button group */}
+                <div className="flex flex-col border-t border-[#1C2530]/50 pt-3 pb-3 gap-2.5">
+                  <span className="text-[8.5px] tracking-[0.28em] uppercase text-[#8A9098] font-medium">
+                    Type of Inquiry
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {["Partnership", "Sponsorship", "Venue", "Technology", "Press", "Private Meeting"].map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setInquiryType(inquiryType === t ? null : t)}
+                        className={`px-3 py-1.5 border text-[8px] tracking-[0.22em] uppercase font-medium transition-all duration-200 ${
+                          inquiryType === t
+                            ? "border-[#E2E8EE]/60 text-[#E2E8EE]"
+                            : "border-[#2A3340]/70 text-[#969CA2] hover:border-[#707880] hover:text-[#C8CDD2]"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Message */}
                 <div className="flex flex-col border-t border-[#1C2530]/50 pt-3 pb-1 gap-1.5">
                   <label htmlFor="inq-message" className="text-[8.5px] tracking-[0.28em] uppercase text-[#8A9098] font-medium">
-                    Your Message
+                    Message
                   </label>
                   <textarea
                     id="inq-message"
@@ -1132,21 +1162,6 @@ export default function Home() {
                 </Link>
               </motion.div>
             </motion.div>
-
-            {/* Right — cinematic inquiry visual, desktop only. Sticky next to the tall form. */}
-            <motion.div
-              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
-              className="hidden lg:block lg:sticky lg:top-28"
-            >
-              <FadeImage
-                src="/images/elysium-ai/dark/09.png"
-                alt="Private Inquiry — Elizium AI"
-                className="aspect-[4/5]"
-                position="center 30%"
-                fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
-                sizes="50vw"
-              />
-            </motion.div>
           </div>
         </div>
       </section>
@@ -1156,12 +1171,12 @@ export default function Home() {
           Image: grid10.png — full generated gallery board, landscape
           Layout: label + heading above, full-width cinematic image below
       ═══════════════════════════════════════════════════════════════════ */}
-      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+      <section style={{ background: BG }} className="py-6 lg:py-10 border-t border-[#1C2530]/50">
         <div className={W}>
           <SectionHead label="Media / Gallery" num="10" />
 
-          {/* Side-by-side: text label/heading/link left, gallery right */}
-          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-6 lg:gap-12 items-center">
+          {/* Side-by-side: compact text left, dominant gallery image right */}
+          <div className="grid grid-cols-1 lg:grid-cols-[2fr_7fr] gap-4 lg:gap-8 items-center">
 
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
@@ -1180,19 +1195,17 @@ export default function Home() {
               </motion.h2>
               <Rule />
 
-              {/* Mobile-only — tall 2×3 vertical gallery (heading above, button below) */}
-              <motion.div variants={fadeUp} className="lg:hidden grid grid-cols-2 gap-1.5 mt-2">
-                {GALLERY.slice(0, 6).map((g) => (
-                  <div key={g.src} className="relative aspect-[3/4] overflow-hidden">
-                    <Image
-                      src={g.src}
-                      alt={g.alt}
-                      fill
-                      className="object-cover"
-                      sizes="50vw"
-                    />
-                  </div>
-                ))}
+              {/* Mobile-only — full gallery image */}
+              <motion.div variants={scaleIn} className="lg:hidden mt-2">
+                <FadeImage
+                  src="/images/elysium-ai/dark/perfect1.png"
+                  alt="Elizium AI — Visual Gallery"
+                  className="aspect-[4/3]"
+                  position="center center"
+                  fadeLeft={6} fadeRight={6} fadeTop={6} fadeBottom={6}
+                  sizes="100vw"
+                  objectFit="contain"
+                />
               </motion.div>
 
               {/* Button sits below the grid on mobile and below the heading on desktop */}
@@ -1206,18 +1219,18 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* Desktop-only full gallery mosaic */}
+            {/* Desktop-only full gallery image — large and cinematic */}
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/grid10.png"
+                src="/images/elysium-ai/dark/perfect1.png"
                 alt="Elizium AI — Visual Gallery"
-                className="aspect-[16/9]"
+                className="aspect-[4/3]"
                 position="center center"
-                fadeLeft={6} fadeRight={6} fadeTop={6} fadeBottom={6}
-                sizes="58vw"
+                fadeLeft={6} fadeRight={4} fadeTop={6} fadeBottom={6}
+                sizes="78vw"
               />
             </motion.div>
           </div>
@@ -1364,15 +1377,15 @@ export default function Home() {
               initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
               className="hidden lg:flex lg:col-span-7 justify-center"
             >
-              <FadeImage
-                src="/images/elysium-ai/dark/tech-final.png"
-                alt="Technology Behind Elizium — Vertical Architecture"
-                className="aspect-[3/4] w-full max-w-[520px]"
-                position="center center"
-                fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                objectFit="contain"
-              />
+              <div className="relative aspect-[3/4] w-full max-w-[520px]">
+                <Image
+                  src="/images/elysium-ai/dark/tech-final.png"
+                  alt="Elizium AI — Technology System"
+                  fill
+                  className="object-contain"
+                  sizes="520px"
+                />
+              </div>
             </motion.div>
           </div>
 
@@ -1424,12 +1437,13 @@ export default function Home() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden mt-1">
                 <FadeImage
-                  src="/images/elysium-ai/dark/13ge.png"
+                  src="/images/elysium-ai/dark/global-map-pure-black.png"
                   alt="Elizium AI — Global Expansion Map"
                   className="aspect-[4/3]"
                   position="center center"
-                  fadeLeft={6} fadeTop={6} fadeBottom={6} fadeRight={4}
+                  fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
                   sizes="100vw"
+                  objectFit="contain"
                 />
               </motion.div>
 
@@ -1467,18 +1481,19 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* Desktop-only global map image — 13ge.png */}
+            {/* Desktop-only global map image */}
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
               className="hidden lg:block lg:col-span-8"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/13ge.png"
+                src="/images/elysium-ai/dark/global-map-pure-black.png"
                 alt="Elizium AI — Global Expansion Map"
                 className="aspect-[16/9]"
                 position="center center"
-                fadeLeft={10} fadeTop={6} fadeBottom={6} fadeRight={4}
+                fadeLeft={0} fadeTop={0} fadeBottom={0} fadeRight={0}
                 sizes="65vw"
+                objectFit="contain"
               />
             </motion.div>
           </div>
@@ -1515,31 +1530,31 @@ export default function Home() {
             </motion.p>
           </motion.div>
 
-          {/* Three team cards */}
+          {/* Two portrait cards */}
           <motion.div
             initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4 mt-8 lg:mt-12"
+            className="grid grid-cols-2 gap-3 lg:gap-4 mt-8 lg:mt-12 max-w-[760px]"
           >
             {[
-              { name: "Liza Volkova",        role: "Founder & Platform Director" },
-              { name: "Creative Direction",  role: "Art & Experience" },
-              { name: "Technology Direction", role: "Systems & AI" },
-            ].map(({ name, role }) => (
+              { name: "Maksim Volkov",        role: "Strategic Technology Direction", img: "/images/elysium-ai/dark/maksim-new.png" },
+              { name: "Elizaveta Zhuravleva", role: "Founder & Platform Director",   img: "/images/elysium-ai/dark/portrait-elizaveta-zhuravleva.png" },
+            ].map(({ name, role, img }) => (
               <motion.div
                 key={name}
                 variants={fadeUp}
                 className="flex flex-col border border-[#1C2530]/55 bg-[#080808]"
               >
-                {/* Portrait area — placeholder dark gradient, ready to receive a real portrait */}
-                <div
-                  className="relative aspect-[3/4] overflow-hidden border-b border-[#1C2530]/55"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse at 50% 38%, rgba(120,130,140,0.16) 0%, rgba(40,46,52,0.10) 35%, rgba(8,8,8,1) 78%)",
-                  }}
-                  aria-hidden
-                />
-                <div className="flex flex-col gap-2 px-5 py-6 lg:px-7 lg:py-8 text-center">
+                <div className="relative aspect-[4/5] sm:aspect-[3/4] overflow-hidden border-b border-[#1C2530]/55">
+                  <Image
+                    src={img}
+                    alt={name}
+                    fill
+                    className="object-cover"
+                    style={{ objectPosition: "center top" }}
+                    sizes="(max-width: 1024px) 50vw, 370px"
+                  />
+                </div>
+                <div className="flex flex-col gap-2 px-5 py-5 lg:px-6 lg:py-6 text-center">
                   <span className="text-[10px] tracking-[0.28em] uppercase font-medium text-[#E2E8EE]">
                     {name}
                   </span>
@@ -1567,20 +1582,113 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          15 · CONTACT
-          Layout: contact details left, FAQ accordion right
+          15 · FAQ — dedicated section, separate from Contact
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="FAQ" num="15" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-start">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-5 flex flex-col gap-4 lg:gap-5"
+            >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                Frequently Asked Questions
+              </motion.span>
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
+              >
+                Important
+                <br />answers
+                <br />about the
+                <br />platform.
+              </motion.h2>
+              <Rule />
+              <motion.div variants={fadeUp} className="hidden lg:block">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-3 px-5 py-3 border border-[#1C2530]/55 text-[#C8CDD2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+                >
+                  Read All FAQ <span className="w-4 h-px bg-current" />
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="lg:col-span-7 flex flex-col"
+            >
+              <div className="border-t border-[#1C2530]/35" />
+              {FAQS.map((item, i) => (
+                <motion.div key={i} variants={fadeUp} className="border-b border-[#1C2530]/35">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full flex items-start justify-between gap-6 py-3.5 text-left group"
+                    aria-expanded={openFaq === i}
+                  >
+                    <div className="flex items-start gap-4 flex-1">
+                      <span className="text-[7.5px] tracking-[0.38em] uppercase text-[#6B7278]/28 font-medium flex-shrink-0 pt-0.5">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="text-[12px] font-light text-[#C8CDD2] group-hover:text-[#E2E8EE] transition-colors duration-200 leading-snug">
+                        {item.q}
+                      </span>
+                    </div>
+                    <span className="text-[13px] text-[#6B7278]/32 font-extralight flex-shrink-0 mt-0.5 group-hover:text-[#6B7278]/65 transition-colors">
+                      {openFaq === i ? "−" : "+"}
+                    </span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {openFaq === i && (
+                      <motion.div
+                        key="ans"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <p className="text-[13px] text-[#707880] leading-relaxed pl-8 pb-4 max-w-md">
+                          {item.a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+
+              {/* Mobile-only Read All FAQ button beneath the accordion */}
+              <motion.div variants={fadeUp} className="lg:hidden mt-5">
+                <Link
+                  href="/contact"
+                  className="w-full inline-flex items-center justify-between gap-3 px-5 py-3.5 border border-[#1C2530]/55 text-[#C8CDD2] text-[9px] tracking-[0.28em] uppercase font-medium"
+                >
+                  Read All FAQ <span className="w-4 h-px bg-current" />
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          16 · CONTACT — clean, FAQ-free
           Bottom: ELIZIUM wordmark strip
       ═══════════════════════════════════════════════════════════════════ */}
       <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
         <div className={W}>
-          <SectionHead label="Contact" num="15" />
+          <SectionHead label="Contact" num="16" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-14 items-start">
 
-            {/* Left — heading + contact rows */}
+            {/* Left — heading + contact rows + buttons */}
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-              className="lg:col-span-6 flex flex-col gap-4 lg:gap-5"
+              className="lg:col-span-7 flex flex-col gap-4 lg:gap-5"
             >
               <motion.h2
                 variants={fadeUp}
@@ -1629,54 +1737,19 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* Right — FAQ accordion */}
+            {/* Right — contact map graphic */}
             <motion.div
-              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-              className="lg:col-span-6 flex flex-col"
+              initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
+              className="hidden lg:block lg:col-span-5"
             >
-              <div className="border-t border-[#1C2530]/40 pt-3 mb-4">
-                <span className="text-[8.5px] tracking-[0.38em] uppercase text-[#8A9098] font-medium">Questions Before Entry</span>
-              </div>
-
-              {FAQS.map((item, i) => (
-                <motion.div key={i} variants={fadeUp} className="border-t border-[#1C2530]/35">
-                  <button
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex items-start justify-between gap-6 py-3.5 text-left group"
-                    aria-expanded={openFaq === i}
-                  >
-                    <div className="flex items-start gap-4 flex-1">
-                      <span className="text-[7.5px] tracking-[0.38em] uppercase text-[#6B7278]/28 font-medium flex-shrink-0 pt-0.5">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="text-[12px] font-light text-[#C8CDD2] group-hover:text-[#E2E8EE] transition-colors duration-200 leading-snug">
-                        {item.q}
-                      </span>
-                    </div>
-                    <span className="text-[13px] text-[#6B7278]/32 font-extralight flex-shrink-0 mt-0.5 group-hover:text-[#6B7278]/65 transition-colors">
-                      {openFaq === i ? "−" : "+"}
-                    </span>
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {openFaq === i && (
-                      <motion.div
-                        key="ans"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <p className="text-[13px] text-[#707880] leading-relaxed pl-8 pb-4 max-w-sm">
-                          {item.a}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ))}
-              <div className="border-t border-[#1C2530]/35" />
+              <FadeImage
+                src="/images/elysium-ai/dark/contactmap.png"
+                alt="Elizium AI — London, United Kingdom"
+                className="aspect-[4/5]"
+                position="center center"
+                fadeLeft={10} fadeTop={8} fadeBottom={8} fadeRight={6}
+                sizes="(max-width: 1024px) 100vw, 40vw"
+              />
             </motion.div>
           </div>
 
