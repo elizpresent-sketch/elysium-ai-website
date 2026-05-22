@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-23 — Make + Google Sheets integration confirmed_
+_Last updated: 2026-05-23 — Live integration confirmed end-to-end_
 
 ---
 
@@ -10,8 +10,7 @@ _Last updated: 2026-05-23 — Make + Google Sheets integration confirmed_
 **Branch:** `platform-company-restructure`
 
 ### Hard Constraints — Never Override
-- Do NOT git push on `platform-company-restructure`.
-- Do NOT deploy.
+- Branch `platform-company-restructure` has been pushed and is deployed to Vercel preview. Do NOT merge to `main` without an explicit decision from the user.
 - Do NOT redesign the homepage — it is visually final.
 - Do NOT change navbar, footer, or any page layout unless the task explicitly requires it.
 - Personal portfolio at `/Users/elizavetazhuravleva/Downloads/UNI/MP/ELIZAVETA_WEBSITE/04_final_site` — completely separate project, do not touch.
@@ -207,17 +206,15 @@ curl -s -X POST http://localhost:3000/api/inquiry \
 
 ---
 
-### 8. Next Recommended Task — Vercel Deployment
+### 8. Integration Complete
 
-_Make webhook + Google Sheets integration is confirmed working locally. See GOOGLE SHEETS INTEGRATION PASS section below for full current state._
-
-Remaining step: add `MAKE_WEBHOOK_URL` to Vercel Environment Variables and redeploy so the live site also writes to Google Sheets.
+_All integration work is confirmed live. See LIVE INTEGRATION CONFIRMED section for final state and next-chat prompt._
 
 ---
 
 ### 9. Opening Prompt for Next Claude Code Chat
 
-_See the GOOGLE SHEETS INTEGRATION PASS section below — §7 contains the current verbatim opening prompt._
+_See the LIVE INTEGRATION CONFIRMED section below — §4 contains the current verbatim opening prompt._
 
 ---
 
@@ -412,9 +409,9 @@ Paste this verbatim:
 | Make: Webhooks → Google Sheets Add a Row | **Active** — 2 operations per submission |
 | Google Sheets "ELIZIUM Inquiry Log" | **Receiving rows** — confirmed |
 | `.env.local` with `MAKE_WEBHOOK_URL` | **Present** locally (never committed) |
-| Homepage §09 Private Access form | **Confirmed end-to-end** — row written to Sheets |
-| `/contact` ContactForm | **Not yet tested** — end-to-end row insertion pending |
-| Vercel environment variable | **Not yet added** — production still in local mode |
+| Homepage §09 Private Access form | **Confirmed end-to-end** — local and live Vercel |
+| `/contact` ContactForm | **Confirmed end-to-end** — both source_page values seen in Sheets |
+| Vercel environment variable | **Set** — Production and Preview |
 
 **Setup issue resolved:** Make had unsaved recovered changes after a prior session. The Google Sheets module was inactive until the recovered changes were explicitly recovered and saved in the Make editor. After saving, the scenario ran correctly. If Make stops writing to Sheets in future, check for unsaved/recovered changes in the scenario editor before debugging code.
 
@@ -442,9 +439,9 @@ The webhook URL lives in `.env.local` only. Not in source code, not in any commi
 
 | Service | Status |
 |---------|--------|
-| Make webhook | **Connected locally** via `.env.local` |
-| Google Sheets "ELIZIUM Inquiry Log" | **Receiving data** |
-| Vercel env var `MAKE_WEBHOOK_URL` | **Not yet added** |
+| Make webhook | **Connected** — local and Vercel |
+| Google Sheets "ELIZIUM Inquiry Log" | **Receiving data** — local and live confirmed |
+| Vercel env var `MAKE_WEBHOOK_URL` | **Set** — Production + Preview |
 | Airtable | Not connected |
 | GA4 / Google Analytics | Not connected |
 | Microsoft Clarity | Not connected |
@@ -453,24 +450,9 @@ The webhook URL lives in `.env.local` only. Not in source code, not in any commi
 
 ---
 
-### 4. Pending Tests
+### 4. All Tests Confirmed
 
-1. **`/contact` ContactForm end-to-end** — submit the form at `/contact` in browser with `npm run dev` running, confirm a row appears in Google Sheets. No code change needed.
-
-2. **Vercel production test** — after adding `MAKE_WEBHOOK_URL` to Vercel and redeploying, submit the live homepage §09 form and confirm a row appears in Google Sheets.
-
----
-
-### 5. Next Deployment Step — Vercel
-
-1. Go to Vercel → Project → Settings → Environment Variables.
-2. Add: `MAKE_WEBHOOK_URL` = (value from `.env.local`) — set for **Production** (and optionally Preview).
-3. Trigger a redeploy from the Vercel dashboard (no code changes required).
-4. After deploy, open the live site homepage §09 form, submit a test inquiry.
-5. Confirm the row appears in Google Sheets "ELIZIUM Inquiry Log".
-6. Confirm the browser shows the success state ("Your inquiry has been received.").
-
-Do NOT commit `.env.local`. Do NOT add a `NEXT_PUBLIC_` prefix. The Vercel env var is added via the dashboard only.
+_All tests completed as of 2026-05-23. See LIVE INTEGRATION CONFIRMED section below for final state._
 
 ---
 
@@ -490,9 +472,11 @@ curl -s -X POST http://localhost:3000/api/inquiry \
 
 ---
 
-### 7. Opening Prompt for Next Claude Code Chat (Contact Form Test + Vercel Deploy)
+### 7. Opening Prompt for Next Claude Code Chat
 
-Paste this verbatim:
+_See the LIVE INTEGRATION CONFIRMED section below — §4 contains the current verbatim opening prompt._
+
+_Historical prompt (Contact Form Test + Vercel Deploy) — superseded:_
 
 ---
 
@@ -552,6 +536,94 @@ Paste this verbatim:
 > - Do not git push.
 > - Read all target files before editing.
 > - Only make code changes if a bug is found during testing.
+
+---
+
+## ══════════════════════════════════════════════
+## LIVE INTEGRATION CONFIRMED — 2026-05-23
+## ══════════════════════════════════════════════
+
+### 1. Final Integration Status
+
+| Component | Status |
+|-----------|--------|
+| Make scenario "Integration Webhooks" | **Active** — "Immediately as data arrives", 2 operations |
+| Make: Webhooks → Google Sheets Add a Row | **Active** — confirmed working |
+| Google Sheets "ELIZIUM Inquiry Log" | **Receiving rows** — local and live confirmed |
+| `MAKE_WEBHOOK_URL` locally | **Present** in `.env.local` (never committed) |
+| `MAKE_WEBHOOK_URL` on Vercel | **Set** — Production and Preview |
+| Deployment | **Live** — deployed from `platform-company-restructure` |
+| Homepage §09 (`homepage_private_access`) | **Confirmed end-to-end** — local and live Vercel preview |
+| `/contact` (`contact_page`) | **Confirmed end-to-end** — both source_page values seen in Sheets |
+
+---
+
+### 2. What Is Connected vs Not
+
+| Service | Status |
+|---------|--------|
+| Make webhook | **Connected** — local and Vercel |
+| Google Sheets "ELIZIUM Inquiry Log" | **Receiving data** — local and live |
+| Vercel env var `MAKE_WEBHOOK_URL` | **Set** — Production + Preview |
+| Airtable | Not connected |
+| GA4 / Google Analytics | Not connected |
+| Microsoft Clarity | Not connected |
+| Email sending | Not connected |
+| OpenAI API | Not connected |
+| Spam protection / rate limiting | Not implemented |
+| Client-side form validation (homepage) | Incomplete — `pa-name` and `pa-email` missing `required` attribute |
+
+---
+
+### 3. Pending Decisions & Optional Future Work
+
+**Decision required:**
+- Merge `platform-company-restructure` into `main` to point the production domain at this version. No code change needed — this is a Git/Vercel decision only. Do not merge without explicit instruction.
+
+**Optional future enhancements (no priority order):**
+- GA4 / Google Analytics
+- Microsoft Clarity
+- Email notification on new inquiry (Resend or SendGrid, via Make or direct)
+- Spam protection / rate limiting on `/api/inquiry`
+- Add `required` attributes to homepage §09 form inputs (`pa-name`, `pa-email`) for browser-level validation
+- Tally or Airtable as alternative/additional data store
+
+---
+
+### 4. Opening Prompt for Next Claude Code Chat
+
+Paste this verbatim:
+
+---
+
+> You are continuing work on the ELIZIUM AI website.
+>
+> Branch: `platform-company-restructure` (pushed, deployed to Vercel preview — do NOT merge to `main` without explicit instruction).
+> Dev server: `http://localhost:3000`
+> Do not git push unless explicitly asked.
+>
+> Read HANDOVER.md in the project root first and follow it exactly. Before editing any file, read it first.
+>
+> CONTEXT:
+> The homepage is visually final. Do NOT redesign it. Do NOT change spacing, images, typography, layout, animation, navbar, footer, or any page design unless explicitly required.
+>
+> Integration is fully live as of 2026-05-23:
+> - `/api/inquiry` validates payloads and POSTs to `MAKE_WEBHOOK_URL` (server-side only).
+> - Make scenario "Integration Webhooks": Webhooks → Google Sheets "ELIZIUM Inquiry Log" Add a Row.
+> - Both `homepage_private_access` and `contact_page` source_page values confirmed in Sheets, locally and on live Vercel preview.
+> - `MAKE_WEBHOOK_URL` is set in Vercel for Production and Preview.
+> - TypeScript: 0 errors. Build: ✓.
+>
+> Before starting any task, state clearly what you are going to do and which files you will touch. Read all target files before editing. Smallest possible changes only.
+>
+> Hard constraints:
+> - Do not redesign homepage or any page.
+> - Do not change navbar/footer.
+> - Do not expose `/private-access` or `/vision`.
+> - Do not add `NEXT_PUBLIC_` env vars.
+> - Do not commit `.env.local`.
+> - Do not merge `platform-company-restructure` to `main` without explicit instruction.
+> - Read all target files before editing.
 
 ---
 
