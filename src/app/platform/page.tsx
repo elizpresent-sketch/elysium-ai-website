@@ -127,7 +127,7 @@ export default function PlatformPage() {
         {/* Cinematic background image */}
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/creatingworlds.png"
+            src="/images/elysium-ai/dark/creatingworlds.webp"
             alt=""
             fill
             priority
@@ -285,7 +285,7 @@ export default function PlatformPage() {
               <motion.div variants={scaleIn} className="lg:hidden flex justify-center">
                 <div className="relative aspect-[3/4] w-full max-w-[360px]">
                   <Image
-                    src="/images/elysium-ai/dark/tech-final.png"
+                    src="/images/elysium-ai/dark/tech-final.webp"
                     alt="Elizium AI — Technology System"
                     fill
                     className="object-contain"
@@ -320,7 +320,7 @@ export default function PlatformPage() {
             >
               <div className="relative aspect-[3/4] w-full max-w-[520px]">
                 <Image
-                  src="/images/elysium-ai/dark/tech-final.png"
+                  src="/images/elysium-ai/dark/tech-final.webp"
                   alt="Elizium AI — Technology System"
                   fill
                   className="object-contain"
@@ -355,7 +355,7 @@ export default function PlatformPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/creatingworlds.png"
+                  src="/images/elysium-ai/dark/creatingworlds.webp"
                   alt="AI Presence on Stage — Elizium AI"
                   className="aspect-[4/3]"
                   position="center center"
@@ -382,7 +382,7 @@ export default function PlatformPage() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/creatingworlds.png"
+                src="/images/elysium-ai/dark/creatingworlds.webp"
                 alt="AI Presence on Stage — Elizium AI"
                 className="aspect-[4/3]"
                 position="center center"

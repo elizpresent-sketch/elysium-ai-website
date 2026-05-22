@@ -80,7 +80,7 @@ export default function FutureHumanPage() {
         {/* Full-bleed image — s2.png: portal, AI face, figure */}
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/future-human-hero-portal.png"
+            src="/images/elysium-ai/dark/future-human-hero-portal.webp"
             alt=""
             fill priority
             className="object-cover"
@@ -262,7 +262,7 @@ export default function FutureHumanPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/01-hero-ai-human-portrait.png"
+                  src="/images/elysium-ai/dark/01-hero-ai-human-portrait.webp"
                   alt="Human Emotion — Future Human"
                   className="aspect-[4/3]"
                   position="center 30%"
@@ -284,7 +284,7 @@ export default function FutureHumanPage() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/01-hero-ai-human-portrait.png"
+                src="/images/elysium-ai/dark/01-hero-ai-human-portrait.webp"
                 alt="Human Emotion — Future Human"
                 className="aspect-[4/3]"
                 position="center 30%"
@@ -312,7 +312,7 @@ export default function FutureHumanPage() {
               className="hidden lg:block lg:order-1"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/private-access-standing-new.png"
+                src="/images/elysium-ai/dark/private-access-standing-new.webp"
                 alt="AI Presence — Future Human"
                 className="aspect-[4/3]"
                 position="center center"
@@ -349,7 +349,7 @@ export default function FutureHumanPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/private-access-standing-new.png"
+                  src="/images/elysium-ai/dark/private-access-standing-new.webp"
                   alt="AI Presence — Future Human"
                   className="aspect-[4/3]"
                   position="center center"
@@ -416,7 +416,7 @@ export default function FutureHumanPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/audience-system-network-new.png"
+                  src="/images/elysium-ai/dark/audience-system-network-new-q95.webp"
                   alt="Audience Interaction — Future Human"
                   className="aspect-[4/3]"
                   position="center center"
@@ -447,7 +447,7 @@ export default function FutureHumanPage() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/audience-system-network-new.png"
+                src="/images/elysium-ai/dark/audience-system-network-new-q95.webp"
                 alt="Audience Interaction — Future Human"
                 className="aspect-[4/5]"
                 position="center center"
@@ -495,7 +495,7 @@ export default function FutureHumanPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/global-map-pure-black.png"
+                  src="/images/elysium-ai/dark/global-map-pure-black-q95.webp"
                   alt="Global Journey — Future Human"
                   className="aspect-[4/3]"
                   position="center center"
@@ -519,7 +519,7 @@ export default function FutureHumanPage() {
               className="hidden lg:block lg:col-span-8"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/global-map-pure-black.png"
+                src="/images/elysium-ai/dark/global-map-pure-black-q95.webp"
                 alt="Global Journey — Future Human"
                 className="aspect-[16/9]"
                 position="center center"

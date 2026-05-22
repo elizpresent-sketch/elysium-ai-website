@@ -123,7 +123,7 @@ export default function ContactPage() {
               className="hidden lg:block lg:col-span-5"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/contactmap.png"
+                src="/images/elysium-ai/dark/contactmap-q95.webp"
                 alt="Elizium AI — London, United Kingdom"
                 className="aspect-[4/5]"
                 position="center center"
@@ -140,7 +140,7 @@ export default function ContactPage() {
             className="lg:hidden mt-6"
           >
             <FadeImage
-              src="/images/elysium-ai/dark/contactmap.png"
+              src="/images/elysium-ai/dark/contactmap-q95.webp"
               alt="Elizium AI — London, United Kingdom"
               className="aspect-[16/9]"
               position="center center"

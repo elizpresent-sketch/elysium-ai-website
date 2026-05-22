@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ELIZIUM AI — Asset Compression Preview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #050505;
+    --surface: #0a0a0a;
+    --border:  rgba(255,255,255,0.07);
+    --dim:     #6B7278;
+    --label:   #969CA2;
+    --white:   #E2E8EE;
+    --green:   #6FCF97;
+    --amber:   #F2C94C;
+    --red:     #EB5757;
+    --mono:    'SF Mono', 'Fira Mono', 'Consolas', monospace;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.6;
+    padding: 0 0 80px;
+  }
+
+  /* ── Header ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5,5,5,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  header h1 {
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--white);
+    font-weight: 500;
+  }
+  header p {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green  { background: var(--green); }
+  .dot-amber  { background: var(--amber); }
+  .dot-red    { background: var(--red); }
+
+  /* ── Nav index ── */
+  nav {
+    padding: 20px 32px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  nav a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    color: var(--label);
+    text-decoration: none;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  nav a:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
+
+  /* ── Card wrapper ── */
+  .card {
+    margin: 32px 32px 0;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header h2 {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--white);
+    font-weight: 500;
+  }
+  .card-header .meta {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--dim);
+  }
+
+  /* ── Image grid: 2-col or 3-col ── */
+  .img-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+  }
+  .img-grid.two   { grid-template-columns: 1fr 1fr; }
+  .img-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  .img-col {
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .img-label {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .img-label .format {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .img-label .size {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+  }
+  .img-label .saving {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 2px 7px;
+    border-radius: 2px;
+  }
+  .saving-green  { background: rgba(111,207,151,0.12); color: var(--green); }
+  .saving-amber  { background: rgba(242,201,76,0.12);  color: var(--amber); }
+  .saving-ref    { background: rgba(255,255,255,0.05); color: var(--dim); }
+
+  .img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    flex: 1;
+  }
+  /* Checkerboard for transparent areas */
+  .img-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(45deg, #111 25%, transparent 25%),
+      linear-gradient(-45deg, #111 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #111 75%),
+      linear-gradient(-45deg, transparent 75%, #111 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .img-wrap img {
+    display: block;
+    width: 100%;
+    height: 400px;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+  }
+  /* Portrait images get taller cells */
+  .img-wrap.portrait img { height: 500px; }
+
+  /* ── Risk badge ── */
+  .risk {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .risk-ok     { color: var(--green); }
+  .risk-watch  { color: var(--amber); }
+  .risk-warn   { color: var(--red); }
+
+  /* ── Summary table ── */
+  .summary {
+    margin: 40px 32px 0;
+    border: 1px solid var(--border);
+  }
+  .summary-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--white);
+    font-weight: 500;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+  }
+  th {
+    padding: 8px 16px;
+    text-align: left;
+    font-size: 8px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--dim);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  td {
+    padding: 9px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  .td-file { color: var(--label); letter-spacing: 0.05em; }
+  .td-num  { color: var(--white); letter-spacing: 0.05em; text-align: right; }
+  .td-save { text-align: right; }
+  .td-mode { color: var(--dim); text-align: center; }
+  .td-risk { text-align: center; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 2px;
+  }
+  .badge-ok   { background: rgba(111,207,151,0.12); color: var(--green); }
+  .badge-warn { background: rgba(242,201,76,0.12);  color: var(--amber); }
+  .tfoot-row td { border-top: 1px solid var(--border); color: var(--white); font-weight: 500; }
+
+  /* ── Trio note ── */
+  .trio-note {
+    margin: 40px 32px 0;
+    padding: 16px 20px;
+    border: 1px solid rgba(242,201,76,0.25);
+    background: rgba(242,201,76,0.04);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--amber);
+    line-height: 1.8;
+  }
+  .trio-note strong { color: var(--white); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>ELIZIUM AI — Asset Compression Preview</h1>
+    <p style="margin-top:4px">11 priority assets · PNG vs WebP · lossless trio vs q95 comparison</p>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="dot dot-green"></div> Low risk</div>
+    <div class="legend-item"><div class="dot dot-amber"></div> Watch closely</div>
+    <div class="legend-item"><div class="dot dot-red"></div> Risk — inspect</div>
+  </div>
+</header>
+
+<nav>
+  <a href="#hero-current-expanded">Hero Desktop</a>
+  <a href="#willhero">Hero Mobile</a>
+  <a href="#s2">S2 Portal</a>
+  <a href="#future-human-hero-portal">FH Hero</a>
+  <a href="#private-access-standing-new">Standing Figure</a>
+  <a href="#tech-final">Tech Final</a>
+  <a href="#maksim-new">Maksim</a>
+  <a href="#portrait-elizaveta-zhuravleva">Elizaveta</a>
+  <a href="#audience-system-network-new">Network</a>
+  <a href="#global-map-pure-black">Global Map</a>
+  <a href="#contactmap">Contact Map</a>
+  <a href="#summary">Summary Table</a>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CINEMATIC BACKGROUNDS
+═══════════════════════════════════════════════════════════ -->
+
+<!-- hero-current-expanded -->
+<div class="card" id="hero-current-expanded">
+  <div class="card-header">
+    <h2>hero-current-expanded</h2>
+    <span class="meta">Homepage desktop hero · full-bleed cinematic · q85</span>
+  </div>
+  <div class="img-grid two">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--red)">5.55 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/hero-current-expanded.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q85</span>
+        <span class="size" style="color:var(--green)">155 KB</span>
+        <span class="saving saving-green">−97.3%</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/hero-current-expanded.webp" alt="WebP q85" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Low risk — dense gradient overlay in code protects any soft areas</div>
+    </div>
+  </div>
+</div>
+
+<!-- willhero -->
+<div class="card" id="willhero">
+  <div class="card-header">
+    <h2>willhero</h2>
+    <span class="meta">Homepage mobile hero · portrait · q85</span>
+  </div>
+  <div class="img-grid two">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--amber)">2.88 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/willhero.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q85</span>
+        <span class="size" style="color:var(--green)">144 KB</span>
+        <span class="saving saving-green">−95.1%</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/willhero.webp" alt="WebP q85" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Low risk — mobile hero with bottom gradient, face/figure dominant</div>
+    </div>
+  </div>
+</div>
+
+<!-- s2 -->
+<div class="card" id="s2">
+  <div class="card-header">
+    <h2>s2</h2>
+    <span class="meta">Homepage §03 First Experience + Vision hero · q85</span>
+  </div>
+  <div class="img-grid two">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--red)">18.45 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/s2.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q85</span>
+        <span class="size" style="color:var(--green)">257 KB</span>
+        <span class="saving saving-green">−98.6%</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/s2.webp" alt="WebP q85" loading="lazy" />
+      </div>
+      <div class="risk risk-watch"><span class="dot dot-amber"></span> Watch: inspect portal edge detail and face rendering at actual screen size</div>
+    </div>
+  </div>
+</div>
+
+<!-- future-human-hero-portal -->
+<div class="card" id="future-human-hero-portal">
+  <div class="card-header">
+    <h2>future-human-hero-portal</h2>
+    <span class="meta">Future Human page hero · full-bleed · q85</span>
+  </div>
+  <div class="img-grid two">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--red)">24.22 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/future-human-hero-portal.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q85</span>
+        <span class="size" style="color:var(--green)">326 KB</span>
+        <span class="saving saving-green">−98.7%</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/future-human-hero-portal.webp" alt="WebP q85" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Low risk — three overlapping gradient layers in code cover transition zones</div>
+    </div>
+  </div>
+</div>
+
+<!-- private-access-standing-new -->
+<div class="card" id="private-access-standing-new">
+  <div class="card-header">
+    <h2>private-access-standing-new</h2>
+    <span class="meta">Future Human §03 AI Presence · object-contain · q85</span>
+  </div>
+  <div class="img-grid two">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--red)">22.32 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/private-access-standing-new.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q85</span>
+        <span class="size" style="color:var(--green)">490 KB</span>
+        <span class="saving saving-green">−97.9%</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/private-access-standing-new.webp" alt="WebP q85" loading="lazy" />
+      </div>
+      <div class="risk risk-watch"><span class="dot dot-amber"></span> Watch: object-contain — full figure visible. Check edge sharpness on figure outline and fine detail.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     TECHNICAL / PORTRAITS
+═══════════════════════════════════════════════════════════ -->
+
+<!-- tech-final -->
+<div class="card" id="tech-final">
+  <div class="card-header">
+    <h2>tech-final</h2>
+    <span class="meta">Technology section · object-contain full figure · q95</span>
+  </div>
+  <div class="img-grid two">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--amber)">8.03 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/tech-final.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q95</span>
+        <span class="size" style="color:var(--green)">625 KB</span>
+        <span class="saving saving-green">−92.4%</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/tech-final.webp" alt="WebP q95" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Low risk — q95 preserves fine detail; object-contain at max-w-[520px] limits display size</div>
+    </div>
+  </div>
+</div>
+
+<!-- maksim-new -->
+<div class="card" id="maksim-new">
+  <div class="card-header">
+    <h2>maksim-new</h2>
+    <span class="meta">Team portrait — Maksim Volkov · q90</span>
+  </div>
+  <div class="img-grid two">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--amber)">5.11 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/maksim-new.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q90</span>
+        <span class="size" style="color:var(--green)">305 KB</span>
+        <span class="saving saving-green">−94.2%</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/maksim-new.webp" alt="WebP q90" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Low risk — portrait card max ~370px display width; q90 more than sufficient</div>
+    </div>
+  </div>
+</div>
+
+<!-- portrait-elizaveta-zhuravleva -->
+<div class="card" id="portrait-elizaveta-zhuravleva">
+  <div class="card-header">
+    <h2>portrait-elizaveta-zhuravleva</h2>
+    <span class="meta">Team portrait — Elizaveta Zhuravleva · q90</span>
+  </div>
+  <div class="img-grid two">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--amber)">4.52 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/portrait-elizaveta-zhuravleva.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q90</span>
+        <span class="size" style="color:var(--green)">341 KB</span>
+        <span class="saving saving-green">−92.6%</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/portrait-elizaveta-zhuravleva.webp" alt="WebP q90" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Low risk — portrait card, same logic as Maksim</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     LOSSLESS TRIO — 3-WAY COMPARISON
+═══════════════════════════════════════════════════════════ -->
+
+<div class="trio-note">
+  <strong>Lossless trio — 3-way comparison below.</strong><br/>
+  Each card shows: <strong>Original PNG</strong> · <strong>Lossless WebP</strong> · <strong>q95 WebP</strong><br/>
+  Lossless guarantees zero quality loss but remains heavy. q95 saves a further 89–91% vs lossless.
+  Inspect the q95 column carefully — if map lines or network edges hold up, q95 is the right choice.
+</div>
+
+<!-- audience-system-network-new -->
+<div class="card" id="audience-system-network-new">
+  <div class="card-header">
+    <h2>audience-system-network-new</h2>
+    <span class="meta">Audience System + Future Human §04 · object-contain · lossless vs q95</span>
+  </div>
+  <div class="img-grid three">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--red)">17.79 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/audience-system-network-new.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP — lossless</span>
+        <span class="size" style="color:var(--amber)">9.28 MB</span>
+        <span class="saving saving-amber">−47.8%</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/audience-system-network-new.webp" alt="WebP lossless" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Zero quality loss — guaranteed pixel-identical</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q95</span>
+        <span class="size" style="color:var(--green)">820 KB</span>
+        <span class="saving saving-green">−95.5% vs PNG</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/audience-system-network-new-q95.webp" alt="WebP q95" loading="lazy" />
+      </div>
+      <div class="risk risk-watch"><span class="dot dot-amber"></span> Inspect: network lines, node points, fine edge detail vs lossless column</div>
+    </div>
+  </div>
+</div>
+
+<!-- global-map-pure-black -->
+<div class="card" id="global-map-pure-black">
+  <div class="card-header">
+    <h2>global-map-pure-black</h2>
+    <span class="meta">Global Expansion + Future Human London · object-contain, no gradients · lossless vs q95</span>
+  </div>
+  <div class="img-grid three">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--red)">10.03 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/global-map-pure-black.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP — lossless</span>
+        <span class="size" style="color:var(--amber)">5.40 MB</span>
+        <span class="saving saving-amber">−46.2%</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/global-map-pure-black.webp" alt="WebP lossless" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Zero quality loss — guaranteed pixel-identical</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q95</span>
+        <span class="size" style="color:var(--green)">1.01 MB</span>
+        <span class="saving saving-green">−89.9% vs PNG</span>
+      </div>
+      <div class="img-wrap">
+        <img src="images/elysium-ai/dark/global-map-pure-black-q95.webp" alt="WebP q95" loading="lazy" />
+      </div>
+      <div class="risk risk-watch"><span class="dot dot-amber"></span> Highest risk of the trio — thin map lines on pure black are sensitive to q95 ringing. Inspect coastlines and route lines closely.</div>
+    </div>
+  </div>
+</div>
+
+<!-- contactmap -->
+<div class="card" id="contactmap">
+  <div class="card-header">
+    <h2>contactmap</h2>
+    <span class="meta">Contact section · portrait + landscape crops · lossless vs q95</span>
+  </div>
+  <div class="img-grid three">
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">PNG — original</span>
+        <span class="size" style="color:var(--red)">14.83 MB</span>
+        <span class="saving saving-ref">reference</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/contactmap.png" alt="PNG" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Original reference</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP — lossless</span>
+        <span class="size" style="color:var(--amber)">8.07 MB</span>
+        <span class="saving saving-amber">−45.6%</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/contactmap.webp" alt="WebP lossless" loading="lazy" />
+      </div>
+      <div class="risk risk-ok"><span class="dot dot-green"></span> Zero quality loss — guaranteed pixel-identical</div>
+    </div>
+    <div class="img-col">
+      <div class="img-label">
+        <span class="format">WebP q95</span>
+        <span class="size" style="color:var(--green)">844 KB</span>
+        <span class="saving saving-green">−94.4% vs PNG</span>
+      </div>
+      <div class="img-wrap portrait">
+        <img src="images/elysium-ai/dark/contactmap-q95.webp" alt="WebP q95" loading="lazy" />
+      </div>
+      <div class="risk risk-watch"><span class="dot dot-amber"></span> Watch: street grid lines and location markers on dark background. Fade gradient applied in code helps mask edge artefacts.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SUMMARY TABLE
+═══════════════════════════════════════════════════════════ -->
+
+<div class="summary" id="summary">
+  <div class="summary-header">Summary — All Converted Files</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Asset</th>
+        <th style="text-align:right">PNG</th>
+        <th style="text-align:right">WebP</th>
+        <th style="text-align:right">Saving</th>
+        <th style="text-align:center">Mode</th>
+        <th style="text-align:center">Visual risk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="td-file">hero-current-expanded</td>
+        <td class="td-num">5.55 MB</td>
+        <td class="td-num">155 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−97.3%</span></td>
+        <td class="td-mode">q85</td>
+        <td class="td-risk"><span class="badge badge-ok">Low</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">willhero</td>
+        <td class="td-num">2.88 MB</td>
+        <td class="td-num">144 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−95.1%</span></td>
+        <td class="td-mode">q85</td>
+        <td class="td-risk"><span class="badge badge-ok">Low</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">s2</td>
+        <td class="td-num">18.45 MB</td>
+        <td class="td-num">257 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−98.6%</span></td>
+        <td class="td-mode">q85</td>
+        <td class="td-risk"><span class="badge badge-warn">Watch</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">future-human-hero-portal</td>
+        <td class="td-num">24.22 MB</td>
+        <td class="td-num">326 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−98.7%</span></td>
+        <td class="td-mode">q85</td>
+        <td class="td-risk"><span class="badge badge-ok">Low</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">private-access-standing-new</td>
+        <td class="td-num">22.32 MB</td>
+        <td class="td-num">490 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−97.9%</span></td>
+        <td class="td-mode">q85</td>
+        <td class="td-risk"><span class="badge badge-warn">Watch</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">tech-final</td>
+        <td class="td-num">8.03 MB</td>
+        <td class="td-num">625 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−92.4%</span></td>
+        <td class="td-mode">q95</td>
+        <td class="td-risk"><span class="badge badge-ok">Low</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">maksim-new</td>
+        <td class="td-num">5.11 MB</td>
+        <td class="td-num">305 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−94.2%</span></td>
+        <td class="td-mode">q90</td>
+        <td class="td-risk"><span class="badge badge-ok">Low</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">portrait-elizaveta-zhuravleva</td>
+        <td class="td-num">4.52 MB</td>
+        <td class="td-num">341 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−92.6%</span></td>
+        <td class="td-mode">q90</td>
+        <td class="td-risk"><span class="badge badge-ok">Low</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">audience-system-network-new <span style="color:var(--dim)">(lossless)</span></td>
+        <td class="td-num">17.79 MB</td>
+        <td class="td-num">9.28 MB</td>
+        <td class="td-save"><span class="badge badge-warn">−47.8%</span></td>
+        <td class="td-mode">lossless</td>
+        <td class="td-risk"><span class="badge badge-ok">Zero loss</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">audience-system-network-new <span style="color:var(--dim)">(q95)</span></td>
+        <td class="td-num">17.79 MB</td>
+        <td class="td-num">820 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−95.5%</span></td>
+        <td class="td-mode">q95</td>
+        <td class="td-risk"><span class="badge badge-warn">Watch</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">global-map-pure-black <span style="color:var(--dim)">(lossless)</span></td>
+        <td class="td-num">10.03 MB</td>
+        <td class="td-num">5.40 MB</td>
+        <td class="td-save"><span class="badge badge-warn">−46.2%</span></td>
+        <td class="td-mode">lossless</td>
+        <td class="td-risk"><span class="badge badge-ok">Zero loss</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">global-map-pure-black <span style="color:var(--dim)">(q95)</span></td>
+        <td class="td-num">10.03 MB</td>
+        <td class="td-num">1.01 MB</td>
+        <td class="td-save"><span class="badge badge-ok">−89.9%</span></td>
+        <td class="td-mode">q95</td>
+        <td class="td-risk"><span class="badge badge-warn">Watch</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">contactmap <span style="color:var(--dim)">(lossless)</span></td>
+        <td class="td-num">14.83 MB</td>
+        <td class="td-num">8.07 MB</td>
+        <td class="td-save"><span class="badge badge-warn">−45.6%</span></td>
+        <td class="td-mode">lossless</td>
+        <td class="td-risk"><span class="badge badge-ok">Zero loss</span></td>
+      </tr>
+      <tr>
+        <td class="td-file">contactmap <span style="color:var(--dim)">(q95)</span></td>
+        <td class="td-num">14.83 MB</td>
+        <td class="td-num">844 KB</td>
+        <td class="td-save"><span class="badge badge-ok">−94.4%</span></td>
+        <td class="td-mode">q95</td>
+        <td class="td-risk"><span class="badge badge-warn">Watch</span></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr class="tfoot-row">
+        <td class="td-file">TOTAL (if lossless kept)</td>
+        <td class="td-num">190.18 MB</td>
+        <td class="td-num">26.26 MB</td>
+        <td class="td-save"><span class="badge badge-ok">−86.2%</span></td>
+        <td class="td-mode">—</td>
+        <td class="td-risk">—</td>
+      </tr>
+      <tr class="tfoot-row">
+        <td class="td-file">TOTAL (if q95 used for trio)</td>
+        <td class="td-num">190.18 MB</td>
+        <td class="td-num" style="color:var(--green)">4.61 MB</td>
+        <td class="td-save"><span class="badge badge-ok">−97.6%</span></td>
+        <td class="td-mode">—</td>
+        <td class="td-risk">—</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<div style="margin:32px 32px 0;padding:16px 20px;border:1px solid var(--border);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);">
+  No code references updated · No original PNGs modified · Preview only
+</div>
+
+</body>
+</html>

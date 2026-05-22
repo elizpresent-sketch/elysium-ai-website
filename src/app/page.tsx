@@ -267,7 +267,7 @@ export default function Home() {
         {/* Cinematic AI-human portrait — fills upper portion of the screen */}
         <div className="relative w-full" style={{ height: "62vh", minHeight: 360 }}>
           <Image
-            src="/images/elysium-ai/dark/willhero.png"
+            src="/images/elysium-ai/dark/willhero.webp"
             alt="Elizium AI — AI-Human"
             fill
             priority
@@ -332,7 +332,7 @@ export default function Home() {
         {/* Full-bleed image — figure sits right of centre */}
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/hero-current-expanded.png"
+            src="/images/elysium-ai/dark/hero-current-expanded.webp"
             alt=""
             fill
             priority
@@ -515,7 +515,7 @@ export default function Home() {
               {/* Mobile-only portal image — sits at end of section as strong vertical visual */}
               <motion.div variants={scaleIn} className="lg:hidden mt-2">
                 <FadeImage
-                  src="/images/elysium-ai/dark/globexp.png"
+                  src="/images/elysium-ai/dark/globexp.webp"
                   alt="Elizium AI — Platform Stage"
                   className="aspect-[3/4]"
                   position="center center"
@@ -557,7 +557,7 @@ export default function Home() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/globexp.png"
+                src="/images/elysium-ai/dark/globexp.webp"
                 alt="Elizium AI — Platform Stage"
                 className="aspect-[4/3]"
                 position="center center"
@@ -628,7 +628,7 @@ export default function Home() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/s2.png"
+                  src="/images/elysium-ai/dark/s2.webp"
                   alt="Future Human — Elizium AI Flagship"
                   className="aspect-[4/3]"
                   position="center center"
@@ -664,7 +664,7 @@ export default function Home() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/s2.png"
+                src="/images/elysium-ai/dark/s2.webp"
                 alt="Future Human — Elizium AI Flagship"
                 className="aspect-[4/3]"
                 position="center center"
@@ -719,7 +719,7 @@ export default function Home() {
               {/* Mobile-only image — sits right under intro for a card-like composition */}
               <motion.div variants={scaleIn} className="lg:hidden mt-1">
                 <FadeImage
-                  src="/images/elysium-ai/dark/audience-system-network-new.png"
+                  src="/images/elysium-ai/dark/audience-system-network-new-q95.webp"
                   alt="Audience System — Elizium AI"
                   className="aspect-[4/3]"
                   position="center center"
@@ -781,7 +781,7 @@ export default function Home() {
               className="hidden lg:block lg:col-span-7"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/audience-system-network-new.png"
+                src="/images/elysium-ai/dark/audience-system-network-new-q95.webp"
                 alt="Audience System — Elizium AI"
                 className="aspect-[4/5]"
                 position="center center"
@@ -856,7 +856,7 @@ export default function Home() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/creatingworlds.png"
+                src="/images/elysium-ai/dark/creatingworlds.webp"
                 alt="Creative Production — Elizium AI"
                 className="aspect-[4/3]"
                 position="center center"
@@ -872,7 +872,7 @@ export default function Home() {
             className="lg:hidden mt-6"
           >
             <FadeImage
-              src="/images/elysium-ai/dark/creatingworlds.png"
+              src="/images/elysium-ai/dark/creatingworlds.webp"
               alt="Creative Production — Elizium AI"
               className="aspect-[4/3]"
               position="center center"
@@ -919,7 +919,7 @@ export default function Home() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden mt-1">
                 <FadeImage
-                  src="/images/elysium-ai/dark/s6.png"
+                  src="/images/elysium-ai/dark/s6.webp"
                   alt="Partnership — Elizium AI"
                   className="aspect-[4/3]"
                   position="center 35%"
@@ -959,7 +959,7 @@ export default function Home() {
                 initial="hidden" whileInView="visible" viewport={viewport} variants={scaleIn}
               >
                 <FadeImage
-                  src="/images/elysium-ai/dark/s6.png"
+                  src="/images/elysium-ai/dark/s6.webp"
                   alt="Partnership — Elizium AI"
                   className="aspect-[16/9]"
                   position="center 35%"
@@ -1198,7 +1198,7 @@ export default function Home() {
               {/* Mobile-only — full gallery image */}
               <motion.div variants={scaleIn} className="lg:hidden mt-2">
                 <FadeImage
-                  src="/images/elysium-ai/dark/perfect1.png"
+                  src="/images/elysium-ai/dark/perfect1.webp"
                   alt="Elizium AI — Visual Gallery"
                   className="aspect-[4/3]"
                   position="center center"
@@ -1225,7 +1225,7 @@ export default function Home() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/perfect1.png"
+                src="/images/elysium-ai/dark/perfect1.webp"
                 alt="Elizium AI — Visual Gallery"
                 className="aspect-[4/3]"
                 position="center center"
@@ -1274,7 +1274,7 @@ export default function Home() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden mt-1">
                 <FadeImage
-                  src="/images/elysium-ai/dark/11about.png"
+                  src="/images/elysium-ai/dark/11about.webp"
                   alt="About Elizium AI"
                   className="aspect-[4/3]"
                   position="center center"
@@ -1312,7 +1312,7 @@ export default function Home() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/11about.png"
+                src="/images/elysium-ai/dark/11about.webp"
                 alt="About Elizium AI"
                 className="aspect-[4/3]"
                 position="center center"
@@ -1379,7 +1379,7 @@ export default function Home() {
             >
               <div className="relative aspect-[3/4] w-full max-w-[520px]">
                 <Image
-                  src="/images/elysium-ai/dark/tech-final.png"
+                  src="/images/elysium-ai/dark/tech-final.webp"
                   alt="Elizium AI — Technology System"
                   fill
                   className="object-contain"
@@ -1437,7 +1437,7 @@ export default function Home() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden mt-1">
                 <FadeImage
-                  src="/images/elysium-ai/dark/global-map-pure-black.png"
+                  src="/images/elysium-ai/dark/global-map-pure-black-q95.webp"
                   alt="Elizium AI — Global Expansion Map"
                   className="aspect-[4/3]"
                   position="center center"
@@ -1487,7 +1487,7 @@ export default function Home() {
               className="hidden lg:block lg:col-span-8"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/global-map-pure-black.png"
+                src="/images/elysium-ai/dark/global-map-pure-black-q95.webp"
                 alt="Elizium AI — Global Expansion Map"
                 className="aspect-[16/9]"
                 position="center center"
@@ -1536,8 +1536,8 @@ export default function Home() {
             className="grid grid-cols-2 gap-3 lg:gap-4 mt-8 lg:mt-12 max-w-[760px]"
           >
             {[
-              { name: "Maksim Volkov",        role: "Strategic Technology Direction", img: "/images/elysium-ai/dark/maksim-new.png" },
-              { name: "Elizaveta Zhuravleva", role: "Founder & Platform Director",   img: "/images/elysium-ai/dark/portrait-elizaveta-zhuravleva.png" },
+              { name: "Maksim Volkov",        role: "Strategic Technology Direction", img: "/images/elysium-ai/dark/maksim-new.webp" },
+              { name: "Elizaveta Zhuravleva", role: "Founder & Platform Director",   img: "/images/elysium-ai/dark/portrait-elizaveta-zhuravleva.webp" },
             ].map(({ name, role, img }) => (
               <motion.div
                 key={name}
@@ -1743,7 +1743,7 @@ export default function Home() {
               className="hidden lg:block lg:col-span-5"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/contactmap.png"
+                src="/images/elysium-ai/dark/contactmap-q95.webp"
                 alt="Elizium AI — London, United Kingdom"
                 className="aspect-[4/5]"
                 position="center center"

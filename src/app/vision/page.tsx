@@ -81,7 +81,7 @@ export default function VisionPage() {
         {/* Full-bleed background image — fades to black at edges via overlays */}
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/s2.png"
+            src="/images/elysium-ai/dark/s2.webp"
             alt=""
             fill
             priority
@@ -267,7 +267,7 @@ export default function VisionPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/11about.png"
+                  src="/images/elysium-ai/dark/11about.webp"
                   alt="Elizium AI — Market Landscape"
                   className="aspect-[4/3]"
                   position="center 40%"
@@ -296,7 +296,7 @@ export default function VisionPage() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/11about.png"
+                src="/images/elysium-ai/dark/11about.webp"
                 alt="Elizium AI — Market Landscape"
                 className="aspect-[4/3]"
                 position="center 40%"
