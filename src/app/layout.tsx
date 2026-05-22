@@ -22,14 +22,15 @@ const cinzel = Cinzel({
 
 export const metadata: Metadata = {
   title: {
-    default: "Elizium AI — The Future of Live Entertainment",
-    template: "%s | Elizium AI",
+    default: "ELIZIUM — AI-Human Emotional Interaction Platform",
+    template: "%s | ELIZIUM",
   },
   description:
-    "Elizium AI is a UK-based creative-tech company developing AI-powered immersive entertainment experiences where human emotion, real-time visual systems, robotics and artificial intelligence meet.",
+    "ELIZIUM is an AI-human emotional interaction platform exploring collective response, immersive environments, emotional signal systems and future-facing experience intelligence.",
   openGraph: {
-    title: "Elizium AI",
-    description: "The Future of Live Entertainment Is Becoming Intelligent.",
+    title: "ELIZIUM — AI-Human Emotional Interaction Platform",
+    description:
+      "A platform for AI-human emotional interaction, immersive systems and collective response intelligence.",
     type: "website",
     locale: "en_GB",
   },

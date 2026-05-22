@@ -7,10 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 // 5 items — each maps to a unique href so only one can be active at a time
 const NAV_LINKS = [
   { label: "Platform",     href: "/platform" },
-  { label: "Experience",   href: "/future-human" },
-  { label: "Partnerships", href: "/private-access" },
-  { label: "Media",        href: "/vision" },
-  { label: "Contact",      href: "/contact" },
+  { label: "Method",       href: "/method" },
+  { label: "Future Human", href: "/future-human" },
+  { label: "For Brands",   href: "/for-brands" },
+  { label: "Company",      href: "/company" },
 ];
 
 export default function Navbar() {
@@ -53,7 +53,7 @@ export default function Navbar() {
               href="/"
               className="text-[10px] tracking-[0.35em] uppercase font-semibold text-[#E2E8EE] hover:text-[#C8CDD2] transition-colors duration-200 flex-shrink-0"
             >
-              Elizium
+              ELIZIUM
             </Link>
 
             {/* Desktop nav — compact multi-item */}
@@ -124,7 +124,7 @@ export default function Navbar() {
               href="/"
               className="text-[9px] tracking-[0.35em] uppercase font-semibold text-[#E2E8EE] mb-6"
             >
-              Elizium AI
+              ELIZIUM
             </Link>
             {NAV_LINKS.map(({ label, href }, i) => (
               <motion.div

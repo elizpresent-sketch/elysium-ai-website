@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
 import ContactForm from "@/components/ui/ContactForm";
@@ -108,12 +107,6 @@ export default function ContactPage() {
                 >
                   Send Message
                 </a>
-                <Link
-                  href="/private-access"
-                  className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 border border-[#1C2530]/55 text-[#969CA2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
-                >
-                  Private Access
-                </Link>
               </motion.div>
             </motion.div>
 

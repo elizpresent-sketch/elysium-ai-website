@@ -1,5 +1,5 @@
-# ELIZIUM AI — Handover Document
-_Last updated: May 2026_
+# ELIZIUM AI Website — Handover
+_Last updated: 2026-05-23 — Make + Google Sheets integration confirmed_
 
 ---
 
@@ -7,15 +7,557 @@ _Last updated: May 2026_
 
 **Name:** ELIZIUM AI
 **Local folder:** `/Users/elizavetazhuravleva/Desktop/elysium-ai-website`
-**Shell path (bash tools):** `/sessions/upbeat-wonderful-volta/mnt/elysium-ai-website/`
+**Branch:** `platform-company-restructure`
 
 ### Hard Constraints — Never Override
+- Do NOT git push on `platform-company-restructure`.
 - Do NOT deploy.
+- Do NOT redesign the homepage — it is visually final.
+- Do NOT change navbar, footer, or any page layout unless the task explicitly requires it.
 - Personal portfolio at `/Users/elizavetazhuravleva/Downloads/UNI/MP/ELIZAVETA_WEBSITE/04_final_site` — completely separate project, do not touch.
 - All copy/written text — must remain word-for-word.
 - All routes/hrefs — must remain unchanged.
+- Read all target files before editing. Smallest possible changes only.
 
 ---
+
+---
+
+## ══════════════════════════════════════════════
+## API FOUNDATION PASS — 2026-05-22
+## ══════════════════════════════════════════════
+
+### 1a. Dev Server
+
+```
+npm run dev       →  http://localhost:3000
+npm run build     →  production build (use locally)
+npx tsc --noEmit  →  TypeScript check — currently 0 errors
+```
+
+### 1b. Current Routes & Build Status
+
+```
+Route                   Type      Notes
+────────────────────────────────────────────────────────────────
+/                       Static    Homepage — DO NOT REDESIGN
+/platform               Static
+/method                 Static
+/future-human           Static
+/for-brands             Static
+/company                Static
+/contact                Static    Uses ContactForm component
+/privacy                Static
+/private-access         Static    HIDDEN — no inbound links
+/vision                 Static    HIDDEN — no inbound links
+/api/inquiry            Dynamic   NEW — POST handler, no external calls yet
+```
+
+Build result: `npm run build` → ✓ Compiled successfully, types clean.
+
+### 1c. Homepage Section Order (do not reorder)
+```
+§01 Hero
+§02 Signal of the Day
+§03 Emotional Choice
+§04 Emotional Spaces
+§05 ELIZIUM Method
+§06 Live Emotional Data
+§07 Featured Experience
+§08 Partner Access
+§09 Private Access  ← contains the inquiry form
+```
+
+---
+
+### 2. Files Changed in the Last Pass (API Foundation)
+
+| File | Change |
+|------|--------|
+| `src/app/api/inquiry/route.ts` | **Created.** POST handler for all inquiry submissions. |
+| `src/app/page.tsx` | `handleInquirySubmit` made `async`; `source_page` changed to `"homepage_private_access"`; `console.log` replaced with `fetch("/api/inquiry")`; `submitError` state added. |
+| `src/components/ui/ContactForm.tsx` | Fake `setTimeout` replaced with real `fetch("/api/inquiry")`; `source_page: "contact_page"` added; `error` state added. |
+
+No other files were touched. Navbar, footer, layout, and all other pages are unchanged.
+
+---
+
+### 3. Exact Current Form Behaviour
+
+#### Homepage §09 — Private Access (`src/app/page.tsx`)
+
+Fields: Full Name (`pa-name`), Company (`pa-company`), Email (`pa-email`), Inquiry Type chips (optional), Message (`pa-message`).
+
+On submit → `POST /api/inquiry`:
+```json
+{
+  "full_name": "...",
+  "company": "...",
+  "email": "...",
+  "inquiry_type": "Partnership" | null,
+  "message": "...",
+  "source_page": "homepage_private_access"
+}
+```
+- **Success** (`ok: true`): form hides, shows "Your inquiry has been received." + "Submit another inquiry" reset button.
+- **Failure** (network error or non-2xx): small inline message above the submit button — "Something went wrong. Please try again." Form stays visible.
+
+#### `/contact` — ContactForm (`src/components/ui/ContactForm.tsx`)
+
+Fields: Name (`name`, required), Email (`email`, required), Organisation (`organisation`, optional), Interest dropdown (`interest`, required), Message (`message`, required).
+
+On submit → `POST /api/inquiry`:
+```json
+{
+  "name": "...",
+  "email": "...",
+  "organisation": "...",
+  "interest": "Investor",
+  "message": "...",
+  "source_page": "contact_page"
+}
+```
+- **Success**: component replaces with "RECEIVED — Thank you. Your inquiry has been received for review."
+- **Failure**: red-tinted error line above submit button. Button re-enables.
+
+---
+
+### 4. API Route — `/api/inquiry`
+
+**File:** `src/app/api/inquiry/route.ts`  
+**Method:** POST only.
+
+**Validation flow:**
+1. Parse JSON → `400 { ok: false, error: "Invalid JSON" }` if not valid JSON.
+2. Check `email` — must be string containing `@` → `400 { error: "Valid email required" }`.
+3. Check `name` OR `full_name` — must be non-empty string → `400 { error: "Name required" }`. (Accepts either key to support both forms.)
+4. Check `source_page` — must be exactly `"homepage_private_access"` or `"contact_page"` → `400 { error: "Invalid source" }`.
+5. Pass: `console.log("[inquiry]", JSON.stringify(payload, null, 2))` server-side → `200 { ok: true }`.
+6. Unexpected throw → `500 { ok: false, error: "Internal server error" }`.
+
+**No external services called. No env vars read.**
+
+---
+
+### 5. Validation Rules & Current Limitations
+
+**Validated:** email contains `@`, name/full_name non-empty, source_page is known value.
+
+**Not validated (intentional for now):** email format beyond `@`, name length, message presence, company/organisation, inquiry type, duplicates, rate limiting.
+
+**Known gap:** homepage form inputs (`pa-name`, `pa-email`) are missing the `required` HTML attribute — browser-level validation does not block empty submits on that form. The API server-side validation still catches empties.
+
+---
+
+### 6. Terminal Test Evidence
+
+```bash
+# VALID — homepage
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"full_name":"Test User","company":"ACME","email":"test@example.com","inquiry_type":"Partnership","message":"Test","source_page":"homepage_private_access"}'
+# → {"ok":true}
+
+# VALID — contact page
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"test@example.com","organisation":"ACME","interest":"Investor","message":"Hello","source_page":"contact_page"}'
+# → {"ok":true}
+
+# 400 — missing email
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"full_name":"Test User","source_page":"homepage_private_access"}'
+# → {"ok":false,"error":"Valid email required"}
+
+# 400 — missing name
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","source_page":"contact_page"}'
+# → {"ok":false,"error":"Name required"}
+
+# 400 — invalid source_page
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"full_name":"Test","email":"test@example.com","source_page":"unknown"}'
+# → {"ok":false,"error":"Invalid source"}
+
+# 400 — malformed JSON
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d 'not-json'
+# → {"ok":false,"error":"Invalid JSON"}
+```
+
+---
+
+### 7. What Is NOT Connected
+
+| Service | Status |
+|---------|--------|
+| Make (Integromat) webhook | Not connected |
+| Airtable | Not connected |
+| Tally | Not connected |
+| GA4 / Google Analytics | Not connected |
+| Microsoft Clarity | Not connected |
+| Email sending (Resend, SendGrid, etc.) | Not connected |
+| OpenAI API | Not connected |
+| Environment variables | None — no `.env.local` file exists |
+| Any external HTTP call from the API | None |
+
+---
+
+### 8. Next Recommended Task — Vercel Deployment
+
+_Make webhook + Google Sheets integration is confirmed working locally. See GOOGLE SHEETS INTEGRATION PASS section below for full current state._
+
+Remaining step: add `MAKE_WEBHOOK_URL` to Vercel Environment Variables and redeploy so the live site also writes to Google Sheets.
+
+---
+
+### 9. Opening Prompt for Next Claude Code Chat
+
+_See the GOOGLE SHEETS INTEGRATION PASS section below — §7 contains the current verbatim opening prompt._
+
+---
+
+## ══════════════════════════════════════════════
+## MAKE WEBHOOK SUPPORT PASS — 2026-05-22
+## ══════════════════════════════════════════════
+
+### 1. File Changed
+
+| File | Change |
+|------|--------|
+| `src/app/api/inquiry/route.ts` | Optional `MAKE_WEBHOOK_URL` env var support added. All other files unchanged. |
+
+No UI files, no page files, no navbar, no footer, no `.env.local`, no `.env.example` were touched in this pass.
+
+---
+
+### 2. How the API Now Behaves
+
+#### Local mode — `MAKE_WEBHOOK_URL` not set (current state)
+
+1. Parse + validate payload (email, name/full_name, source_page) — unchanged.
+2. `console.log("[inquiry]", ...)` — unchanged.
+3. Return `200 { ok: true, mode: "local" }`.
+
+Both the homepage §09 form and the `/contact` form were confirmed working in local mode:
+- Terminal showed `POST /api/inquiry 200` and printed the full inquiry payload.
+- Success states display correctly in browser.
+
+#### Webhook mode — `MAKE_WEBHOOK_URL` is set
+
+1. Parse + validate payload — same.
+2. `console.log("[inquiry]", ...)` — same.
+3. `POST` validated payload JSON to `MAKE_WEBHOOK_URL`.
+4. If Make returns non-2xx: log server-side → return `502 { ok: false, error: "Upstream error" }` → client shows "Something went wrong."
+5. If Make fetch throws (network/DNS): log server-side → same 502.
+6. If Make succeeds: return `200 { ok: true, mode: "webhook" }`.
+
+The webhook URL is server-side only. It is never sent to the client or exposed in any response field.
+
+---
+
+### 3. TypeScript & Build
+
+- `npx tsc --noEmit` → **0 errors**
+- `npm run build` → **✓ Compiled successfully**, 14 static pages, `/api/inquiry` Dynamic
+
+---
+
+### 4. What Is NOT Connected
+
+| Service | Status |
+|---------|--------|
+| Make (Integromat) webhook | **URL not yet added** — code is ready, env var is not set |
+| Airtable | Not connected |
+| Tally | Not connected |
+| GA4 / Google Analytics | Not connected |
+| Microsoft Clarity | Not connected |
+| Email sending | Not connected |
+| OpenAI API | Not connected |
+| Environment variables | `.env.local` does not exist yet |
+
+---
+
+### 5. Exact Test Payloads (curl)
+
+Run these once `MAKE_WEBHOOK_URL` is in `.env.local` and `npm run dev` has been restarted:
+
+```bash
+# Homepage §09 — should return { ok: true, mode: "webhook" }
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"full_name":"Test User","company":"ACME","email":"test@example.com","inquiry_type":"Partnership","message":"Test message","source_page":"homepage_private_access"}'
+
+# /contact form — should return { ok: true, mode: "webhook" }
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"test@example.com","organisation":"ACME","interest":"Investor","message":"Hello from contact","source_page":"contact_page"}'
+
+# Without MAKE_WEBHOOK_URL set — returns { ok: true, mode: "local" }
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"full_name":"Local Test","email":"local@example.com","source_page":"homepage_private_access","message":"Local only"}'
+```
+
+---
+
+### 6. Next Recommended Task — Add Make URL & Test
+
+Steps for next session:
+
+1. In Make.com, create a new scenario with a Webhook trigger module. Copy the webhook URL.
+2. Create `.env.local` in the project root (never commit this file):
+   ```
+   MAKE_WEBHOOK_URL=https://hook.eu2.make.com/YOUR_SCENARIO_ID_HERE
+   ```
+3. Restart `npm run dev` so Next.js picks up the new env var.
+4. Run the curl commands from §5 above and verify Make receives the payload.
+5. In Make, add downstream modules: Airtable row creation, email notification, or both.
+
+---
+
+### 7. Opening Prompt for Next Claude Code Chat (Make Webhook Testing)
+
+Paste this verbatim:
+
+---
+
+> You are continuing work on the ELIZIUM AI website.
+>
+> Branch: `platform-company-restructure`
+> Dev server: `http://localhost:3000`
+> Do not git push.
+>
+> Read HANDOVER.md in the project root first and follow it exactly. Before editing any file, read it first.
+>
+> CONTEXT:
+> The homepage is visually final. Do NOT redesign it. Do NOT change spacing, images, typography, layout, animation, navbar, footer, or any page design unless explicitly required.
+>
+> The previous pass added optional Make webhook support to the API:
+> - `src/app/api/inquiry/route.ts` — reads `process.env.MAKE_WEBHOOK_URL`; if set, POSTs the validated payload to Make; if not set, logs locally and returns `{ ok: true, mode: "local" }`.
+> - No UI changes. No `.env.local` exists yet.
+> - TypeScript: 0 errors. Build: ✓.
+>
+> TASK — Connect the real Make webhook and confirm it works end-to-end.
+>
+> Do NOT change any form UI, page design, navbar, or footer.
+> Do NOT expose the webhook URL in client-side code or any NEXT_PUBLIC_ var.
+>
+> Please do exactly this:
+>
+> 1. Read:
+>    - `src/app/api/inquiry/route.ts`
+>    - `.env.local` (may not exist yet — expected)
+>    - `.gitignore`
+>
+> 2. Confirm `.env.local` is gitignored (line `.env*.local` should already be present — do not duplicate it).
+>
+> 3. Create `.env.local` with the Make webhook URL I will provide:
+>    ```
+>    MAKE_WEBHOOK_URL=PASTE_URL_HERE
+>    ```
+>
+> 4. Optionally create `.env.example` (safe to commit) with an empty placeholder:
+>    ```
+>    # Make webhook — paste your scenario webhook URL here
+>    MAKE_WEBHOOK_URL=
+>    ```
+>
+> 5. Restart the dev server (`npm run dev`) — necessary for Next.js to pick up the new env var.
+>
+> 6. Run the following curl commands and confirm `{ ok: true, mode: "webhook" }`:
+>    ```bash
+>    # Homepage §09
+>    curl -s -X POST http://localhost:3000/api/inquiry \
+>      -H "Content-Type: application/json" \
+>      -d '{"full_name":"Test User","company":"ACME","email":"test@example.com","inquiry_type":"Partnership","message":"Test message","source_page":"homepage_private_access"}'
+>
+>    # /contact form
+>    curl -s -X POST http://localhost:3000/api/inquiry \
+>      -H "Content-Type: application/json" \
+>      -d '{"name":"Test User","email":"test@example.com","organisation":"ACME","interest":"Investor","message":"Hello from contact","source_page":"contact_page"}'
+>    ```
+>
+> 7. Report:
+>    - Whether Make received the payloads (check Make scenario execution history)
+>    - Terminal output from the dev server
+>    - curl response bodies
+>    - Any errors
+>
+> Hard constraints:
+> - Do not redesign homepage or any page.
+> - Do not change navbar/footer.
+> - Do not expose `/private-access` or `/vision`.
+> - Do not add NEXT_PUBLIC_ env vars.
+> - Do not commit `.env.local`.
+> - Do not git push.
+> - Read all target files before editing.
+> - Only touch `.env.local`, `.env.example` (optional), and no other files unless a bug is found.
+
+---
+
+## ══════════════════════════════════════════════
+## GOOGLE SHEETS INTEGRATION PASS — 2026-05-23
+## ══════════════════════════════════════════════
+
+### 1. Integration Status
+
+| Component | Status |
+|-----------|--------|
+| Make scenario "Integration Webhooks" | **Active** — set to "Immediately as data arrives" |
+| Make: Webhooks → Google Sheets Add a Row | **Active** — 2 operations per submission |
+| Google Sheets "ELIZIUM Inquiry Log" | **Receiving rows** — confirmed |
+| `.env.local` with `MAKE_WEBHOOK_URL` | **Present** locally (never committed) |
+| Homepage §09 Private Access form | **Confirmed end-to-end** — row written to Sheets |
+| `/contact` ContactForm | **Not yet tested** — end-to-end row insertion pending |
+| Vercel environment variable | **Not yet added** — production still in local mode |
+
+**Setup issue resolved:** Make had unsaved recovered changes after a prior session. The Google Sheets module was inactive until the recovered changes were explicitly recovered and saved in the Make editor. After saving, the scenario ran correctly. If Make stops writing to Sheets in future, check for unsaved/recovered changes in the scenario editor before debugging code.
+
+---
+
+### 2. Integration Architecture
+
+```
+Browser form submit
+  → POST /api/inquiry  (Next.js server-side route)
+      validates payload
+      console.log server-side
+      POST to MAKE_WEBHOOK_URL  (server-side only — never exposed to client)
+        → Make "Integration Webhooks" scenario
+            → Google Sheets "ELIZIUM Inquiry Log" — Add a Row
+  → { ok: true, mode: "webhook" } returned to browser
+  → Form shows success state
+```
+
+The webhook URL lives in `.env.local` only. Not in source code, not in any committed file, not in any `NEXT_PUBLIC_` variable.
+
+---
+
+### 3. What Is Connected vs Not
+
+| Service | Status |
+|---------|--------|
+| Make webhook | **Connected locally** via `.env.local` |
+| Google Sheets "ELIZIUM Inquiry Log" | **Receiving data** |
+| Vercel env var `MAKE_WEBHOOK_URL` | **Not yet added** |
+| Airtable | Not connected |
+| GA4 / Google Analytics | Not connected |
+| Microsoft Clarity | Not connected |
+| Email sending | Not connected |
+| OpenAI API | Not connected |
+
+---
+
+### 4. Pending Tests
+
+1. **`/contact` ContactForm end-to-end** — submit the form at `/contact` in browser with `npm run dev` running, confirm a row appears in Google Sheets. No code change needed.
+
+2. **Vercel production test** — after adding `MAKE_WEBHOOK_URL` to Vercel and redeploying, submit the live homepage §09 form and confirm a row appears in Google Sheets.
+
+---
+
+### 5. Next Deployment Step — Vercel
+
+1. Go to Vercel → Project → Settings → Environment Variables.
+2. Add: `MAKE_WEBHOOK_URL` = (value from `.env.local`) — set for **Production** (and optionally Preview).
+3. Trigger a redeploy from the Vercel dashboard (no code changes required).
+4. After deploy, open the live site homepage §09 form, submit a test inquiry.
+5. Confirm the row appears in Google Sheets "ELIZIUM Inquiry Log".
+6. Confirm the browser shows the success state ("Your inquiry has been received.").
+
+Do NOT commit `.env.local`. Do NOT add a `NEXT_PUBLIC_` prefix. The Vercel env var is added via the dashboard only.
+
+---
+
+### 6. Exact Test Payloads (curl — local, with MAKE_WEBHOOK_URL set)
+
+```bash
+# /contact form — not yet end-to-end tested, should return { ok: true, mode: "webhook" }
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Contact Test","email":"contact@example.com","organisation":"Test Org","interest":"Investor","message":"Contact form end-to-end test","source_page":"contact_page"}'
+
+# Homepage §09 — already confirmed, for regression testing
+curl -s -X POST http://localhost:3000/api/inquiry \
+  -H "Content-Type: application/json" \
+  -d '{"full_name":"Homepage Test","company":"ACME","email":"home@example.com","inquiry_type":"Partnership","message":"Homepage end-to-end test","source_page":"homepage_private_access"}'
+```
+
+---
+
+### 7. Opening Prompt for Next Claude Code Chat (Contact Form Test + Vercel Deploy)
+
+Paste this verbatim:
+
+---
+
+> You are continuing work on the ELIZIUM AI website.
+>
+> Branch: `platform-company-restructure`
+> Dev server: `http://localhost:3000`
+> Do not git push.
+>
+> Read HANDOVER.md in the project root first and follow it exactly. Before editing any file, read it first.
+>
+> CONTEXT:
+> The homepage is visually final. Do NOT redesign it. Do NOT change spacing, images, typography, layout, animation, navbar, footer, or any page design unless explicitly required.
+>
+> Integration status as of 2026-05-23:
+> - `src/app/api/inquiry/route.ts` — reads `MAKE_WEBHOOK_URL`; if set, POSTs validated payload to Make; returns `{ ok: true, mode: "webhook" }`.
+> - Make scenario "Integration Webhooks" is live: Webhooks → Google Sheets "ELIZIUM Inquiry Log" Add a Row.
+> - Homepage §09 form confirmed end-to-end locally — rows writing to Sheets.
+> - `/contact` form: end-to-end test still pending.
+> - `MAKE_WEBHOOK_URL` is in `.env.local` locally but NOT yet in Vercel.
+> - TypeScript: 0 errors. Build: ✓.
+>
+> TASK — Two things, in order:
+>
+> 1. Confirm `/contact` form works end-to-end locally.
+> 2. Guide the Vercel environment variable setup and production test.
+>
+> Do NOT change any form UI, page design, navbar, footer, or API code unless a bug is found.
+> Do NOT expose the webhook URL in client-side code or any `NEXT_PUBLIC_` var.
+> Do NOT git push.
+>
+> Please do exactly this:
+>
+> 1. Run this curl command and confirm `{ ok: true, mode: "webhook" }`:
+>    ```bash
+>    curl -s -X POST http://localhost:3000/api/inquiry \
+>      -H "Content-Type: application/json" \
+>      -d '{"name":"Contact Test","email":"contact@example.com","organisation":"Test Org","interest":"Investor","message":"Contact form end-to-end test","source_page":"contact_page"}'
+>    ```
+>
+> 2. Report whether Make shows a successful execution and whether a row appeared in Google Sheets.
+>
+> 3. If the curl test passed, provide step-by-step Vercel instructions (do not execute them — the user will do this manually):
+>    - Vercel → Project → Settings → Environment Variables
+>    - Add `MAKE_WEBHOOK_URL` = (value from `.env.local`) — Production only, no `NEXT_PUBLIC_` prefix
+>    - Trigger a redeploy from the Vercel dashboard (no code change needed)
+>    - After redeploy: submit the live homepage §09 form, confirm a row appears in Google Sheets
+>
+> 4. Update HANDOVER.md with confirmed results after each test passes.
+>
+> Hard constraints:
+> - Do not redesign homepage or any page.
+> - Do not change navbar/footer.
+> - Do not expose `/private-access` or `/vision`.
+> - Do not add `NEXT_PUBLIC_` env vars.
+> - Do not commit `.env.local`.
+> - Do not git push.
+> - Read all target files before editing.
+> - Only make code changes if a bug is found during testing.
+
+---
+
+## ══════════════════════════════════════════════
+## ORIGINAL HANDOVER (earlier sessions)
+## ══════════════════════════════════════════════
 
 ## 2. Tech Stack & Commands
 

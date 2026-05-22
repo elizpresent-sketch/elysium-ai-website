@@ -34,6 +34,7 @@ export default function ContactForm() {
   const [form, setForm] = useState<FormState>(INITIAL);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -44,11 +45,19 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Ready to connect to Tally, HubSpot, or any CRM endpoint.
-    // Replace the timeout below with your fetch/POST call.
-    await new Promise((r) => setTimeout(r, 800));
+    setError(false);
+    try {
+      const res = await fetch("/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, source_page: "contact_page" }),
+      });
+      if (!res.ok) { setError(true); setLoading(false); return; }
+      setSubmitted(true);
+    } catch (_err) {
+      setError(true);
+    }
     setLoading(false);
-    setSubmitted(true);
   };
 
   const labelClass = "block text-[10px] tracking-superwide uppercase font-medium text-graphite-light mb-2";
@@ -167,7 +176,12 @@ export default function ContactForm() {
       </motion.p>
 
       {/* Submit */}
-      <motion.div variants={fadeUp}>
+      <motion.div variants={fadeUp} className="flex flex-col gap-3">
+        {error && (
+          <p className="text-[11px] text-red-400/80 leading-relaxed">
+            Something went wrong. Please try again.
+          </p>
+        )}
         <button
           type="submit"
           disabled={loading}
