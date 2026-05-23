@@ -508,9 +508,10 @@ export default function Home() {
                 The audience<br />chooses.<br />The system<br />responds.
               </motion.h2>
               <Rule />
-              <motion.p variants={fadeUp} className="text-[13px] text-[#AAB0B6] leading-relaxed">
-                ELIZIUM reads collective emotional choice in real time. Each decision
-                alters the narrative, environment and outcome.
+              <motion.p variants={fadeUp} className="text-[13px] text-[#AAB0B6] leading-relaxed lg:max-w-[280px]">
+                ELIZIUM reads collective emotional choice in real time.{" "}
+                <br className="hidden lg:block" />
+                Each decision alters the narrative, environment and outcome.
               </motion.p>
               <motion.div variants={fadeUp} className="flex flex-col gap-0">
                 {[
