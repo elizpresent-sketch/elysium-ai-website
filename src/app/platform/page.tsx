@@ -332,6 +332,61 @@ export default function PlatformPage() {
         </div>
       </section>
 
+      {/* ── SIGNAL OUTPUT ── */}
+      <section style={{ background: "#080808" }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            variants={stagger}
+            className="flex flex-col gap-4 mb-8 lg:mb-10"
+          >
+            <SectionLabel text="Signal Output" animate={false} />
+            <motion.p variants={fadeUp} className="text-[13.5px] text-[#7B8188] leading-relaxed max-w-[600px]">
+              Every deployment produces a structured emotional archive: audience signals,
+              collective response patterns and partner-ready insight reports.
+            </motion.p>
+          </motion.div>
+          <div
+            className="grid grid-cols-1 md:grid-cols-3 gap-px"
+            style={{ background: "rgba(28,37,48,0.6)" }}
+          >
+            {[
+              {
+                n: "01",
+                title: "Emotional Archives",
+                body: "Timestamped signal records from every live session — a structured record of collective emotional state across the full experience.",
+              },
+              {
+                n: "02",
+                title: "Collective Response Patterns",
+                body: "Aggregate analysis of audience response: emotional peaks, inflection points and pattern maps across individual and group behaviour.",
+              },
+              {
+                n: "03",
+                title: "Partner Insight Reports",
+                body: "Post-event intelligence reports structured for brand partners, venue operators and creative institutions.",
+              },
+            ].map(({ n, title, body }) => (
+              <motion.div
+                key={n}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                variants={fadeUp}
+                className="flex flex-col gap-3 p-5 lg:p-6"
+                style={{ background: BG }}
+              >
+                <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium">{n}</span>
+                <span className="text-[12px] tracking-[0.08em] uppercase text-[#C8CDD2] font-medium">{title}</span>
+                <p className="text-[13px] text-[#7B8188] leading-relaxed">{body}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── ROBOTICS ── */}
       <section className="bg-porcelain py-10 lg:py-20 overflow-hidden">
         <div className={W}>
@@ -355,13 +410,13 @@ export default function PlatformPage() {
               {/* Mobile-only image */}
               <motion.div variants={scaleIn} className="lg:hidden">
                 <FadeImage
-                  src="/images/elysium-ai/dark/creatingworlds.webp"
+                  src="/images/elysium-ai/dark/06-creative-production-stage.webp"
                   alt="AI Presence on Stage — Elizium AI"
                   className="aspect-[4/3]"
                   position="center center"
                   fadeRight={0} fadeTop={0} fadeBottom={0} fadeLeft={0}
                   sizes="100vw"
-                  objectFit="contain"
+                  objectFit="cover"
                 />
               </motion.div>
 
@@ -382,13 +437,13 @@ export default function PlatformPage() {
               className="hidden lg:block"
             >
               <FadeImage
-                src="/images/elysium-ai/dark/creatingworlds.webp"
+                src="/images/elysium-ai/dark/06-creative-production-stage.webp"
                 alt="AI Presence on Stage — Elizium AI"
                 className="aspect-[4/3]"
                 position="center center"
                 fadeRight={0} fadeTop={0} fadeBottom={0} fadeLeft={0}
                 sizes="66vw"
-                objectFit="contain"
+                objectFit="cover"
               />
             </motion.div>
           </div>

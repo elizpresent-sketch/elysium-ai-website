@@ -1,10 +1,38 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, stagger, viewport } from "@/lib/motion";
 
 const BG = "#050505";
 const W = "max-w-[1440px] mx-auto px-6 lg:px-12";
+
+// ─── FadeImage ───────────────────────────────────────────────────────────────
+interface FadeImageProps {
+  src: string; alt: string; className?: string; position?: string;
+  fadeLeft?: number; fadeRight?: number; fadeTop?: number; fadeBottom?: number;
+  sizes?: string;
+}
+function FadeImage({
+  src, alt, className = "", position = "center center",
+  fadeLeft = 0, fadeRight = 0, fadeTop = 10, fadeBottom = 10, sizes = "100vw",
+}: FadeImageProps) {
+  const layers: string[] = [];
+  if (fadeTop > 0)    layers.push(`linear-gradient(to bottom, ${BG} 0%, transparent ${fadeTop}%)`);
+  if (fadeBottom > 0) layers.push(`linear-gradient(to top,    ${BG} 0%, transparent ${fadeBottom}%)`);
+  if (fadeLeft > 0)   layers.push(`linear-gradient(to right,  ${BG} 0%, transparent ${fadeLeft}%)`);
+  if (fadeRight > 0)  layers.push(`linear-gradient(to left,   ${BG} 0%, transparent ${fadeRight}%)`);
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      <Image src={src} alt={alt} fill className="object-cover"
+        style={{ objectPosition: position }} sizes={sizes} />
+      {layers.length > 0 && (
+        <div aria-hidden className="absolute inset-0 pointer-events-none z-10"
+          style={{ background: layers.join(", ") }} />
+      )}
+    </div>
+  );
+}
 
 const STAGES = [
   {
@@ -81,6 +109,17 @@ export default function MethodPage() {
         </div>
       </section>
 
+      {/* ── METHOD IMAGE ── */}
+      <div style={{ background: BG }} className="overflow-hidden border-t border-[#1C2530]/50">
+        <FadeImage
+          src="/images/elysium-ai/dark/generated/elizium-method-symbols-set-clean-optimised.webp"
+          alt="ELIZIUM Method — Signal and Pattern System"
+          className="w-full aspect-[21/7]"
+          fadeLeft={12} fadeRight={12} fadeTop={22} fadeBottom={22}
+          sizes="100vw"
+        />
+      </div>
+
       {/* ── FIVE STAGES ── */}
       <section style={{ background: "#080808" }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
         <div className={W}>
@@ -111,6 +150,62 @@ export default function MethodPage() {
               </motion.div>
             ))}
             <div className="border-t border-[#1C2530]/50" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── PLATFORM OUTPUT ── */}
+      <section style={{ background: BG }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <div className="flex items-center justify-between border-t border-[#1C2530]/60 pt-3.5 mb-6">
+            <span className="text-[9px] tracking-[0.36em] uppercase font-medium text-[#969CA2]">
+              Platform Output
+            </span>
+          </div>
+          <div className="flex flex-col gap-4 mb-8 max-w-[680px]">
+            <p className="text-[14px] text-[#AAB0B6] leading-relaxed">
+              Every ELIZIUM deployment produces structured data that extends beyond the experience
+              itself — creating lasting value for partners, venues and cultural institutions.
+            </p>
+            <p className="text-[12px] text-[#6B7278] tracking-[0.04em] leading-relaxed">
+              Future Human — premiering in London — is the first flagship deployment of the ELIZIUM Method.
+            </p>
+          </div>
+          <div
+            className="grid grid-cols-1 md:grid-cols-3 gap-px"
+            style={{ background: "rgba(28,37,48,0.6)" }}
+          >
+            {[
+              {
+                n: "01",
+                title: "Emotional Archives",
+                body: "Full timestamped records of collective audience emotional signal — structured and accessible post-event.",
+              },
+              {
+                n: "02",
+                title: "Partner Signal Reports",
+                body: "Post-event intelligence for brand partners and venue operators — emotional engagement maps, peak moments and pattern analysis.",
+              },
+              {
+                n: "03",
+                title: "Collective Pattern Data",
+                body: "Aggregate emotional behaviour across sessions — the foundation for future experience design, cultural insight and AI development.",
+              },
+            ].map(({ n, title, body }) => (
+              <motion.div
+                key={n}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                variants={fadeUp}
+                className="flex flex-col gap-3 p-5 lg:p-6"
+                style={{ background: "#080808" }}
+              >
+                <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium">{n}</span>
+                <span className="text-[12px] tracking-[0.08em] uppercase text-[#C8CDD2] font-medium">{title}</span>
+                <p className="text-[13px] text-[#7B8188] leading-relaxed">{body}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

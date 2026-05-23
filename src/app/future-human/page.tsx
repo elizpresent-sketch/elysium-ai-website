@@ -409,8 +409,8 @@ export default function FutureHumanPage() {
               </motion.h2>
               <Rule />
               <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
-                Through opt-in interaction and live response systems, audience input
-                becomes part of the visual and narrative architecture of the performance.
+                The experience does not end when the lights come up. Each audience member
+                leaves with a record of their signal — and a path back into the ELIZIUM world.
               </motion.p>
 
               {/* Mobile-only image */}
@@ -428,13 +428,13 @@ export default function FutureHumanPage() {
 
               <motion.div variants={fadeUp} className="flex flex-col gap-0 mt-1">
                 {[
-                  { a: "QR Entry",              b: "Private Invitations" },
-                  { a: "Personal Pathway",       b: "Audience Feedback" },
-                  { a: "Post-Event Interaction", b: "Access to Future Experiences" },
+                  { a: "Before",  b: "Selected access — private invitation only" },
+                  { a: "During",  b: "Live emotional signal — recorded in real time" },
+                  { a: "After",   b: "Personal signal record — ongoing ELIZIUM world access" },
                 ].map(({ a, b }) => (
-                  <div key={a} className="grid grid-cols-2 gap-x-3 py-2.5 border-t border-[#1C2530]/45">
-                    <span className="text-[8.5px] tracking-[0.2em] uppercase text-[#969CA2] font-medium">{a}</span>
-                    <span className="text-[8.5px] tracking-[0.2em] uppercase text-[#7B8188] font-medium">{b}</span>
+                  <div key={a} className="grid grid-cols-[4rem_1fr] gap-x-4 py-2.5 border-t border-[#1C2530]/45">
+                    <span className="text-[8.5px] tracking-[0.2em] uppercase text-[#6B7278]/60 font-medium">{a}</span>
+                    <span className="text-[8.5px] tracking-[0.2em] uppercase text-[#969CA2] font-medium leading-snug">{b}</span>
                   </div>
                 ))}
                 <div className="border-t border-[#1C2530]/45" />
@@ -535,8 +535,21 @@ export default function FutureHumanPage() {
       {/* ══════════════════════════════════════════════════════════════
           06 — PRIVATE ACCESS CTA
       ══════════════════════════════════════════════════════════════ */}
-      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
-        <div className={W}>
+      <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 relative overflow-hidden">
+        <div className="absolute inset-0 lg:left-[40%] pointer-events-none">
+          <Image
+            src="/images/elysium-ai/dark/generated/featured-experience-future-human-storm-banner.webp"
+            alt="" fill aria-hidden
+            className="object-cover"
+            style={{ objectPosition: "center center" }}
+            sizes="100vw"
+          />
+        </div>
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: `linear-gradient(to right, ${BG} 0%, ${BG} 20%, rgba(5,5,5,0.88) 42%, rgba(5,5,5,0.28) 72%, transparent 100%)` }}
+        />
+        <div className={`relative z-10 ${W}`}>
           <SectionHead label="Private Access" num="06" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">

@@ -79,14 +79,13 @@ export default function ContactPage() {
                 className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
                 style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
               >
-                Let&apos;s Build
-                <br />the Future
-                <br />Together
+                Private
+                <br />Inquiry
               </motion.h1>
               <Rule />
               <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-md">
-                Get in touch for partnerships, collaborations, media inquiries or
-                private opportunities.
+                For brands, venues, investors, press and strategic partners.
+                All enquiries are reviewed by the core team.
               </motion.p>
 
               {/* Contact rows */}
@@ -101,12 +100,13 @@ export default function ContactPage() {
               </motion.div>
 
               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 pt-1">
-                <a
-                  href="mailto:admin@elizium.co.uk"
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("inquiry-form")?.scrollIntoView({ behavior: "smooth" })}
                   className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 bg-[#E2E8EE] text-[#050505] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#C8CDD2] transition-colors duration-300"
                 >
-                  Send Message
-                </a>
+                  Submit Inquiry
+                </button>
               </motion.div>
             </motion.div>
 
@@ -145,7 +145,7 @@ export default function ContactPage() {
       </section>
 
       {/* ── INQUIRY FORM ── */}
-      <section style={{ background: "#080808" }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+      <section id="inquiry-form" style={{ background: "#080808" }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
         <div className={W}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
 
