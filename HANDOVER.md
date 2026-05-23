@@ -1197,3 +1197,37 @@ s3.png  s4.png
 ## Quick-Start Prompt for Next Chat
 
 We are working on the ELIZIUM AI website at `/Users/elizavetazhuravleva/Desktop/elysium-ai-website`. Read `HANDOVER.md` in the project root first — it has all context. Do not deploy. Do not touch the personal portfolio at `/Users/elizavetazhuravleva/Downloads/UNI/MP/ELIZAVETA_WEBSITE/04_final_site`. After any edit run `npx tsc --noEmit` and confirm 0 errors.
+
+
+
+## Make / Google Sheets Mapping — Confirmed Fixed
+
+Date confirmed: 24 May 2026
+
+Status: LOCKED / WORKING
+
+The Google Sheets mapping issue has been fixed.
+
+Previous issue:
+- Google Sheets was receiving plain field names as row values:
+  reaction | signal_id | source_page | timestamp | user_agent
+
+Cause:
+- The Google Sheets Add a Row module in Make had plain typed text in columns A–E instead of dynamic webhook variable chips.
+
+Fix:
+- Webhook data structure was re-determined by sending a fresh Signal reaction sample from the Vercel Preview.
+- Google Sheets module was remapped using webhook variables:
+  - A: 1. reaction
+  - B: 1. signal_id
+  - C: 1. source_page
+  - D: 1. timestamp
+  - E: 1. user_agent
+
+Confirmed result:
+- New Google Sheet rows now show real values such as selected reaction, active signal_id, source_page, timestamp, and browser user_agent.
+
+Important:
+- Do not type field names manually into Make Google Sheets columns.
+- Use dynamic webhook variable chips from module 1 only.
+- Old bad rows in Google Sheets are test junk and should be deleted, keeping row 1 as headers.
