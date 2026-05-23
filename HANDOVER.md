@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-23 — Signal Reaction MVP confirmed on Vercel Preview_
+_Last updated: 2026-05-24 — Signal v2 config + Live Emotional Data fallback architecture_
 
 ---
 
@@ -60,6 +60,80 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## SIGNAL V2 CONFIG + LIVE EMOTIONAL DATA — 2026-05-24
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+Signal v2 architecture introduced. TypeScript: 0 errors. Build: ✓.
+
+---
+
+### 2. New File
+
+**`src/lib/signals.ts`** — single source of truth for the active Signal of the Day and live emotional data fallback.
+
+Exports:
+- `Reaction` — union type: `"anxiety" | "interest" | "trust" | "discomfort" | "emptiness"`
+- `REACTION_LABELS` — map of lowercase reaction → display label (e.g. `anxiety → "Anxiety"`)
+- `Signal` — interface for a full signal config object
+- `ACTIVE_SIGNAL` — the current active signal (update here when rotating signals)
+- `EmotionalMetric` — interface for a live data metric tile
+- `LIVE_EMOTIONAL_FALLBACK` — static fallback array for §06 Live Emotional Data tiles
+
+---
+
+### 3. Homepage Changes (page.tsx)
+
+Six hardcoded values replaced with config references. **Visual output is identical.**
+
+| Was | Now |
+|-----|-----|
+| `"signal-2026-05-23"` in handler | `ACTIVE_SIGNAL.signal_id` |
+| `"homepage_signal_of_the_day"` in handler | `ACTIVE_SIGNAL.source_page` |
+| `"67%"` in §02 display | `ACTIVE_SIGNAL.statistic` |
+| `"experienced anxiety..."` in §02 display | `ACTIVE_SIGNAL.statement` |
+| `["Anxiety", "Interest", ...]` array in §02 | `ACTIVE_SIGNAL.reactions` + `REACTION_LABELS` |
+| 4 hardcoded `<DataTile>` in §06 | `LIVE_EMOTIONAL_FALLBACK.map(...)` |
+
+---
+
+### 4. Make / Google Sheets — No Change Required
+
+The signal-reaction API route is **not touched**. Payload sent to Make is identical:
+`{ reaction, signal_id, source_page, timestamp, user_agent }`
+
+Google Sheets column mapping (A–E) remains exactly as before. No Make scenario change needed.
+
+---
+
+### 5. How to Rotate to a New Signal
+
+Edit only `src/lib/signals.ts` — update `ACTIVE_SIGNAL`:
+- `signal_id` — new unique ID (e.g. `"signal-2026-06-01"`)
+- `date`, `theme`, `statistic`, `statement`
+- `reactions` array if the set changes (also update `ALLOWED_REACTIONS` in `src/app/api/signal-reaction/route.ts` if adding new values)
+
+No other file needs to change.
+
+---
+
+### 6. Future Aggregation — Google Sheets Summary Sheet (not yet built)
+
+When real reaction counts are available, create a **new summary sheet** with these columns:
+
+```
+signal_id | total_responses
+| anxiety_count  | interest_count  | trust_count  | discomfort_count  | emptiness_count
+| anxiety_percent| interest_percent| trust_percent| discomfort_percent| emptiness_percent
+| last_updated
+```
+
+Then replace `LIVE_EMOTIONAL_FALLBACK` with a fetch from this summary sheet (via a new `/api/signal-summary` route or a revalidated server component). Do not implement until explicitly instructed.
+
+---
 
 ## ══════════════════════════════════════════════
 ## HOMEPAGE VISUAL MVP LOCK — 2026-05-23

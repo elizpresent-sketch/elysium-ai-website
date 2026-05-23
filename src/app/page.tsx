@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
+import { ACTIVE_SIGNAL, REACTION_LABELS, LIVE_EMOTIONAL_FALLBACK } from "@/lib/signals";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS
@@ -252,8 +253,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reaction: label.toLowerCase(),
-          signal_id: "signal-2026-05-23",
-          source_page: "homepage_signal_of_the_day",
+          signal_id: ACTIVE_SIGNAL.signal_id,
+          source_page: ACTIVE_SIGNAL.source_page,
         }),
       });
     } catch {
@@ -437,10 +438,10 @@ export default function Home() {
                   className="font-display font-normal text-[#E2E8EE] leading-none"
                   style={{ fontSize: "clamp(3.8rem, 10vw, 6rem)" }}
                 >
-                  67%
+                  {ACTIVE_SIGNAL.statistic}
                 </span>
                 <p className="text-[14px] text-[#C8CDD2] leading-relaxed max-w-[340px]">
-                  experienced anxiety when AI began to speak too humanly.
+                  {ACTIVE_SIGNAL.statement}
                 </p>
                 <Rule />
               </motion.div>
@@ -463,9 +464,11 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 pt-1">
-                {["Anxiety", "Interest", "Trust", "Discomfort", "Emptiness"].map((label) => (
+                {ACTIVE_SIGNAL.reactions.map((reaction) => {
+                  const label = REACTION_LABELS[reaction];
+                  return (
                   <button
-                    key={label}
+                    key={reaction}
                     type="button"
                     onClick={() => handleReactionClick(label)}
                     className="flex items-center gap-3 px-3.5 py-3 lg:py-3.5 w-full text-left cursor-pointer transition-all duration-200"
@@ -490,7 +493,8 @@ export default function Home() {
                       {label}
                     </span>
                   </button>
-                ))}
+                  );
+                })}
               </div>
               <div className="pt-2">
                 <span
@@ -737,12 +741,11 @@ export default function Home() {
 
           <div className="flex flex-col gap-px" style={{ background: GRID_BG }}>
 
-            {/* 4-tile metric strip */}
+            {/* 4-tile metric strip — values from LIVE_EMOTIONAL_FALLBACK in src/lib/signals.ts */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-px">
-              <DataTile value={78}  label="Emotional Response Index" />
-              <DataTile value={91} suffix="%" label="Signal Continuity" />
-              <DataTile value={64} suffix="%" label="Post-Event Interaction Rate" />
-              <DataTile value={5}   label="Brand Insight Layers" />
+              {LIVE_EMOTIONAL_FALLBACK.map((m) => (
+                <DataTile key={m.label} value={m.value} suffix={m.suffix} label={m.label} />
+              ))}
             </div>
 
           </div>
