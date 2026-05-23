@@ -382,7 +382,7 @@ export default function Home() {
           02 · SIGNAL OF THE DAY
           Eye image full-section bg; metric left, readout rows right
       ═══════════════════════════════════════════════════════════════════ */}
-      <section id="signal-of-the-day" style={{ background: BG }} className="py-6 lg:py-10 border-t border-[#1C2530]/50 relative overflow-hidden">
+      <section id="signal-of-the-day" style={{ background: BG, scrollMarginTop: "80px" }} className="py-12 lg:py-24 border-t border-[#1C2530]/50 relative overflow-hidden">
         {/* Eye image — full section background */}
         <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.72 }}>
           <Image
@@ -424,7 +424,7 @@ export default function Home() {
             {/* Right — "What did you feel?" + static reactions */}
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-              className="flex flex-col"
+              className="flex flex-col w-full lg:max-w-[340px] lg:ml-auto"
             >
               <div className="flex items-center justify-between py-3 border-t border-[#1C2530]/50">
                 <span className="text-[7.5px] tracking-[0.38em] uppercase text-[#6B7278] font-medium">Signal State</span>
@@ -443,24 +443,24 @@ export default function Home() {
                     key={label}
                     type="button"
                     onClick={() => setSelectedReaction(selectedReaction === label ? null : label)}
-                    className="flex items-center gap-3 px-3.5 py-2.5 w-full text-left cursor-pointer transition-all duration-200 hover:bg-[#E2E8EE]/5"
+                    className="flex items-center gap-3 px-3.5 py-3 lg:py-3.5 w-full text-left cursor-pointer transition-all duration-200"
                     style={{
                       border: selectedReaction === label
-                        ? "1px solid rgba(200,205,210,0.70)"
-                        : "1px solid rgba(200,205,210,0.22)",
-                      background: selectedReaction === label ? "rgba(200,205,210,0.10)" : "rgba(5,5,5,0.55)",
+                        ? "1px solid rgba(200,205,210,0.88)"
+                        : "1px solid rgba(200,205,210,0.40)",
+                      background: selectedReaction === label ? "rgba(200,205,210,0.16)" : "rgba(5,5,5,0.80)",
                     }}
                   >
                     <span
                       className="w-2 h-2 rounded-full flex-shrink-0 transition-all duration-200"
                       style={{
-                        border: selectedReaction === label ? "none" : "1px solid rgba(200,205,210,0.35)",
-                        background: selectedReaction === label ? "rgba(200,205,210,0.80)" : "transparent",
+                        border: selectedReaction === label ? "none" : "1px solid rgba(200,205,210,0.60)",
+                        background: selectedReaction === label ? "rgba(200,205,210,0.95)" : "transparent",
                       }}
                     />
                     <span
                       className="text-[8.5px] tracking-[0.22em] uppercase font-medium transition-colors duration-200"
-                      style={{ color: selectedReaction === label ? "#E2E8EE" : "#C8CDD2" }}
+                      style={{ color: selectedReaction === label ? "#E2E8EE" : "#D8DDE2" }}
                     >
                       {label}
                     </span>
@@ -472,8 +472,9 @@ export default function Home() {
                   className="inline-flex items-center gap-3 px-4 py-2.5 text-[8px] tracking-[0.28em] uppercase text-[#C8CDD2] font-medium transition-all duration-300"
                   style={{
                     border: selectedReaction
-                      ? "1px solid rgba(200,205,210,0.45)"
-                      : "1px solid rgba(200,205,210,0.25)",
+                      ? "1px solid rgba(200,205,210,0.62)"
+                      : "1px solid rgba(200,205,210,0.40)",
+                    background: "rgba(5,5,5,0.80)",
                   }}
                 >
                   {selectedReaction ? "Response Registered" : "What did you feel?"}
