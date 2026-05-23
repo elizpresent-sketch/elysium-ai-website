@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-23 — Secondary pages upgrade complete_
+_Last updated: 2026-05-23 — Signal Reaction MVP confirmed on Vercel Preview_
 
 ---
 
@@ -19,6 +19,47 @@ _Last updated: 2026-05-23 — Secondary pages upgrade complete_
 - Read all target files before editing. Smallest possible changes only.
 
 ---
+
+## Signal Reaction System — MVP Confirmed on Vercel Preview
+
+Date confirmed: 23 May 2026
+
+Status: LOCKED / WORKING
+
+The Signal Reaction System has now been confirmed in both local development and Vercel Preview.
+
+Confirmed flow:
+- User clicks a Signal of the Day reaction button on the deployed Vercel Preview.
+- Frontend visually registers the selected reaction.
+- API route `/api/signal-reaction` receives the reaction payload.
+- Server adds timestamp and user_agent.
+- API route forwards payload to Make webhook via `MAKE_SIGNAL_REACTION_WEBHOOK_URL`.
+- Make scenario receives the webhook.
+- Google Sheets receives a new row in `ELIZIUM Signal Reactions`.
+
+Confirmed Google Sheet columns:
+- reaction
+- signal_id
+- source_page
+- timestamp
+- user_agent
+
+Important note:
+The UI status may move from “Recording…” to “Response Registered” very quickly because the backend response is fast. This is not a bug. A small intentional delay can be added later for cinematic pacing, but should not be changed during the current lock-in unless specifically requested.
+
+Confirmed deployment context:
+- Branch: `platform-company-restructure`
+- Vercel environment: Preview
+- Signal reaction integration included after commit `97d0ac3 Add Signal reaction webhook integration`
+- A later empty commit was used only to trigger Vercel Preview deployment.
+
+Do not change:
+- `src/app/api/signal-reaction/route.ts`
+- Signal reaction payload structure
+- Make webhook connection
+- Google Sheets column structure
+unless a new scoped task is explicitly opened.
+
 
 ## ══════════════════════════════════════════════
 ## HOMEPAGE VISUAL MVP LOCK — 2026-05-23
