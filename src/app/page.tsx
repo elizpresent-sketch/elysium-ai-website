@@ -235,6 +235,7 @@ export default function Home() {
   const [inquiryType, setInquiryType] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
+  const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
 
   async function handleInquirySubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -267,176 +268,121 @@ export default function Home() {
           01 · HERO — one cinematic moment, everything after is system
       ═══════════════════════════════════════════════════════════════════ */}
 
-      {/* Mobile hero */}
-      <section className="lg:hidden relative flex flex-col overflow-hidden pt-14" style={{ background: BG }}>
-        <div className="relative w-full" style={{ height: "62vh", minHeight: 360 }}>
+      {/* Mobile hero — centred question over full-bleed warm image */}
+      <section className="lg:hidden relative flex flex-col overflow-hidden" style={{ background: BG, minHeight: "90vh" }}>
+        {/* Full-bleed background image */}
+        <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/willhero.webp"
-            alt="ELIZIUM — AI-Human Emotional Interaction Platform"
+            src="/images/elysium-ai/dark/generated/elizium-hero-question-mobile-warm-4x5.webp"
+            alt="ELIZIUM — What remains of the human when the system learns to understand them"
             fill
             priority
             className="object-cover"
-            style={{ objectPosition: "50% center" }}
+            style={{ objectPosition: "center 35%" }}
             sizes="100vw"
           />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "rgba(5,5,5,0.48)" }} />
           <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ background: `linear-gradient(to bottom, transparent 0%, transparent 55%, rgba(5,5,5,0.65) 80%, ${BG} 100%)` }}
+            className="absolute inset-x-0 top-0 h-24 pointer-events-none"
+            style={{ background: `linear-gradient(to bottom, ${BG} 0%, rgba(5,5,5,0.55) 55%, transparent 100%)` }}
           />
           <div
-            className="absolute inset-x-0 top-0 h-16 pointer-events-none"
-            style={{ background: `linear-gradient(to bottom, ${BG} 0%, rgba(5,5,5,0.5) 50%, transparent 100%)` }}
+            className="absolute inset-x-0 bottom-0 h-32 pointer-events-none"
+            style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.65) 50%, transparent 100%)` }}
           />
         </div>
+        {/* Centred content */}
         <motion.div
           initial="hidden" animate="visible" variants={stagger}
-          className="relative z-10 -mt-14 px-6 pb-10 flex flex-col gap-5"
+          className="relative z-10 flex-1 flex flex-col items-center justify-center text-center pt-14 px-6 pb-12 gap-9"
         >
           <motion.h1
             variants={fadeUp}
-            className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em]"
-            style={{ fontSize: "clamp(1.85rem, 9vw, 2.5rem)" }}
+            className="font-display font-normal text-[#E2E8EE] leading-[1.25] tracking-[0.01em]"
+            style={{ fontSize: "clamp(1.15rem, 5vw, 1.5rem)" }}
           >
-            AI‑Human<br />Emotional<br />Interaction
+            What remains of the human when the system learns to understand them better than they understand themselves?
           </motion.h1>
-          <motion.p variants={fadeUp} className="text-[13px] text-[#B0B8C0] leading-relaxed">
-            A future-facing AI-human emotional interaction platform — built at the
-            intersection of artificial intelligence, collective human emotion and live
-            immersive audience systems.
-          </motion.p>
-          <motion.div variants={fadeUp} className="flex flex-col gap-2.5 pt-1">
+          <motion.div variants={fadeUp} className="flex flex-col gap-2.5 w-full">
             <Link
               href="/platform"
-              className="w-full inline-flex items-center justify-between gap-3 px-5 py-3.5 border border-[#E2E8EE]/70 text-[#E2E8EE] text-[9px] tracking-[0.3em] uppercase font-medium"
+              className="w-full inline-flex items-center justify-between gap-3 px-5 py-3.5 border border-[#E2E8EE]/80 text-[#E2E8EE] text-[9px] tracking-[0.3em] uppercase font-medium transition-all duration-300 hover:border-[#E2E8EE] hover:bg-[#E2E8EE]/10"
+              style={{ background: "rgba(5,5,5,0.55)" }}
             >
               Enter Platform <span className="w-4 h-px bg-current" />
             </Link>
             <Link
-              href="/contact"
-              className="w-full inline-flex items-center justify-between gap-3 px-5 py-3.5 border border-[#1C2530]/70 text-[#969CA2] text-[9px] tracking-[0.3em] uppercase font-medium"
+              href="#signal-of-the-day"
+              className="w-full inline-flex items-center justify-between gap-3 px-5 py-3.5 border border-[#E2E8EE]/45 text-[#C8CDD2] text-[9px] tracking-[0.3em] uppercase font-medium transition-all duration-300 hover:border-[#E2E8EE]/70 hover:text-[#E2E8EE]"
+              style={{ background: "rgba(5,5,5,0.55)" }}
             >
-              Private Inquiry <span className="w-4 h-px bg-current opacity-50" />
+              Signal <span className="w-4 h-px bg-current opacity-60" />
             </Link>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* Desktop hero — compressed, tag chips removed */}
-      <section className="hidden lg:flex relative min-h-[82vh] flex-col overflow-hidden" style={{ background: BG }}>
+      {/* Desktop hero — centred question-led screen */}
+      <section className="hidden lg:flex relative min-h-[90vh] flex-col overflow-hidden" style={{ background: BG }}>
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/generated/elizium-system-aperture-hero-optimised.webp"
+            src="/images/elysium-ai/dark/generated/elizium-hero-question-wide-warm.webp"
             alt=""
             fill
             priority
             className="object-cover"
-            style={{ objectPosition: "center center" }}
+            style={{ objectPosition: "center 42%" }}
             sizes="100vw"
             aria-hidden
           />
+          <div className="absolute inset-0" style={{ background: "rgba(5,5,5,0.38)" }} />
           <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(105deg,
-                ${BG} 0%, ${BG} 28%,
-                rgba(5,5,5,0.96) 44%,
-                rgba(5,5,5,0.70) 60%,
-                rgba(5,5,5,0.24) 78%,
-                transparent 100%)`,
-            }}
+            className="absolute inset-x-0 top-0 h-44"
+            style={{ background: `linear-gradient(to bottom, ${BG} 0%, rgba(5,5,5,0.62) 40%, transparent 100%)` }}
           />
           <div
-            className="absolute inset-x-0 top-0 h-40"
-            style={{ background: `linear-gradient(to bottom, ${BG} 0%, ${BG} 8%, rgba(5,5,5,0.7) 55%, transparent 100%)` }}
-          />
-          <div
-            className="absolute inset-x-0 bottom-0 h-32"
-            style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.8) 55%, transparent 100%)` }}
+            className="absolute inset-x-0 bottom-0 h-36"
+            style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.82) 50%, transparent 100%)` }}
           />
         </div>
 
-        <div className={`relative z-10 flex-1 flex items-center w-full ${W} pt-20 pb-8`}>
-          <div className="w-full max-w-[480px]">
-            <motion.div initial="hidden" animate="visible" variants={stagger} className="flex flex-col gap-5">
-              <motion.div variants={fadeUp} className="flex flex-col gap-2">
-                <span className="text-[8.5px] tracking-[0.38em] uppercase font-medium text-[#7B8188] flex items-center gap-3">
-                  <span className="w-5 h-px bg-[#6B7278]/55" />
-                  An AI-human emotional interaction system.
-                </span>
-                <div className="w-8 h-px bg-[#1C2530]/60" />
-              </motion.div>
+        <div className={`relative z-10 flex-1 flex items-center justify-center w-full ${W} pt-20 pb-8`}>
+          <div className="w-full max-w-[600px] flex flex-col items-center text-center">
+            <motion.div initial="hidden" animate="visible" variants={stagger} className="flex flex-col items-center gap-10">
               <motion.h1
                 variants={fadeUp}
-                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.11em]"
-                style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)" }}
+                className="font-display font-normal text-[#E2E8EE] leading-[1.28] tracking-[0.01em]"
+                style={{ fontSize: "clamp(1.4rem, 2.4vw, 2.2rem)" }}
               >
-                AI‑Human<br />Emotional<br />Interaction
+                What remains of the human when the system learns to understand them better than they understand themselves?
               </motion.h1>
-              <motion.p variants={fadeUp} className="text-[13.5px] text-[#B0B8C0] leading-relaxed max-w-[380px]">
-                A future-facing platform built at the intersection of artificial
-                intelligence, collective human emotion and live immersive audience systems.
-              </motion.p>
-              <motion.div variants={fadeUp} className="flex flex-row gap-3 pt-1">
+              <motion.div variants={fadeUp} className="flex flex-row gap-3">
                 <Link
                   href="/platform"
-                  className="inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#E2E8EE]/70 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300"
+                  className="inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#E2E8EE]/80 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#E2E8EE] hover:bg-[#E2E8EE]/10 transition-all duration-300"
+                  style={{ background: "rgba(5,5,5,0.55)" }}
                 >
                   Enter Platform <span className="w-4 h-px bg-current" />
                 </Link>
                 <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#1C2530]/55 text-[#969CA2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
+                  href="#signal-of-the-day"
+                  className="inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#E2E8EE]/45 text-[#C8CDD2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#E2E8EE]/70 hover:text-[#E2E8EE] transition-all duration-300"
+                  style={{ background: "rgba(5,5,5,0.55)" }}
                 >
-                  Private Inquiry
+                  Signal <span className="w-4 h-px bg-current opacity-60" />
                 </Link>
               </motion.div>
             </motion.div>
           </div>
         </div>
 
-        {/* Status bar */}
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-          className="relative z-10 border-t border-[#1C2530]/50"
-          style={{ background: "rgba(5,5,5,0.92)", backdropFilter: "blur(14px)" }}
-        >
-          <div className={`${W} py-3`}>
-            <div className="flex items-center gap-8">
-              <span className="text-[8px] tracking-[0.38em] uppercase font-semibold text-[#7B8188] whitespace-nowrap flex-shrink-0">
-                Platform Status
-              </span>
-              <span className="block w-px h-3 bg-[#1C2530] flex-shrink-0" />
-              <div className="grid grid-cols-4 gap-x-7 gap-y-2 flex-1">
-                {[
-                  { label: "Platform Online",                   d: 0,   dur: 3.2 },
-                  { label: "Private Access Active",             d: 1.1, dur: 4.0 },
-                  { label: "Emotional Processing Active",       d: 2.0, dur: 3.6 },
-                  { label: "Global Expansion Framework Active", d: 0.5, dur: 4.4 },
-                ].map(({ label, d, dur }) => (
-                  <div key={label} className="flex items-center gap-2">
-                    <motion.span
-                      className="w-1 h-1 rounded-full bg-[#C8CDD2] flex-shrink-0"
-                      animate={{
-                        opacity: [0.25, 0.9, 0.25],
-                        boxShadow: ["0 0 0px rgba(180,200,220,0)", "0 0 4px 1px rgba(180,200,220,0.28)", "0 0 0px rgba(180,200,220,0)"],
-                      }}
-                      transition={{ duration: dur, delay: d, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                    <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188] leading-tight">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
           02 · SIGNAL OF THE DAY
           Eye image full-section bg; metric left, readout rows right
       ═══════════════════════════════════════════════════════════════════ */}
-      <section style={{ background: BG }} className="py-6 lg:py-10 border-t border-[#1C2530]/50 relative overflow-hidden">
+      <section id="signal-of-the-day" style={{ background: BG }} className="py-6 lg:py-10 border-t border-[#1C2530]/50 relative overflow-hidden">
         {/* Eye image — full section background */}
         <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.72 }}>
           <Image
@@ -456,30 +402,26 @@ export default function Home() {
           <SectionHead label="Signal of the Day" num="02" />
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 lg:gap-10 items-start">
 
-            {/* Left — big ERI metric + summary rows */}
+            {/* Left — emotional signal statement */}
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-              className="flex flex-col gap-5"
+              className="flex flex-col gap-4"
             >
-              <motion.div variants={fadeUp}>
-                <BigMetric value={78} label="Emotional Response Index" />
-              </motion.div>
-              <motion.div variants={fadeUp} className="flex flex-col gap-0">
-                {[
-                  { label: "Dominant Signal", value: "Curiosity" },
-                  { label: "Collective Depth", value: "High" },
-                  { label: "Alignment",        value: "Strong Convergence" },
-                ].map(({ label, value }) => (
-                  <div key={label} className="grid grid-cols-2 py-2.5 border-t border-[#1C2530]/50 items-center">
-                    <span className="text-[8.5px] tracking-[0.22em] uppercase text-[#6B7278] font-medium">{label}</span>
-                    <span className="text-[8.5px] tracking-[0.15em] uppercase text-[#C8CDD2] font-medium">{value}</span>
-                  </div>
-                ))}
-                <div className="border-t border-[#1C2530]/50" />
+              <motion.div variants={fadeUp} className="flex flex-col gap-3">
+                <span
+                  className="font-display font-normal text-[#E2E8EE] leading-none"
+                  style={{ fontSize: "clamp(3.8rem, 10vw, 6rem)" }}
+                >
+                  67%
+                </span>
+                <p className="text-[14px] text-[#C8CDD2] leading-relaxed max-w-[340px]">
+                  experienced anxiety when AI began to speak too humanly.
+                </p>
+                <Rule />
               </motion.div>
             </motion.div>
 
-            {/* Right — signal readout rows, no card border, over image bg */}
+            {/* Right — "What did you feel?" + static reactions */}
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
               className="flex flex-col"
@@ -495,21 +437,49 @@ export default function Home() {
                   <span className="text-[7px] tracking-[0.28em] uppercase text-[#969CA2]">Active</span>
                 </div>
               </div>
-              {[
-                { label: "Dominant Emotion",  value: "Curiosity" },
-                { label: "Response Index",    value: "78 / 100" },
-                { label: "Collective Depth",  value: "High" },
-                { label: "Peak Moment",       value: "Scene III — Min 18:42" },
-              ].map(({ label, value }) => (
-                <div
-                  key={label}
-                  className="grid grid-cols-[2fr_3fr] gap-4 py-2 border-t border-[#1C2530]/50 items-center"
+              <div className="flex flex-col gap-1.5 pt-1">
+                {["Anxiety", "Interest", "Trust", "Discomfort", "Emptiness"].map((label) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setSelectedReaction(selectedReaction === label ? null : label)}
+                    className="flex items-center gap-3 px-3.5 py-2.5 w-full text-left cursor-pointer transition-all duration-200 hover:bg-[#E2E8EE]/5"
+                    style={{
+                      border: selectedReaction === label
+                        ? "1px solid rgba(200,205,210,0.70)"
+                        : "1px solid rgba(200,205,210,0.22)",
+                      background: selectedReaction === label ? "rgba(200,205,210,0.10)" : "rgba(5,5,5,0.55)",
+                    }}
+                  >
+                    <span
+                      className="w-2 h-2 rounded-full flex-shrink-0 transition-all duration-200"
+                      style={{
+                        border: selectedReaction === label ? "none" : "1px solid rgba(200,205,210,0.35)",
+                        background: selectedReaction === label ? "rgba(200,205,210,0.80)" : "transparent",
+                      }}
+                    />
+                    <span
+                      className="text-[8.5px] tracking-[0.22em] uppercase font-medium transition-colors duration-200"
+                      style={{ color: selectedReaction === label ? "#E2E8EE" : "#C8CDD2" }}
+                    >
+                      {label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <div className="pt-2">
+                <span
+                  className="inline-flex items-center gap-3 px-4 py-2.5 text-[8px] tracking-[0.28em] uppercase text-[#C8CDD2] font-medium transition-all duration-300"
+                  style={{
+                    border: selectedReaction
+                      ? "1px solid rgba(200,205,210,0.45)"
+                      : "1px solid rgba(200,205,210,0.25)",
+                  }}
                 >
-                  <span className="text-[8.5px] tracking-[0.22em] uppercase text-[#6B7278] font-medium">{label}</span>
-                  <span className="text-[9px] tracking-[0.15em] uppercase text-[#C8CDD2] font-medium">{value}</span>
-                </div>
-              ))}
-              <div className="border-t border-[#1C2530]/50" />
+                  {selectedReaction ? "Response Registered" : "What did you feel?"}
+                  <span className="w-3 h-px bg-current opacity-50" />
+                </span>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -608,6 +578,7 @@ export default function Home() {
       <section style={{ background: BG }} className="py-6 lg:py-10 border-t border-[#1C2530]/50">
         <div className={W}>
           <SectionHead label="Emotional Spaces" num="04" />
+          <div className="relative">
           <motion.div
             initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
             className="flex gap-px overflow-x-auto"
@@ -624,7 +595,7 @@ export default function Home() {
               <motion.div
                 key={label}
                 variants={fadeUp}
-                className="relative flex-shrink-0 lg:flex-1 overflow-hidden w-[140px]"
+                className="relative flex-shrink-0 lg:flex-1 overflow-hidden w-[100px]"
                 style={{ aspectRatio: "3/4", background: BG }}
               >
                 <Image
@@ -633,7 +604,7 @@ export default function Home() {
                   fill
                   className="object-cover"
                   style={{ objectPosition: "center center" }}
-                  sizes="(max-width: 1024px) 140px, 17vw"
+                  sizes="(max-width: 1024px) 100px, 17vw"
                 />
                 <div
                   className="absolute inset-x-0 bottom-0 h-1/4 pointer-events-none"
@@ -645,6 +616,8 @@ export default function Home() {
               </motion.div>
             ))}
           </motion.div>
+          <div className="lg:hidden absolute inset-y-0 right-0 w-10 pointer-events-none z-10" style={{ background: `linear-gradient(to left, ${BG} 0%, transparent 100%)` }} />
+          </div>
         </div>
       </section>
 
@@ -678,7 +651,7 @@ export default function Home() {
             {/* 5-col gap-px method cards — per-card symbol backgrounds */}
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-              className="grid grid-cols-1 sm:grid-cols-5 gap-px"
+              className="flex overflow-x-auto sm:grid sm:grid-cols-5 gap-px"
               style={{ background: GRID_BG }}
             >
               {[
@@ -691,7 +664,7 @@ export default function Home() {
                 <motion.div
                   key={item.n}
                   variants={fadeUp}
-                  className="relative overflow-hidden p-4 lg:p-5"
+                  className="relative overflow-hidden p-4 lg:p-5 flex-shrink-0 w-[130px] sm:w-auto"
                   style={{ background: BG }}
                 >
                   {/* Per-card symbol image — centered, visible but subtle */}
@@ -781,6 +754,12 @@ export default function Home() {
                 background: `linear-gradient(to right, ${BG} 0%, ${BG} 18%, rgba(5,5,5,0.70) 36%, rgba(5,5,5,0.08) 58%, transparent 100%)`,
               }}
             />
+            <div
+              className="absolute inset-0 pointer-events-none z-10 lg:hidden"
+              style={{
+                background: "linear-gradient(to right, rgba(5,5,5,0.88) 0%, rgba(5,5,5,0.70) 40%, rgba(5,5,5,0.45) 65%, rgba(5,5,5,0.20) 85%, transparent 100%)",
+              }}
+            />
             {/* Text — left, over gradient */}
             <motion.div
               variants={fadeUp}
@@ -817,81 +796,81 @@ export default function Home() {
 
       {/* ═══════════════════════════════════════════════════════════════════
           08 · PARTNER ACCESS
-          Split panel: For Brands left, Hidden Access right
+          For Brands standalone block
       ═══════════════════════════════════════════════════════════════════ */}
       <section style={{ background: BG }} className="py-6 lg:py-10 border-t border-[#1C2530]/50 overflow-hidden">
         <div className={W}>
           <SectionHead label="Partner Access" num="08" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-px" style={{ background: GRID_BG }}>
-
-            {/* Left panel — For Brands */}
-            <motion.div
-              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-              className="flex flex-col justify-between gap-4 py-5 pr-5 lg:py-7 lg:pr-7"
-              style={{ background: BG }}
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+            className="flex flex-col gap-4 max-w-[560px]"
+          >
+            <span className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+              For Brands & Partners
+            </span>
+            <motion.h2
+              variants={fadeUp}
+              className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em]"
+              style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.8rem)" }}
             >
-              <div className="flex flex-col gap-3">
-                <span className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
-                  For Brands & Partners
-                </span>
-                <motion.h2
-                  variants={fadeUp}
-                  className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em]"
-                  style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.8rem)" }}
-                >
-                  A platform built<br />for partnership.
-                </motion.h2>
-                <Rule />
-                <motion.p variants={fadeUp} className="text-[13px] text-[#AAB0B6] leading-relaxed">
-                  ELIZIUM is built from the ground up for brand integration — not as
-                  sponsorship, but as a structural layer of the experience and insight system.
-                </motion.p>
-              </div>
-              <motion.div variants={fadeUp}>
-                <Link
-                  href="/for-brands"
-                  className="inline-flex items-center gap-3 px-5 py-3 border border-[#E2E8EE]/65 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300 w-fit"
-                >
-                  Partnership Overview <span className="w-4 h-px bg-current" />
-                </Link>
-              </motion.div>
+              A platform built<br />for partnership.
+            </motion.h2>
+            <Rule />
+            <motion.p variants={fadeUp} className="text-[13px] text-[#AAB0B6] leading-relaxed max-w-[480px]">
+              ELIZIUM is built from the ground up for brand integration — not as
+              sponsorship, but as a structural layer of the experience and insight system.
+            </motion.p>
+            <motion.div variants={fadeUp}>
+              <Link
+                href="/for-brands"
+                className="inline-flex items-center gap-3 px-5 py-3 border border-[#E2E8EE]/65 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300 w-fit"
+              >
+                Partnership Overview <span className="w-4 h-px bg-current" />
+              </Link>
             </motion.div>
+          </motion.div>
+        </div>
+      </section>
 
-            {/* Right panel — Hidden Access */}
-            <div className="relative overflow-hidden min-h-[300px] flex flex-col">
-              <Image
-                src="/images/elysium-ai/dark/generated/elizium-system-aperture-hero-optimised.webp"
-                alt="" fill aria-hidden
-                className="object-cover"
-                style={{ objectPosition: "center center" }}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    "linear-gradient(to right, rgba(5,5,5,0.58) 0%, rgba(5,5,5,0.32) 50%, rgba(5,5,5,0.10) 100%)",
-                }}
-              />
-              <div className="relative z-10 flex flex-col justify-between gap-6 p-6 lg:p-8 flex-1">
-                <div className="flex flex-col gap-2">
-                  <span className="text-[8px] tracking-[0.38em] uppercase text-[#B0B8C0] font-medium">
-                    Hidden Access
-                  </span>
-                  <Rule w="w-5" />
-                  <p className="text-[13.5px] text-[#E2E8EE] font-light tracking-wide leading-snug">
-                    System access available for 72 hours.
-                  </p>
-                </div>
+      {/* ═══════════════════════════════════════════════════════════════════
+          08b · HIDDEN ACCESS — cinematic stripe
+          Full-width narrow block: threshold image, 72h access CTA
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section style={{ background: BG }} className="border-t border-[#1C2530]/50">
+        <div className={W}>
+          <div className="relative overflow-hidden" style={{ minHeight: "160px" }}>
+            <Image
+              src="/images/elysium-ai/dark/generated/elizium-hidden-access-eye-strip.webp"
+              alt="" fill aria-hidden
+              className="object-cover"
+              style={{ objectPosition: "40% center" }}
+              sizes="(max-width: 1440px) 100vw, 1440px"
+            />
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: "linear-gradient(to right, rgba(5,5,5,0.93) 0%, rgba(5,5,5,0.72) 38%, rgba(5,5,5,0.28) 68%, rgba(5,5,5,0.06) 100%)",
+              }}
+            />
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 py-10 lg:py-12 lg:max-w-[62%]">
+              <div className="flex flex-col gap-2">
+                <span className="text-[8px] tracking-[0.42em] uppercase text-[#B0B8C0] font-medium">Hidden Access</span>
+                <Rule w="w-5" />
+                <p className="text-[15px] text-[#E2E8EE] font-light tracking-wide leading-snug">
+                  System access available for 72 hours.
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="hidden lg:block text-[#6B7278]/35 text-[11px] tracking-[0.3em]">←</span>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-3 px-5 py-3 border border-[#E2E8EE]/55 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300 w-fit"
+                  className="inline-flex items-center gap-3 px-5 py-3 border border-[#E2E8EE]/55 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300 w-fit flex-shrink-0"
                 >
                   Request Access <span className="w-4 h-px bg-current" />
                 </Link>
+                <span className="hidden lg:block text-[#6B7278]/35 text-[11px] tracking-[0.3em]">→</span>
               </div>
             </div>
-
           </div>
         </div>
       </section>
