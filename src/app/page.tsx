@@ -236,6 +236,31 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
+  const [reactionStatus, setReactionStatus] = useState<"idle" | "recording" | "registered">("idle");
+
+  async function handleReactionClick(label: string) {
+    if (selectedReaction === label) {
+      setSelectedReaction(null);
+      setReactionStatus("idle");
+      return;
+    }
+    setSelectedReaction(label);
+    setReactionStatus("recording");
+    try {
+      await fetch("/api/signal-reaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reaction: label.toLowerCase(),
+          signal_id: "signal-2026-05-23",
+          source_page: "homepage_signal_of_the_day",
+        }),
+      });
+    } catch {
+      // silent fallback — keep selection
+    }
+    setReactionStatus("registered");
+  }
 
   async function handleInquirySubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -442,7 +467,7 @@ export default function Home() {
                   <button
                     key={label}
                     type="button"
-                    onClick={() => setSelectedReaction(selectedReaction === label ? null : label)}
+                    onClick={() => handleReactionClick(label)}
                     className="flex items-center gap-3 px-3.5 py-3 lg:py-3.5 w-full text-left cursor-pointer transition-all duration-200"
                     style={{
                       border: selectedReaction === label
@@ -477,7 +502,7 @@ export default function Home() {
                     background: "rgba(5,5,5,0.80)",
                   }}
                 >
-                  {selectedReaction ? "Response Registered" : "What did you feel?"}
+                  {reactionStatus === "recording" ? "Recording…" : reactionStatus === "registered" ? "Response Registered" : "What did you feel?"}
                   <span className="w-3 h-px bg-current opacity-50" />
                 </span>
               </div>
