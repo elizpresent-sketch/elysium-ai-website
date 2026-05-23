@@ -55,7 +55,7 @@ export default function PrivacyPage() {
   return (
     <>
       {/* ── HEADER ── */}
-      <section className="bg-porcelain pt-36 pb-14 lg:pb-18">
+      <section className="bg-porcelain pt-28 lg:pt-32 pb-4 lg:pb-6">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <motion.div
             initial="hidden"
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
       </section>
 
       {/* ── CONTENT ── */}
-      <section className="bg-pearl py-16 lg:py-24">
+      <section className="bg-pearl pt-4 pb-10 lg:pt-6 lg:pb-14">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="max-w-2xl flex flex-col">
             {SECTIONS.map((s, i) => (
