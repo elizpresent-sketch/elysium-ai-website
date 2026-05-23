@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-23 — Homepage visual MVP locked_
+_Last updated: 2026-05-23 — Secondary pages upgrade complete_
 
 ---
 
@@ -136,13 +136,13 @@ Signal reaction buttons are **separate** from inquiry integration and are **not 
 
 **Do not start these now — recorded here for planning only.**
 
-**Phase A — Secondary pages MVP (do first):**
-- `/platform`
-- `/method`
-- `/future-human`
-- `/for-brands`
-- `/contact` polish
-- Footer / legal / contact details
+**Phase A — Secondary pages MVP: ✓ COMPLETE (2026-05-23)**
+- `/platform` — Signal Output section added, Robotics image fixed ✓
+- `/method` — image strip + Platform Output section added ✓
+- `/future-human` — §04 emotional journey language + §06 storm banner CTA ✓
+- `/for-brands` — hero image column + Partnership Formats section ✓
+- `/contact` — Private Inquiry headline + scroll-to-form button ✓
+- Footer — audited, adequate as-is (social links + Terms pending when accounts exist)
 
 **Phase B — Signal Reaction System MVP (after secondary pages):**
 - Frontend reaction → POST to new `/api/reaction` route → storage via Make/Sheets or Airtable
@@ -187,6 +187,123 @@ Paste this verbatim:
 > - TypeScript: 0 errors. Build: ✓.
 >
 > Signal reaction buttons are frontend-only — not connected to backend yet. Do not add backend for reactions unless explicitly asked.
+>
+> Before starting any task, state clearly what you are going to do and which files you will touch. Read all target files before editing. Smallest possible changes only.
+>
+> Hard constraints:
+> - Do not redesign homepage or any page.
+> - Do not change navbar/footer.
+> - Do not expose `/private-access` or `/vision`.
+> - Do not add `NEXT_PUBLIC_` env vars.
+> - Do not commit `.env.local`.
+> - Do not merge `platform-company-restructure` to `main` without explicit instruction.
+> - Do not git push unless explicitly asked.
+> - Do not add Signal reaction backend until explicitly instructed.
+> - Read all target files before editing.
+
+---
+
+## ══════════════════════════════════════════════
+## SECONDARY PAGES UPGRADE — 2026-05-23
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+All five secondary pages upgraded to match locked homepage style and ELIZIUM platform narrative.
+TypeScript: 0 errors. `npm run build`: ✓ Compiled successfully, 14 static pages.
+
+---
+
+### 2. Files Changed
+
+| File | Changes |
+|------|---------|
+| `src/app/platform/page.tsx` | Robotics section: replaced `creatingworlds.webp` → `06-creative-production-stage.webp`, `objectFit` `contain` → `cover`. Added Signal Output 3-card section between System Design and Robotics. |
+| `src/app/method/page.tsx` | Added `FadeImage` component + Image import. Added method image strip (`elizium-method-symbols-set-clean-optimised.webp`) between hero and Five Stages. Added Platform Output 3-card section with Future Human reference. |
+| `src/app/future-human/page.tsx` | §04 Audience Interaction: replaced QR/logistics copy with emotional journey language (Before/During/After grid). §06 CTA: added cinematic `featured-experience-future-human-storm-banner.webp` background (absolute, left 40% on desktop, gradient overlay). |
+| `src/app/for-brands/page.tsx` | Added `FadeImage` component + Image import. Hero restructured to 12-col grid: existing content in `lg:col-span-7`, new `partner-platform-wave-room.webp` in `lg:col-span-5`. Added Partnership Formats row section (3 rows) before CTA. |
+| `src/app/contact/page.tsx` | Headline changed to "Private / Inquiry". Context paragraph updated to brands/venues/investors audience. `<a href="mailto:...">Send Message</a>` → `<button>` scroll-to-form. `id="inquiry-form"` added to form section. |
+
+---
+
+### 3. New Section Inventory
+
+**`/platform` — Signal Output** (between System Design and Robotics):
+- 3-card grid: Emotional Archives / Collective Response Patterns / Partner Insight Reports
+
+**`/method` — Method Image Strip** (between hero and Five Stages):
+- Full-width `aspect-[21/7]` image: `elizium-method-symbols-set-clean-optimised.webp`
+
+**`/method` — Platform Output** (between Five Stages and CTA):
+- Intro text + Future Human deployment reference
+- 3-card grid: Emotional Archives / Partner Signal Reports / Collective Pattern Data
+
+**`/future-human` — §04 Audience Interaction** (replaced):
+- Before: "Selected access — private invitation only"
+- During: "Live emotional signal — recorded in real time"
+- After: "Personal signal record — ongoing ELIZIUM world access"
+
+**`/future-human` — §06 CTA** (background added):
+- `featured-experience-future-human-storm-banner.webp` absolute behind content
+- Gradient: `linear-gradient(to right, #050505 0%, #050505 20%, rgba 42%, transparent 100%)`
+
+**`/for-brands` — Partnership Formats** (before CTA):
+- 3 rows: Sponsorship / Cultural Partnership / Co-Commissioned Experience / Emotional Insight Access
+
+---
+
+### 4. Asset Keys (all confirmed present and loaded)
+
+| Asset | Used in |
+|-------|---------|
+| `generated/elizium-method-symbols-set-clean-optimised.webp` | /method image strip |
+| `generated/partner-platform-wave-room.webp` | /for-brands hero right column |
+| `generated/featured-experience-future-human-storm-banner.webp` | /future-human §06 CTA background |
+| `06-creative-production-stage.webp` | /platform Robotics section (replaces creatingworlds.webp) |
+
+---
+
+### 5. Hard Constraints (carry forward)
+
+- Do NOT touch `src/app/api/inquiry/route.ts`, `src/components/ui/ContactForm.tsx`, `.env.local`, Vercel env vars, Make/Sheets integration.
+- Do NOT connect Signal reactions to backend yet.
+- Do NOT merge `platform-company-restructure` to `main` without explicit instruction.
+- Do NOT git push unless explicitly asked.
+
+---
+
+### 6. Opening Prompt for Next Claude Code Chat
+
+Paste this verbatim:
+
+---
+
+> You are continuing work on the ELIZIUM AI website.
+>
+> Branch: `platform-company-restructure` (pushed, deployed to Vercel preview — do NOT merge to `main` without explicit instruction).
+> Dev server: `http://localhost:3000`
+> Do not git push unless explicitly asked.
+>
+> Read HANDOVER.md in the project root first and follow it exactly. Before editing any file, read it first.
+>
+> CONTEXT:
+> The homepage visual MVP is **locked** as of 2026-05-23. Do NOT redesign it.
+>
+> All secondary pages have been upgraded as of 2026-05-23:
+> - `/platform`: Signal Output 3-card section added; Robotics image fixed.
+> - `/method`: Method image strip added; Platform Output 3-card section added; Future Human deployment reference added.
+> - `/future-human`: §04 Audience Interaction rewritten with emotional journey language (Before/During/After); §06 CTA has cinematic storm banner background.
+> - `/for-brands`: Hero restructured with wave room image right column; Partnership Formats row section added.
+> - `/contact`: "Private Inquiry" headline; scroll-to-form button; `id="inquiry-form"` on form section.
+>
+> Integration is fully live:
+> - `/api/inquiry` validates payloads and POSTs to `MAKE_WEBHOOK_URL` (server-side only).
+> - Make scenario "Integration Webhooks": Webhooks → Google Sheets "ELIZIUM Inquiry Log" Add a Row.
+> - Both source_page values confirmed in Sheets, locally and on live Vercel preview.
+> - `MAKE_WEBHOOK_URL` is set in Vercel for Production and Preview.
+> - TypeScript: 0 errors. Build: ✓.
+>
+> Signal reaction buttons are frontend-only — not connected to backend yet.
 >
 > Before starting any task, state clearly what you are going to do and which files you will touch. Read all target files before editing. Smallest possible changes only.
 >
