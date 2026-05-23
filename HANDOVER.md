@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-23 — Live integration confirmed end-to-end_
+_Last updated: 2026-05-23 — Homepage visual MVP locked_
 
 ---
 
@@ -19,6 +19,187 @@ _Last updated: 2026-05-23 — Live integration confirmed end-to-end_
 - Read all target files before editing. Smallest possible changes only.
 
 ---
+
+## ══════════════════════════════════════════════
+## HOMEPAGE VISUAL MVP LOCK — 2026-05-23
+## ══════════════════════════════════════════════
+
+### 1. HOMEPAGE LOCK STATUS
+
+**The homepage visual MVP is locked on branch `platform-company-restructure`.**
+
+- Future homepage changes should be tiny only: image swaps, text tweaks, spacing refinements.
+- Do not restart homepage redesign unless explicitly instructed.
+- Next major work should move to secondary pages and/or Signal Reaction System MVP.
+
+---
+
+### 2. FINAL HOMEPAGE STRUCTURE
+
+Locked homepage flow (do not reorder):
+
+```
+§01 Hero
+§02 Signal of the Day
+§03 Emotional Choice
+§04 Emotional Spaces
+§05 ELIZIUM Method
+§06 Live Emotional Data
+§07 Featured Experience
+§08 Partner Access / For Brands
+§08b Hidden Access stripe
+§09 Private Access / inquiry form
+Footer
+```
+
+---
+
+### 3. HERO FINAL STATE
+
+- Hero is now **question-led**, not the old left-aligned poster layout.
+- **Desktop asset:** `generated/elizium-hero-question-wide-warm.webp`
+- **Mobile asset:** `generated/elizium-hero-question-mobile-warm-4x5.webp`
+- Hero question is live HTML text, not baked into the image:
+  > "What remains of the human when the system learns to understand them better than they understand themselves?"
+- **Hero buttons:**
+  - `ENTER PLATFORM` → `/platform`
+  - `SIGNAL` → scrolls to Signal of the Day section (`#signal-of-the-day`)
+- Platform status strip removed from hero — it was not part of the reference flow.
+- Hero eyebrow label ("System Signal — 01") removed — it was unnecessary.
+
+---
+
+### 4. SIGNAL OF THE DAY FINAL STATE
+
+- Signal of the Day is visually aligned to the reference block.
+- **Background image:** `generated/elizium-signal-eye-data-optimised.webp`
+- **Scroll target:** `id="signal-of-the-day"` with `scrollMarginTop: "80px"` (clears fixed nav on SIGNAL click)
+- **Section padding:** `py-12 lg:py-24` — taller than other sections to read as a standalone cinematic panel
+- **Content:**
+  - `67%` — large display figure (font-display)
+  - `"experienced anxiety when AI began to speak too humanly."`
+  - Signal State / Active pulsing indicator
+  - Five reaction buttons: **ANXIETY / INTEREST / TRUST / DISCOMFORT / EMPTINESS**
+- **Reaction buttons:** frontend-only. `selectedReaction` state in React. No API, no Make, no Sheets, no analytics.
+- **Reaction button column:** constrained to `max-w-[340px] ml-auto` on desktop so eye/pupil image remains visible. Full-width on mobile.
+- **Full Signal Reaction System MVP** (save reactions to backend) must be built as a **separate explicit pass** — do not add now.
+
+---
+
+### 5. EMOTIONAL CHOICE FINAL STATE
+
+- Visually accepted and locked.
+- Paragraph text capped at `lg:max-w-[280px]` and line-breaks cleanly after the first sentence on desktop (`<br className="hidden lg:block" />`).
+- Do not redesign this section unless explicitly instructed.
+
+---
+
+### 6. HIDDEN ACCESS FINAL STATE
+
+- Visually approved and locked.
+- **Image:** `generated/elizium-hidden-access-eye-strip.webp`
+- Desktop button placement approved: button is left of the eye, not over the pupil.
+- Mobile Hidden Access is acceptable (eye is subtle — intentional).
+- Do not restructure this section.
+
+---
+
+### 7. INTEGRATION STATUS (unchanged — live)
+
+Inquiry integration remains live and untouched:
+
+```
+homepage/contact forms → POST /api/inquiry → Make webhook → Google Sheets
+```
+
+**Do not touch any of these:**
+- `src/app/api/inquiry/route.ts`
+- `src/components/ui/ContactForm.tsx`
+- `.env.local`
+- Vercel env vars (`MAKE_WEBHOOK_URL`)
+- Make scenario "Integration Webhooks"
+- Google Sheets "ELIZIUM Inquiry Log"
+
+Signal reaction buttons are **separate** from inquiry integration and are **not connected yet**.
+
+---
+
+### 8. LOCAL GIT STATE / IGNORE LIST
+
+- `.claude/launch.json` may appear as modified locally — do not commit unless explicitly needed.
+- `public/images/elysium-ai/dark/generated/elizium-hero-question-mobile.webp` may appear untracked and unused — do not commit unless code references it.
+- Main used assets are the warm hero images and hidden-access eye strip, already committed.
+
+---
+
+### 9. NEXT RECOMMENDED WORK
+
+**Do not start these now — recorded here for planning only.**
+
+**Phase A — Secondary pages MVP (do first):**
+- `/platform`
+- `/method`
+- `/future-human`
+- `/for-brands`
+- `/contact` polish
+- Footer / legal / contact details
+
+**Phase B — Signal Reaction System MVP (after secondary pages):**
+- Frontend reaction → POST to new `/api/reaction` route → storage via Make/Sheets or Airtable
+- Simple emotional pattern display (aggregate reactions, no personal data stored client-side)
+
+---
+
+### 10. HARD CONSTRAINTS FOR ALL FUTURE CHATS
+
+- Do not merge `platform-company-restructure` to `main` without explicit instruction.
+- Do not git push unless explicitly asked.
+- Do not touch API / integration / env vars unless the task is specifically about integration.
+- Do not expose `/vision` or `/private-access` in navigation.
+- Do not redesign the homepage from scratch.
+- Do not add Signal reaction backend until the Signal Reaction System MVP pass is explicitly started.
+- Always read HANDOVER.md in full before editing any file.
+
+---
+
+### Opening Prompt for Next Claude Code Chat (Current — Homepage Locked)
+
+Paste this verbatim:
+
+---
+
+> You are continuing work on the ELIZIUM AI website.
+>
+> Branch: `platform-company-restructure` (pushed, deployed to Vercel preview — do NOT merge to `main` without explicit instruction).
+> Dev server: `http://localhost:3000`
+> Do not git push unless explicitly asked.
+>
+> Read HANDOVER.md in the project root first and follow it exactly. Before editing any file, read it first.
+>
+> CONTEXT:
+> The homepage visual MVP is **locked** as of 2026-05-23. Do NOT redesign it. Do NOT change spacing, images, typography, layout, animation, navbar, footer, or any page design unless the task explicitly requires a small targeted fix.
+>
+> Integration is fully live:
+> - `/api/inquiry` validates payloads and POSTs to `MAKE_WEBHOOK_URL` (server-side only).
+> - Make scenario "Integration Webhooks": Webhooks → Google Sheets "ELIZIUM Inquiry Log" Add a Row.
+> - Both `homepage_private_access` and `contact_page` confirmed in Sheets, locally and on live Vercel preview.
+> - `MAKE_WEBHOOK_URL` is set in Vercel for Production and Preview.
+> - TypeScript: 0 errors. Build: ✓.
+>
+> Signal reaction buttons are frontend-only — not connected to backend yet. Do not add backend for reactions unless explicitly asked.
+>
+> Before starting any task, state clearly what you are going to do and which files you will touch. Read all target files before editing. Smallest possible changes only.
+>
+> Hard constraints:
+> - Do not redesign homepage or any page.
+> - Do not change navbar/footer.
+> - Do not expose `/private-access` or `/vision`.
+> - Do not add `NEXT_PUBLIC_` env vars.
+> - Do not commit `.env.local`.
+> - Do not merge `platform-company-restructure` to `main` without explicit instruction.
+> - Do not git push unless explicitly asked.
+> - Do not add Signal reaction backend until explicitly instructed.
+> - Read all target files before editing.
 
 ---
 
