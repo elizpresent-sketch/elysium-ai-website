@@ -228,6 +228,18 @@ const FAQS = [
 void GALLERY;
 void FAQS;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// LIVE SUMMARY — client-side type matching /api/signal-summary response
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface LiveSummaryData {
+  ok:              boolean;
+  mode:            "live" | "fallback";
+  total_responses: number;
+  last_updated:    string | null;
+  metrics:         { reaction: string; label: string; percent: number; count: number }[];
+}
+
 // ═════════════════════════════════════════════════════════════════════════════
 // PAGE
 // ═════════════════════════════════════════════════════════════════════════════
@@ -238,6 +250,18 @@ export default function Home() {
   const [submitError, setSubmitError] = useState(false);
   const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
   const [reactionStatus, setReactionStatus] = useState<"idle" | "recording" | "registered">("idle");
+  const [liveData, setLiveData] = useState<LiveSummaryData | null>(null);
+
+  useEffect(() => {
+    fetch("/api/signal-summary")
+      .then((res) => res.json())
+      .then((data: LiveSummaryData) => {
+        if (data?.ok) setLiveData(data);
+      })
+      .catch(() => {
+        // silent — fallback data already shown
+      });
+  }, []);
 
   async function handleReactionClick(label: string) {
     if (selectedReaction === label) {
@@ -287,6 +311,14 @@ export default function Home() {
       setSubmitError(true);
     }
   }
+
+  // ── §06 Live Emotional Data — derived tile values ─────────────────────────
+  // isLive: true only when API returned real aggregate data (mode:"live", count > 0)
+  // liveTiles: top 4 reactions by percent, sorted descending — null when not live
+  const isLive = liveData?.mode === "live" && (liveData?.total_responses ?? 0) > 0;
+  const liveTiles = isLive && liveData
+    ? [...liveData.metrics].sort((a, b) => b.percent - a.percent).slice(0, 4)
+    : null;
 
   return (
     <>
@@ -733,7 +765,7 @@ export default function Home() {
 
       {/* ═══════════════════════════════════════════════════════════════════
           06 · LIVE EMOTIONAL DATA
-          4 DataTile metrics only
+          4 DataTile metrics — live from /api/signal-summary or static fallback
       ═══════════════════════════════════════════════════════════════════ */}
       <section style={{ background: BG }} className="py-6 lg:py-10 border-t border-[#1C2530]/50">
         <div className={W}>
@@ -741,12 +773,39 @@ export default function Home() {
 
           <div className="flex flex-col gap-px" style={{ background: GRID_BG }}>
 
-            {/* 4-tile metric strip — values from LIVE_EMOTIONAL_FALLBACK in src/lib/signals.ts */}
+            {/* 4-tile metric strip — live reaction data when available, fallback otherwise */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-px">
-              {LIVE_EMOTIONAL_FALLBACK.map((m) => (
-                <DataTile key={m.label} value={m.value} suffix={m.suffix} label={m.label} />
-              ))}
+              {liveTiles
+                ? liveTiles.map((m) => (
+                    <DataTile key={m.reaction} value={Math.round(m.percent)} suffix="%" label={m.label} />
+                  ))
+                : LIVE_EMOTIONAL_FALLBACK.map((m) => (
+                    <DataTile key={m.label} value={m.value} suffix={m.suffix} label={m.label} />
+                  ))
+              }
             </div>
+
+            {/* Signal Active strip — only visible when real aggregate data is loaded */}
+            {isLive && liveData && (
+              <div
+                className="flex items-center justify-between px-4 py-2.5"
+                style={{ borderTop: "1px solid rgba(28,37,48,0.40)", background: BG }}
+              >
+                <div className="flex items-center gap-2">
+                  <motion.span
+                    className="w-1.5 h-1.5 rounded-full bg-[#C8CDD2]"
+                    animate={{ opacity: [0.25, 1, 0.25] }}
+                    transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                  <span className="text-[7.5px] tracking-[0.32em] uppercase text-[#6B7278] font-medium">
+                    Signal Active
+                  </span>
+                </div>
+                <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#6B7278]">
+                  {liveData.total_responses} responses
+                </span>
+              </div>
+            )}
 
           </div>
         </div>
