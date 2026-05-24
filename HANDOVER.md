@@ -1389,3 +1389,30 @@ Important:
 - Do not type field names manually into Make Google Sheets columns.
 - Use dynamic webhook variable chips from module 1 only.
 - Old bad rows in Google Sheets are test junk and should be deleted, keeping row 1 as headers.
+
+
+
+## Live Emotional Data — Homepage Connection Confirmed
+
+Date confirmed: 24 May 2026
+
+Status: LOCKED / WORKING
+
+The homepage Live Emotional Data section is now connected to the live Signal Summary API.
+
+Confirmed flow:
+- User clicks a Signal of the Day reaction on the homepage.
+- `/api/signal-reaction` sends the reaction to Make.
+- Make writes the raw reaction row to Google Sheets `Sheet1`.
+- `Signal Summary` tab calculates total responses, reaction counts, percentages, and last_updated.
+- `/api/signal-summary` reads the published aggregate-only Signal Summary CSV.
+- Homepage Live Emotional Data fetches `/api/signal-summary`.
+- When `mode` is `live` and `total_responses > 0`, the homepage displays live reaction percentages.
+- If the API fails or returns fallback, the homepage silently keeps the existing fallback metrics.
+
+Important:
+- Existing Signal reaction collection flow remains unchanged.
+- Make/Google Sheets mapping remains unchanged.
+- Raw `Sheet1` remains private.
+- Only the aggregate Signal Summary CSV is published for MVP use.
+- No dashboard, auth, Supabase, Firebase, or external database has been added.
