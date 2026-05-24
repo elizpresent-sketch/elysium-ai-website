@@ -1416,3 +1416,48 @@ Important:
 - Raw `Sheet1` remains private.
 - Only the aggregate Signal Summary CSV is published for MVP use.
 - No dashboard, auth, Supabase, Firebase, or external database has been added.
+
+
+
+## Insight Reports — Manual MVP Layer Created
+
+Date confirmed: 24 May 2026
+
+Status: LOCKED / MANUAL MVP
+
+A new Google Sheets tab called `Insight Reports` has been created as the first interpretation layer for ELIZIUM METHOD.
+
+Current sheet structure:
+- `Sheet1` = raw Signal reaction log
+- `Signal Summary` = aggregate counts, percentages, and last_updated
+- `Insight Reports` = written strategic interpretation layer
+
+Insight Reports columns:
+- report_id
+- date_created
+- signal_id
+- signal_theme
+- total_responses
+- dominant_reaction
+- dominant_percent
+- emotional_pattern
+- interpretation
+- experience_implication
+- brand_partner_value
+- recommended_next_signal
+- status
+
+First report:
+- report_id: insight-2026-05-24-week-01
+- signal_id: signal-2026-05-23
+- signal_theme: AI Anxiety
+- total_responses at creation: 5
+- dominant pattern: anxiety + interest, 40% / 40%
+- status: draft
+
+Important:
+- This report is manually generated at MVP stage.
+- It is an early signal based on a small response count, not a final audience conclusion.
+- It should be framed as an emotional interaction pattern, not a diagnosis or psychological profile.
+- This layer proves the first ELIZIUM METHOD output: raw response → aggregate pattern → strategic emotional insight.
+- No website/API connection to Insight Reports has been built yet.
