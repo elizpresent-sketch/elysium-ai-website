@@ -1,7 +1,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // ELIZIUM SIGNAL CONFIG
-// Single source of truth for the active Signal of the Day and related types.
-// The active signal drives the homepage §02 display and the signal-reaction API.
+// Single source of truth for all Signal of the Day data and related types.
+//
+// To rotate to a new signal:
+//   1. Update ACTIVE_SIGNAL below with the new signal's content.
+//   2. Make sure that signal also exists in SIGNAL_ARCHIVE (at position [0]).
+//   3. Ensure the corresponding row exists in the Google Sheets Signal Summary tab.
+//   4. No other file needs to change.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -20,19 +25,20 @@ export const REACTION_LABELS: Record<Reaction, string> = {
 
 /** Full Signal config shape */
 export interface Signal {
-  signal_id:   string;    // sent to Make / Google Sheets
-  date:        string;    // ISO date string YYYY-MM-DD
-  theme:       string;    // descriptive theme label
-  statistic:   string;    // large display figure, e.g. "67%"
-  statement:   string;    // sentence following the statistic
-  prompt:      string;    // reaction prompt label, e.g. "What did you feel?"
-  source_page: string;    // sent to Make / Google Sheets — must match API validation
+  signal_id:   string;     // sent to Make / Google Sheets — must be unique per signal
+  date:        string;     // ISO date string YYYY-MM-DD
+  theme:       string;     // descriptive theme label
+  statistic:   string;     // large display figure, e.g. "67%"
+  statement:   string;     // sentence following the statistic
+  prompt:      string;     // reaction prompt shown to the audience
+  source_page: string;     // sent to Make / Google Sheets — must match API validation
   reactions:   Reaction[]; // ordered list of allowed reactions for this signal
 }
 
 // ── Active Signal ─────────────────────────────────────────────────────────────
-// Update this object when rotating to a new Signal of the Day.
+// This is the signal currently displayed on the homepage.
 // All homepage §02 values and the signal-reaction API payload derive from here.
+// SIGNAL_ARCHIVE[0] must always match this signal.
 
 export const ACTIVE_SIGNAL: Signal = {
   signal_id:   "signal-2026-05-23",
@@ -45,12 +51,71 @@ export const ACTIVE_SIGNAL: Signal = {
   reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
 };
 
+// ── Signal Archive ────────────────────────────────────────────────────────────
+// Complete ordered list of all signals — active and draft.
+// Index [0] is always the currently active signal.
+// Drafts below [0] are not displayed and do not affect any live system.
+// Google Sheets Signal Summary should have one row per signal_id when activated.
+
+export const SIGNAL_ARCHIVE: Signal[] = [
+
+  // ── ACTIVE ────────────────────────────────────────────────────────────────
+  ACTIVE_SIGNAL,
+
+  // ── DRAFT — do not activate without updating ACTIVE_SIGNAL above ──────────
+
+  {
+    signal_id:   "signal-2026-05-24",
+    date:        "2026-05-24",
+    theme:       "System Trust",
+    statistic:   "72%",
+    statement:   "hesitated before trusting an AI system that seemed emotionally aware.",
+    prompt:      "What makes you trust a system that seems to understand you?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-05-25",
+    date:        "2026-05-25",
+    theme:       "Human Control",
+    statistic:   "58%",
+    statement:   "felt uncertainty when control shifted from human decision to intelligent system response.",
+    prompt:      "When does assistance become control?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-05-26",
+    date:        "2026-05-26",
+    theme:       "Emotional Memory",
+    statistic:   "64%",
+    statement:   "felt uneasy imagining a system that remembers emotional responses over time.",
+    prompt:      "Would you let a system remember how you felt?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+];
+
+// ── Archive helpers ───────────────────────────────────────────────────────────
+
+/** Look up a signal from the archive by its signal_id. Returns undefined if not found. */
+export function getSignalById(id: string): Signal | undefined {
+  return SIGNAL_ARCHIVE.find((s) => s.signal_id === id);
+}
+
+/** Return the currently active signal. Equivalent to importing ACTIVE_SIGNAL directly. */
+export function getActiveSignal(): Signal {
+  return ACTIVE_SIGNAL;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // LIVE EMOTIONAL DATA — FALLBACK METRICS
-// These static values drive the homepage §06 Live Emotional Data display.
-// Future: replace with aggregate data fetched from Google Sheets summary sheet.
-// When real data is available, swap LIVE_EMOTIONAL_FALLBACK for a fetched array
-// of the same shape without changing the rendering code.
+// These static values drive the homepage §06 Live Emotional Data display
+// when /api/signal-summary returns fallback mode (no live data available).
+// When real aggregate data is available, the live API values are shown instead.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** A single display metric in the Live Emotional Data section */
@@ -63,10 +128,10 @@ export interface EmotionalMetric {
 }
 
 /**
- * Current fallback metrics for §06.
- * These represent platform-level figures, not per-signal aggregates.
+ * Static fallback metrics for §06 Live Emotional Data.
+ * These represent platform-level figures shown when no live signal data is available.
  *
- * Future Google Sheets summary shape (do not implement yet):
+ * Google Sheets Signal Summary shape (one row per signal_id):
  *   signal_id | total_responses
  *   | anxiety_count  | interest_count  | trust_count  | discomfort_count  | emptiness_count
  *   | anxiety_percent| interest_percent| trust_percent| discomfort_percent| emptiness_percent

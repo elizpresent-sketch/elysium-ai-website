@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-24 — /api/signal-summary route added — reads published Signal Summary CSV_
+_Last updated: 2026-05-24 — Signal Archive introduced — ACTIVE_SIGNAL remains signal-2026-05-23_
 
 ---
 
@@ -60,6 +60,61 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## SIGNAL ARCHIVE — 2026-05-24
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+Signal Archive structure introduced in `src/lib/signals.ts`. TypeScript: 0 errors. Build: ✓. No other files changed. Homepage visual output is identical.
+
+---
+
+### 2. What changed in `src/lib/signals.ts`
+
+- `ACTIVE_SIGNAL` — **unchanged**. Still `signal-2026-05-23`. All live systems unaffected.
+- `SIGNAL_ARCHIVE: Signal[]` — **new export**. Array of all signals, active at `[0]`, drafts below.
+- `getSignalById(id)` — **new helper**. Returns a `Signal | undefined` from the archive by `signal_id`.
+- `getActiveSignal()` — **new helper**. Returns `ACTIVE_SIGNAL`. Convenience for API consumers.
+
+---
+
+### 3. Archive contents
+
+| Position | signal_id | Theme | Status |
+|---|---|---|---|
+| [0] — ACTIVE | `signal-2026-05-23` | AI Anxiety | Live |
+| [1] | `signal-2026-05-24` | System Trust | Draft |
+| [2] | `signal-2026-05-25` | Human Control | Draft |
+| [3] | `signal-2026-05-26` | Emotional Memory | Draft |
+
+---
+
+### 4. How to rotate to a new signal
+
+1. Update `ACTIVE_SIGNAL` in `src/lib/signals.ts` with the new signal's content.
+2. Move that signal to `SIGNAL_ARCHIVE[0]` (or ensure it is already there).
+3. Ensure a corresponding row exists in the Google Sheets Signal Summary tab for the new `signal_id`.
+4. Deploy. No other file changes required.
+
+---
+
+### 5. Make / Google Sheets
+
+No change required. `signal_id: "signal-2026-05-23"` continues to flow through Make unchanged. When a new signal is activated, its `signal_id` will flow through automatically. The Signal Summary sheet should eventually have one row per `signal_id`.
+
+---
+
+### 6. Draft signals — not activated, not wired
+
+The three draft signals exist only in `src/lib/signals.ts`. They:
+- Are not displayed on the homepage
+- Do not affect `/api/signal-reaction` or `/api/signal-summary`
+- Do not have Google Sheets Summary rows yet (not needed until activated)
+- Are not automatically switched to on a schedule (no automation implemented)
+
+---
 
 ## ══════════════════════════════════════════════
 ## SIGNAL SUMMARY API — 2026-05-24
