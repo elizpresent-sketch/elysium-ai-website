@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-24 — Signal v2 config + Live Emotional Data fallback architecture_
+_Last updated: 2026-05-24 — /api/signal-summary route added — reads published Signal Summary CSV_
 
 ---
 
@@ -60,6 +60,90 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## SIGNAL SUMMARY API — 2026-05-24
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`/api/signal-summary` route added. TypeScript: 0 errors. Build: ✓ Dynamic.
+
+---
+
+### 2. New File
+
+**`src/app/api/signal-summary/route.ts`** — GET handler. Server-side only. `export const dynamic = "force-dynamic"` prevents Next.js static caching.
+
+---
+
+### 3. What it does
+
+1. Reads env var `SIGNAL_SUMMARY_CSV_URL` (server-side only, never exposed to client).
+2. Fetches the published Signal Summary CSV with `cache: "no-store"`.
+3. Parses the CSV and finds the row matching `ACTIVE_SIGNAL.signal_id`.
+4. Returns normalised JSON.
+
+**If the env var is missing, fetch fails, or no matching row is found → returns `mode: "fallback"` with zero values. Never returns a non-2xx status for data unavailability.**
+
+---
+
+### 4. Response shape
+
+```json
+{
+  "ok": true,
+  "mode": "live" | "fallback",
+  "signal_id": "signal-2026-05-23",
+  "total_responses": 42,
+  "last_updated": "2026-05-24T10:00:00Z",
+  "metrics": [
+    { "reaction": "anxiety",    "label": "Anxiety",    "percent": 45.2, "count": 19 },
+    { "reaction": "interest",   "label": "Interest",   "percent": 21.4, "count": 9  },
+    { "reaction": "trust",      "label": "Trust",      "percent": 14.3, "count": 6  },
+    { "reaction": "discomfort", "label": "Discomfort", "percent": 11.9, "count": 5  },
+    { "reaction": "emptiness",  "label": "Emptiness",  "percent": 7.1,  "count": 3  }
+  ]
+}
+```
+
+Percent values are handled safely whether Google Sheets publishes them as `"50.00%"` or `"0.5"` (decimal).
+
+---
+
+### 5. Env var setup
+
+**Name:** `SIGNAL_SUMMARY_CSV_URL`
+
+**How to get it:**
+1. Open the ELIZIUM Signal Reactions Google Sheet.
+2. Go to the Signal Summary tab.
+3. File → Share → Publish to web → select Signal Summary tab → CSV → Publish.
+4. Copy the published CSV URL.
+
+**Where to add it:**
+- Locally: append `SIGNAL_SUMMARY_CSV_URL=https://docs.google.com/...` to `.env.local` (do not commit).
+- Vercel: Settings → Environment Variables → `SIGNAL_SUMMARY_CSV_URL` → Preview (and Production when ready).
+- Restart `npm run dev` after adding to `.env.local`.
+
+---
+
+### 6. What is NOT changed
+
+- `src/app/api/signal-reaction/route.ts` — untouched. Raw reaction collection flow is unchanged.
+- Make scenario and Google Sheets Sheet1 — untouched.
+- Sheet1 (raw reactions) remains private. Only the Signal Summary tab is published as CSV.
+- Homepage display — not yet connected to this route. Still uses `LIVE_EMOTIONAL_FALLBACK`.
+
+---
+
+### 7. Next step (not yet built)
+
+Connect homepage §06 Live Emotional Data to `/api/signal-summary`.
+Replace `LIVE_EMOTIONAL_FALLBACK` display with real aggregate data from this route.
+Do not implement until explicitly instructed.
+
+---
 
 ## ══════════════════════════════════════════════
 ## SIGNAL V2 CONFIG + LIVE EMOTIONAL DATA — 2026-05-24
