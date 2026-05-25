@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-25 — Human Control Insight Report confirmed live; §05 duplicate step fixed; §06 staleness notice added_
+_Last updated: 2026-05-25 — ACTIVE_SIGNAL_MODE refactor; date-based activation prepared; Human Control Insight Report confirmed live; §05 duplicate step fixed; §06 staleness notice added_
 
 ---
 
@@ -60,6 +60,71 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## ACTIVE SIGNAL MODE + DATE ACTIVATION PREP — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`src/lib/signals.ts` refactored to support both manual and date-based activation. `src/app/system-preview/page.tsx` updated to display activation mode. TypeScript: 0 errors. Build: pass. Homepage output unchanged. Active signal remains `signal-2026-05-25`.
+
+---
+
+### 2. New Exports — `src/lib/signals.ts`
+
+| Export | Type | Description |
+|---|---|---|
+| `ActiveSignalMode` | `type` | `"manual" \| "date"` |
+| `ACTIVE_SIGNAL_MODE` | `const` | Current mode — `"manual"` |
+| `getSignalForDate(dateString)` | `function` | Returns signal matching YYYY-MM-DD, or null |
+| `getResolvedActiveSignal()` | `function` | Returns active signal per current mode |
+| `ACTIVE_SIGNAL` | `const` | Unchanged type/consumers — now resolved via `getResolvedActiveSignal()` |
+| `getActiveSignal()` | `function` | Unchanged |
+
+All existing consumers (`src/app/page.tsx`, `/api/signal-summary/route.ts`) import `ACTIVE_SIGNAL: Signal` — no changes required.
+
+---
+
+### 3. Mode Behaviour
+
+**`ACTIVE_SIGNAL_MODE = "manual"` (current)**
+- Always uses `ACTIVE_SIGNAL_ID` to select the active signal.
+- Rotation is explicit: change `ACTIVE_SIGNAL_ID` in `signals.ts` and deploy.
+- No automatic switching. Fully deterministic.
+
+**`ACTIVE_SIGNAL_MODE = "date"` (prepared, not enabled)**
+- Selects the signal whose `date` field matches today's date (YYYY-MM-DD, server-local time).
+- Falls back to `ACTIVE_SIGNAL_ID` if no signal matches today.
+- Server-evaluated at module load time via `getResolvedActiveSignal()`.
+
+---
+
+### 4. Pre-Flight Checklist Before Enabling Date Mode
+
+Do NOT change `ACTIVE_SIGNAL_MODE` to `"date"` until ALL of the following are satisfied:
+
+- [ ] Google Sheets Signal Summary has a row for every `signal_id` in `SIGNAL_ARCHIVE` that will be activated.
+- [ ] A decision has been made on whether Insight Reports for each date-based signal are auto or manually approved.
+- [ ] All signals in `SIGNAL_ARCHIVE` scheduled for the near future have been reviewed and their content confirmed (statistic, statement, prompt, theme).
+- [ ] The timezone of the Vercel deployment is understood and accepted (server uses UTC — a "2026-05-26" signal activates at 00:00 UTC, not local midnight).
+- [ ] Signal rotation on Vercel has been tested: deploy with `ACTIVE_SIGNAL_MODE = "date"` on preview branch, confirm the correct signal loads on the correct date.
+
+---
+
+### 5. /system-preview Changes
+
+- §01 identity table: new "Activation Mode" row displays `Manual` or `Date-Based`.
+- §04 System Status: "Signal Rotation" row now shows current mode and signal_id in detail. New "Date Activation" row shows `Prepared` (turns `Active` when mode switches to `"date"`).
+
+---
+
+### 6. Files Changed
+
+- `src/lib/signals.ts` — added `ActiveSignalMode`, `ACTIVE_SIGNAL_MODE`, `getSignalForDate()`, `getResolvedActiveSignal()`; `ACTIVE_SIGNAL` now derived via `getResolvedActiveSignal()`
+- `src/app/system-preview/page.tsx` — added `ACTIVE_SIGNAL_MODE` import; new §01 "Activation Mode" row; updated §04 Signal Rotation + Date Activation rows
+
+---
 
 ## ══════════════════════════════════════════════
 ## HUMAN CONTROL INSIGHT REPORT + SYSTEM PREVIEW FIX — 2026-05-25

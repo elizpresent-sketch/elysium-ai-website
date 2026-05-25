@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ACTIVE_SIGNAL_ID, ACTIVE_SIGNAL, SIGNAL_ARCHIVE } from "@/lib/signals";
+import { ACTIVE_SIGNAL_ID, ACTIVE_SIGNAL, ACTIVE_SIGNAL_MODE, SIGNAL_ARCHIVE } from "@/lib/signals";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS — mirror homepage values so page inherits the same dark foundation
@@ -165,8 +165,9 @@ export default function SystemPreview() {
             {/* Identity table */}
             <div style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
               {[
-                { key: "Signal ID",  val: ACTIVE_SIGNAL_ID },
-                { key: "Theme",      val: ACTIVE_SIGNAL.theme },
+                { key: "Signal ID",       val: ACTIVE_SIGNAL_ID },
+                { key: "Activation Mode", val: ACTIVE_SIGNAL_MODE === "manual" ? "Manual" : "Date-Based" },
+                { key: "Theme",           val: ACTIVE_SIGNAL.theme },
                 { key: "Date",       val: ACTIVE_SIGNAL.date },
                 { key: "Status",     val: "Active" },
                 { key: "Source",     val: ACTIVE_SIGNAL.source_page },
@@ -440,9 +441,15 @@ export default function SystemPreview() {
               },
               {
                 label:  "Signal Rotation",
-                value:  "Manual",
-                detail: "ACTIVE_SIGNAL_ID in src/lib/signals.ts",
-                active: false,
+                value:  ACTIVE_SIGNAL_MODE === "manual" ? "Manual" : "Date-Based",
+                detail: `mode: ${ACTIVE_SIGNAL_MODE} · id: ${ACTIVE_SIGNAL_ID}`,
+                active: ACTIVE_SIGNAL_MODE === "date",
+              },
+              {
+                label:  "Date Activation",
+                value:  ACTIVE_SIGNAL_MODE === "date" ? "Active" : "Prepared",
+                detail: "Set ACTIVE_SIGNAL_MODE to 'date' in signals.ts",
+                active: ACTIVE_SIGNAL_MODE === "date",
               },
               {
                 label:  "Insight Reports",

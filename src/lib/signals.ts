@@ -99,22 +99,66 @@ export function getSignalById(id: string): Signal | undefined {
   return SIGNAL_ARCHIVE.find((s) => s.signal_id === id);
 }
 
-// ── Active Signal ─────────────────────────────────────────────────────────────
-// Change ACTIVE_SIGNAL_ID to rotate to a different signal.
-// ACTIVE_SIGNAL is derived automatically — no other edits needed here.
+// ── Activation Mode ───────────────────────────────────────────────────────────
+// Controls how the active signal is chosen.
+//
+//   "manual" (current) — always use ACTIVE_SIGNAL_ID below. Safe, explicit, default.
+//   "date"             — select the signal whose date matches today (YYYY-MM-DD).
+//                        Falls back to ACTIVE_SIGNAL_ID if no signal matches today.
+//
+// ⚠️  DO NOT switch to "date" until:
+//   1. Google Sheets Signal Summary has a row for every scheduled signal_id.
+//   2. A decision has been made on whether Insight Reports are auto or manually approved.
+//   3. All signals in the archive have been reviewed and their content confirmed.
 
-/** The signal_id of the currently active Signal of the Day. Change this to rotate. */
+export type ActiveSignalMode = "manual" | "date";
+
+/**
+ * Activation mode for the Signal of the Day.
+ * Change to "date" to enable automatic date-based signal selection.
+ * Must remain "manual" until the checklist above is satisfied.
+ */
+export const ACTIVE_SIGNAL_MODE: ActiveSignalMode = "manual";
+
+// ── Active Signal ─────────────────────────────────────────────────────────────
+// In manual mode: change ACTIVE_SIGNAL_ID to rotate to a different signal.
+// In date mode: ACTIVE_SIGNAL_ID is used as the fallback when no date match exists.
+
+/** The signal_id used in manual mode, or as fallback in date mode. */
 export const ACTIVE_SIGNAL_ID = "signal-2026-05-25";
 
 /**
+ * Returns the signal whose date field matches the given YYYY-MM-DD string.
+ * Returns null if no signal in SIGNAL_ARCHIVE has that date.
+ */
+export function getSignalForDate(dateString: string): Signal | null {
+  return SIGNAL_ARCHIVE.find((s) => s.date === dateString) ?? null;
+}
+
+/**
+ * Resolves the active signal based on ACTIVE_SIGNAL_MODE.
+ * - "manual": returns the signal matching ACTIVE_SIGNAL_ID.
+ * - "date":   returns the signal matching today's date, falling back to ACTIVE_SIGNAL_ID.
+ *
+ * Always returns a valid Signal. Throws if ACTIVE_SIGNAL_ID is not in SIGNAL_ARCHIVE.
+ */
+export function getResolvedActiveSignal(): Signal {
+  if (ACTIVE_SIGNAL_MODE === "date") {
+    const today = new Date().toISOString().slice(0, 10);
+    return getSignalForDate(today) ?? getSignalById(ACTIVE_SIGNAL_ID)!;
+  }
+  return getSignalById(ACTIVE_SIGNAL_ID)!;
+}
+
+/**
  * The currently active Signal of the Day.
- * Derived from SIGNAL_ARCHIVE via ACTIVE_SIGNAL_ID.
+ * Resolved via ACTIVE_SIGNAL_MODE — see getResolvedActiveSignal() above.
  * Used by homepage §02, /api/signal-summary, and /api/signal-reaction payload.
  *
- * Non-null assertion is intentional: ACTIVE_SIGNAL_ID must always exist in SIGNAL_ARCHIVE.
- * If it does not, a runtime error will surface immediately — by design.
+ * Non-null assertion in getResolvedActiveSignal is intentional:
+ * ACTIVE_SIGNAL_ID must always exist in SIGNAL_ARCHIVE — runtime error if not.
  */
-export const ACTIVE_SIGNAL: Signal = getSignalById(ACTIVE_SIGNAL_ID)!;
+export const ACTIVE_SIGNAL: Signal = getResolvedActiveSignal();
 
 /** Return the currently active signal. Convenience wrapper around ACTIVE_SIGNAL. */
 export function getActiveSignal(): Signal {
