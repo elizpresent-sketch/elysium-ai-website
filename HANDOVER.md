@@ -1617,3 +1617,41 @@ Important:
 - It should be framed as an emotional interaction pattern, not a diagnosis or psychological profile.
 - This layer proves the first ELIZIUM METHOD output: raw response → aggregate pattern → strategic emotional insight.
 - No website/API connection to Insight Reports has been built yet.
+
+
+
+## First Controlled Signal Rotation — Confirmed Working
+
+Date confirmed: 25 May 2026
+
+Status: LOCKED / WORKING
+
+The first controlled active-signal switch has been completed successfully.
+
+Previous active signal:
+- signal-2026-05-23 — AI Anxiety
+
+New active signal:
+- signal-2026-05-25 — Human Control
+
+Confirmed behaviour:
+- ACTIVE_SIGNAL_ID now controls the active signal from `src/lib/signals.ts`.
+- Homepage Signal of the Day now uses the Human Control signal.
+- New Signal reactions are written to Google Sheets with `signal_id = signal-2026-05-25`.
+- `Sheet1` keeps raw reactions for both old and new signals.
+- `Signal Summary` calculates the new signal separately.
+- `/api/signal-summary` returns `mode: live` for `signal-2026-05-25`.
+- Homepage Live Emotional Data reads the current active signal’s summary.
+- Previous signal data remains archived under `signal-2026-05-23`.
+
+Google Sheets note:
+- Each new active signal must have a matching row in `Signal Summary`.
+- Formula range B:M should be copied from the working row.
+- For `last_updated`, use the robust formula:
+  `=IF($B4=0,"",INDEX(FILTER(Sheet1!D:D,TRIM(Sheet1!B:B)=TRIM(A4)),COUNTA(FILTER(Sheet1!D:D,TRIM(Sheet1!B:B)=TRIM(A4)))))`
+
+Important:
+- No Make mapping changes were required.
+- No API payload changes were required.
+- No dashboard/auth/database was added.
+- Rotation is manual and controlled for now.
