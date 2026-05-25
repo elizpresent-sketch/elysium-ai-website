@@ -488,10 +488,6 @@ export default function SystemPreview() {
               },
               {
                 n:    "02",
-                step: "Create next Insight Report after response count increases for the current signal.",
-              },
-              {
-                n:    "03",
                 step: "Rotate to next signal by changing ACTIVE_SIGNAL_ID in src/lib/signals.ts and deploying.",
               },
               {
@@ -558,6 +554,18 @@ export default function SystemPreview() {
           {/* Live report */}
           {insightIsLive && insightReport && (
             <>
+              {/* Staleness notice — shown when report belongs to a previous signal */}
+              {insightReport.signal_id !== ACTIVE_SIGNAL_ID && (
+                <div
+                  className="px-4 py-3"
+                  style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}
+                >
+                  <p className="text-[10.5px] tracking-[0.04em] text-[#707880] leading-relaxed">
+                    Report references previous signal: {insightReport.signal_id}. Current active signal is {ACTIVE_SIGNAL_ID}. New report pending.
+                  </p>
+                </div>
+              )}
+
               {/* Identity rows */}
               <div style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}>
                 {[
