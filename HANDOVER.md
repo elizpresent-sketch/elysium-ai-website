@@ -109,6 +109,60 @@ No change required. `signal_id` flows automatically from `ACTIVE_SIGNAL.signal_i
 ---
 
 ## ══════════════════════════════════════════════
+## SYSTEM PREVIEW PAGE — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`/system-preview` internal page created. TypeScript: 0 errors. Build: ✓ 16 pages (was 15). No other files changed. Not linked in nav or footer.
+
+---
+
+### 2. New File
+
+**`src/app/system-preview/page.tsx`** — `"use client"` page. Imports `ACTIVE_SIGNAL_ID`, `ACTIVE_SIGNAL`, `SIGNAL_ARCHIVE` directly from `@/lib/signals`. Fetches `/api/signal-summary` in `useEffect` (same pattern as homepage). No Framer Motion. No images. No new dependencies.
+
+---
+
+### 3. Page Sections
+
+| § | Label | Content |
+|---|---|---|
+| 01 | Active Signal | ACTIVE_SIGNAL_ID, theme, date, status, source_page, statistic, statement, prompt |
+| 02 | Live Summary | API mode badge, total responses, last_updated, reaction distribution bars |
+| 03 | Signal Archive | All SIGNAL_ARCHIVE entries with Active / Past / Draft status |
+| 04 | System Status | Signal Collection, Summary API, Raw Data, Summary CSV, Signal Rotation, Insight Reports |
+| 05 | Next Operational Steps | Prioritised action list |
+
+---
+
+### 4. Access
+
+Route: `/system-preview`
+Auth: none — hidden by virtue of being unlinked
+Not in navbar, footer, or any public page link.
+
+---
+
+### 5. Design
+
+Premium dark ELIZIUM internal command centre style. Uses existing BG (`#050505`), typography classes (`font-display`, tracking patterns), and colour palette from the project. No external dependencies added.
+
+---
+
+### 6. What Is NOT Changed
+
+- `src/app/page.tsx` — untouched
+- `src/app/api/signal-summary/route.ts` — untouched
+- `src/app/api/signal-reaction/route.ts` — untouched
+- `src/lib/signals.ts` — untouched
+- `src/components/layout/Navbar.tsx` — untouched (no link added)
+- `src/components/layout/Footer.tsx` — untouched (no link added)
+- Make / Google Sheets — no change required
+
+---
+
+## ══════════════════════════════════════════════
 ## ACTIVE_SIGNAL_ID ROTATION CONTROL — 2026-05-25
 ## ══════════════════════════════════════════════
 
