@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-25 — Insight Report API + /system-preview §06 layer added_
+_Last updated: 2026-05-25 — /system-preview confirmed working end-to-end; §05 operational steps cleaned up_
 
 ---
 
@@ -60,6 +60,66 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## SYSTEM PREVIEW CONFIRMED + §05 CLEANUP — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`/system-preview` end-to-end confirmed on Vercel Preview. §05 Next Operational Steps cleaned up — one outdated instruction removed. TypeScript: 0 errors. Only `src/app/system-preview/page.tsx` changed.
+
+---
+
+### 2. /system-preview — Confirmed Working Sections
+
+| § | Label | Confirmed State |
+|---|---|---|
+| 01 | Active Signal | `signal-2026-05-25` / Human Control / 58% — correct |
+| 02 | Live Summary | `mode: live`, 2 responses, Interest 100% — real data flowing |
+| 03 | Signal Archive | All 4 signals shown with Past / Active / Draft labels — correct |
+| 04 | System Status | Signal Collection, Summary API, Raw Data, Summary CSV, Signal Rotation, Insight Reports — correct |
+| 05 | Next Operational Steps | Cleaned up — see §3 below |
+| 06 | Latest Insight Report | `insight-2026-05-24-week-01` loaded via `/api/insight-report` — mode: live |
+
+---
+
+### 3. §05 Next Operational Steps — Cleanup
+
+Outdated step removed: `"Add Signal Summary row for signal-2026-05-25 in Google Sheets Signal Summary tab to enable live aggregate data."` — this work is done; live data is confirmed for signal-2026-05-25.
+
+Current step 01: `"Create next Insight Report once signal-2026-05-25 reaches a stronger response count."`
+
+Steps 02–04 unchanged:
+- 02: Rotate to next signal by changing ACTIVE_SIGNAL_ID in src/lib/signals.ts and deploying.
+- 03: Production-grade later: replace public CSV endpoint with private Google Sheets API access.
+
+---
+
+### 4. /api/insight-report — Confirmed Live
+
+- Route: `src/app/api/insight-report/route.ts`
+- Env var `INSIGHT_REPORTS_CSV_URL` is set in Vercel Preview.
+- Latest qualifying row returned: `insight-2026-05-24-week-01` (status: `draft`).
+- Report references `signal-2026-05-23` / AI Anxiety — this is expected. No Human Control (signal-2026-05-25) report has been written yet.
+- A new Insight Report for signal-2026-05-25 should be created manually once the response count is stronger.
+
+---
+
+### 5. Live System — Unchanged
+
+The following pipeline is confirmed unchanged:
+
+```
+Signal reaction click → /api/signal-reaction → Make → Sheet1
+Signal Summary formulas → /api/signal-summary → homepage Live Emotional Data
+Signal Summary formulas → /api/signal-summary → /system-preview §02 Live Summary
+INSIGHT_REPORTS_CSV_URL → /api/insight-report → /system-preview §06 Latest Insight Report
+```
+
+No Make/Google mapping changes. No API route changes. No homepage changes. No env var changes.
+
+---
 
 ## ══════════════════════════════════════════════
 ## INSIGHT REPORT API + SYSTEM PREVIEW §06 — 2026-05-25

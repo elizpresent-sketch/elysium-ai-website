@@ -484,7 +484,7 @@ export default function SystemPreview() {
             {[
               {
                 n:    "01",
-                step: `Add Signal Summary row for ${ACTIVE_SIGNAL_ID} in Google Sheets Signal Summary tab to enable live aggregate data.`,
+                step: "Create next Insight Report once signal-2026-05-25 reaches a stronger response count.",
               },
               {
                 n:    "02",
