@@ -104,7 +104,7 @@ export function getSignalById(id: string): Signal | undefined {
 // ACTIVE_SIGNAL is derived automatically — no other edits needed here.
 
 /** The signal_id of the currently active Signal of the Day. Change this to rotate. */
-export const ACTIVE_SIGNAL_ID = "signal-2026-05-23";
+export const ACTIVE_SIGNAL_ID = "signal-2026-05-25";
 
 /**
  * The currently active Signal of the Day.

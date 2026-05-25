@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-25 — ACTIVE_SIGNAL_ID single-control-point refactor — active signal remains signal-2026-05-23_
+_Last updated: 2026-05-25 — First controlled signal switch — active signal is now signal-2026-05-25 (Human Control)_
 
 ---
 
@@ -62,6 +62,53 @@ unless a new scoped task is explicitly opened.
 
 
 ## ══════════════════════════════════════════════
+## FIRST CONTROLLED SIGNAL SWITCH — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+First controlled active-signal switch performed. TypeScript: 0 errors. Build: ✓ Dynamic routes confirmed. Only `src/lib/signals.ts` changed (one line). No other files touched.
+
+---
+
+### 2. What changed
+
+| Item | Before | After |
+|---|---|---|
+| `ACTIVE_SIGNAL_ID` | `"signal-2026-05-23"` | `"signal-2026-05-25"` |
+| Active theme | AI Anxiety | Human Control |
+| Active statistic | 67% | 58% |
+
+`ACTIVE_SIGNAL` is derived automatically — no other code changed.
+
+---
+
+### 3. Archive state after switch
+
+| signal_id | Theme | Status |
+|---|---|---|
+| `signal-2026-05-23` | AI Anxiety | Archived — data remains in Google Sheets |
+| `signal-2026-05-24` | System Trust | Draft |
+| `signal-2026-05-25` | Human Control | **Active** |
+| `signal-2026-05-26` | Emotional Memory | Draft |
+
+---
+
+### 4. Required Google Sheets action (manual — not yet confirmed)
+
+A row for `signal-2026-05-25` must exist in the **Signal Summary** tab before live aggregate data will return for this signal. Without it, `/api/signal-summary` returns `mode: "fallback"` with zero values — this is safe and expected until the row is added.
+
+Old reactions under `signal-2026-05-23` remain in Google Sheets and are unaffected.
+
+---
+
+### 5. Make / Google Sheets
+
+No change required. `signal_id` flows automatically from `ACTIVE_SIGNAL.signal_id`. New reactions submitted via the homepage will write `signal_id: "signal-2026-05-25"` to Sheet1.
+
+---
+
+## ══════════════════════════════════════════════
 ## ACTIVE_SIGNAL_ID ROTATION CONTROL — 2026-05-25
 ## ══════════════════════════════════════════════
 
@@ -106,10 +153,12 @@ Do **not** edit `ACTIVE_SIGNAL` directly — it is now derived automatically.
 
 ### 4. Active Signal confirmed
 
-- `ACTIVE_SIGNAL_ID` → `"signal-2026-05-23"`
-- `ACTIVE_SIGNAL.signal_id` → `"signal-2026-05-23"` ✓
-- `ACTIVE_SIGNAL.theme` → `"AI Anxiety"` ✓
+- `ACTIVE_SIGNAL_ID` → `"signal-2026-05-25"`
+- `ACTIVE_SIGNAL.signal_id` → `"signal-2026-05-25"` ✓
+- `ACTIVE_SIGNAL.theme` → `"Human Control"` ✓
+- `ACTIVE_SIGNAL.statistic` → `"58%"` ✓
 - Signal reactions, Make webhook, Google Sheets: all unchanged
+- Previous signal `signal-2026-05-23` (AI Anxiety) remains archived in SIGNAL_ARCHIVE and in Google Sheets
 
 ---
 
