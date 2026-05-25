@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-25 — /system-preview confirmed working end-to-end; §05 operational steps cleaned up_
+_Last updated: 2026-05-25 — Human Control Insight Report confirmed live; §05 duplicate step fixed; §06 staleness notice added_
 
 ---
 
@@ -60,6 +60,76 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## HUMAN CONTROL INSIGHT REPORT + SYSTEM PREVIEW FIX — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+Human Control Insight Report (`insight-2026-05-25-week-02`) created in Google Sheets and confirmed live via `/api/insight-report`. Layer A (§05 duplicate step fix) and Layer B (§06 signal staleness notice) applied to `src/app/system-preview/page.tsx`. TypeScript: 0 errors. Only `src/app/system-preview/page.tsx` changed in code.
+
+---
+
+### 2. New Insight Report — Confirmed Live
+
+| Field | Value |
+|---|---|
+| report_id | `insight-2026-05-25-week-02` |
+| signal_id | `signal-2026-05-25` |
+| signal_theme | Human Control |
+| total_responses at creation | 7 |
+| dominant_reaction | interest |
+| dominant_percent | 57.14% |
+| status | draft |
+
+Reaction distribution at creation:
+
+| Reaction | % | n |
+|---|---|---|
+| anxiety | 14.29% | 1 |
+| interest | 57.14% | 4 |
+| trust | 14.29% | 1 |
+| discomfort | 14.29% | 1 |
+| emptiness | 0% | 0 |
+
+Encoding note: Curly apostrophes in Google Sheets text fields replaced with straight apostrophes to prevent CSV encoding issues.
+
+---
+
+### 3. /system-preview §06 — Confirmed Updated
+
+- `/api/insight-report` now returns `insight-2026-05-25-week-02` with `mode: live`.
+- `/system-preview` §06 displays the Human Control report correctly.
+- The previous-signal staleness notice (Layer B) disappeared automatically — `report.signal_id` now matches `ACTIVE_SIGNAL_ID`.
+
+---
+
+### 4. Layer A — §05 Next Operational Steps Fix
+
+Corrected list (duplicate "Create Insight Report" step removed from page.tsx):
+- 01: Create next Insight Report once signal-2026-05-25 reaches a stronger response count.
+- 02: Rotate to next signal by changing ACTIVE_SIGNAL_ID in src/lib/signals.ts and deploying.
+- —: Production-grade later: replace public CSV endpoint with private Google Sheets API access.
+
+---
+
+### 5. Layer B — §06 Signal Staleness Notice
+
+Conditional notice added to `/system-preview` §06. Shown only when `insightReport.signal_id !== ACTIVE_SIGNAL_ID`. Muted operator-note style, consistent with dark command-centre aesthetic. Disappears automatically when a matching report exists for the active signal. No API route changes. No signals.ts changes. No homepage changes.
+
+---
+
+### 6. Do Not Change
+
+- `src/app/api/insight-report/route.ts` — untouched
+- `src/app/api/signal-summary/route.ts` — untouched
+- `src/app/api/signal-reaction/route.ts` — untouched
+- `src/lib/signals.ts` — untouched
+- Make / Google Sheets mapping — unchanged
+- Google Sheets column structure — unchanged
+
+---
 
 ## ══════════════════════════════════════════════
 ## SYSTEM PREVIEW CONFIRMED + §05 CLEANUP — 2026-05-25
