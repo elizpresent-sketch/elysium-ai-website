@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-25 — ACTIVE_SIGNAL_MODE refactor; date-based activation prepared; Human Control Insight Report confirmed live; §05 duplicate step fixed; §06 staleness notice added_
+_Last updated: 2026-05-25 — Signal Calendar tab created in Google Sheets (planning layer, not yet connected); ACTIVE_SIGNAL_MODE refactor; date-based activation prepared; Human Control Insight Report confirmed live; §05 duplicate step fixed; §06 staleness notice added_
 
 ---
 
@@ -60,6 +60,85 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## SIGNAL CALENDAR — GOOGLE SHEETS PLANNING LAYER — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Overview
+
+A new tab called `Signal Calendar` has been created in the ELIZIUM Google Sheets workbook. It is the external planning and scheduling layer for future daily/rotating signals. It is **not connected to the website** — the website continues to use the code-based `SIGNAL_ARCHIVE` and `ACTIVE_SIGNAL_MODE = "manual"` in `src/lib/signals.ts`.
+
+Signal Calendar is the intended migration target when the team is ready to move signal scheduling out of code and into a managed external source.
+
+---
+
+### 2. Signal Calendar Columns
+
+| Column | Description |
+|---|---|
+| `signal_id` | Matches `signal_id` in `SIGNAL_ARCHIVE` |
+| `date` | Scheduled activation date (YYYY-MM-DD) |
+| `theme` | Display theme label |
+| `statistic` | Large display figure (e.g. `58%`) |
+| `statement` | Sentence following the statistic |
+| `prompt` | Reaction prompt shown to audience |
+| `reactions` | Comma-separated allowed reactions |
+| `status` | Planning status — see §3 below |
+| `image_asset` | Optional image asset reference (intentionally empty until approved) |
+| `mobile_image_asset` | Optional mobile image asset reference (intentionally empty until approved) |
+| `report_status` | Insight Report status for this signal — see §3 below |
+| `notes` | Free-text operator notes |
+
+---
+
+### 3. Current Rows
+
+| signal_id | date | theme | status | report_status |
+|---|---|---|---|---|
+| `signal-2026-05-23` | 2026-05-23 | AI Anxiety | `archived` | `report_created` |
+| `signal-2026-05-24` | 2026-05-24 | System Trust | `skipped` | `not_required` |
+| `signal-2026-05-25` | 2026-05-25 | Human Control | `active` | `report_created` |
+| `signal-2026-05-26` | 2026-05-26 | Emotional Memory | `draft` | `report_pending` |
+
+---
+
+### 4. Connection Status
+
+Signal Calendar is **read by no code path** at this time. It is a planning document only.
+
+The website pipeline is unchanged:
+```
+SIGNAL_ARCHIVE (signals.ts) → ACTIVE_SIGNAL_MODE: manual → ACTIVE_SIGNAL_ID → active signal
+Signal reactions → /api/signal-reaction → Make → Sheet1
+Signal Summary tab → /api/signal-summary → homepage + /system-preview
+Insight Reports tab → /api/insight-report → /system-preview §06
+```
+
+Signal Calendar is **not** part of this pipeline yet.
+
+---
+
+### 5. Pre-Migration Requirements
+
+Before any signal can be loaded from Signal Calendar (instead of `SIGNAL_ARCHIVE`), each scheduled signal row must satisfy all of the following:
+
+1. A `Signal Calendar` row exists with confirmed content (statistic, statement, prompt, theme, reactions).
+2. A `Signal Summary` tab row exists for the `signal_id` (required for `/api/signal-summary` to return live aggregate data).
+3. Visual assets reviewed: `image_asset` and `mobile_image_asset` either confirmed empty (no images used) or approved asset references present.
+4. A decision on report workflow: manual draft vs AI-generated draft — affects whether `report_status` reaches `report_created` before or after activation.
+
+Additionally, `ACTIVE_SIGNAL_MODE` must be switched to `"date"` in `src/lib/signals.ts` and the full pre-flight checklist in the "ACTIVE SIGNAL MODE" section above must be satisfied.
+
+---
+
+### 6. Do Not Change (this pass)
+
+- No code files were changed in this pass.
+- `src/lib/signals.ts` — signal rotation remains manual, `ACTIVE_SIGNAL_ID = "signal-2026-05-25"`.
+- Signal Calendar is a Google Sheets planning document only.
+
+---
 
 ## ══════════════════════════════════════════════
 ## ACTIVE SIGNAL MODE + DATE ACTIVATION PREP — 2026-05-25
