@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-25 — Signal Calendar tab created in Google Sheets (planning layer, not yet connected); ACTIVE_SIGNAL_MODE refactor; date-based activation prepared; Human Control Insight Report confirmed live; §05 duplicate step fixed; §06 staleness notice added_
+_Last updated: 2026-05-25 — Inquiry API normalisation (Stage 3): consistent payload shape, inquiry_id, timestamp server-generated; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor; Human Control Insight Report live_
 
 ---
 
@@ -60,6 +60,134 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## INQUIRY API NORMALISATION — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`src/app/api/inquiry/route.ts` updated. Validation logic unchanged. Normalized payload now forwarded to Make instead of raw payload. TypeScript: 0 errors. Build: ✓ 16 pages, 4 Dynamic routes. Only `src/app/api/inquiry/route.ts` changed.
+
+---
+
+### 2. Problem Solved
+
+Two forms sent inconsistent field shapes to Make:
+
+| Field concept | Homepage (`homepage_private_access`) | ContactForm (`contact_page`) |
+|---|---|---|
+| Name | `full_name` | `name` |
+| Company | `company` | `organisation` |
+| Request type | `inquiry_type` | `interest` |
+| ID | none | none |
+| Timestamp | none | none |
+
+Make received different field names depending on which form submitted — messy for a CRM column mapping.
+
+---
+
+### 3. Normalised Payload Shape
+
+Make now always receives this exact 9-field structure, regardless of source:
+
+```json
+{
+  "inquiry_id":   "inq-20260525-143022-a7f3",
+  "timestamp":    "2026-05-25T14:30:22.123Z",
+  "source_page":  "homepage_private_access",
+  "name":         "Full Name",
+  "email":        "email@example.com",
+  "company":      "Company Name",
+  "request_type": "Partnership",
+  "message":      "Message text",
+  "raw_source":   "homepage_private_access"
+}
+```
+
+**Mapping logic (server-side, in route.ts):**
+
+| Normalised field | Homepage source | ContactForm source |
+|---|---|---|
+| `name` | `full_name` | `name` |
+| `company` | `company` | `organisation` |
+| `request_type` | `inquiry_type` | `interest` |
+| `inquiry_id` | Generated: `inq-YYYYMMDD-HHMMSS-xxxx` | Same |
+| `timestamp` | `new Date().toISOString()` | Same |
+| `source_page` | `"homepage_private_access"` | `"contact_page"` |
+| `raw_source` | Same as `source_page` | Same as `source_page` |
+| `email` | `email` | `email` |
+| `message` | `message` | `message` |
+
+`inquiry_id` format: `inq-` + `YYYYMMDD` + `-` + `HHMMSS` + `-` + 4-char base-36 random suffix (UTC).
+
+---
+
+### 4. Validation — Unchanged
+
+All validation logic is identical to the previous version and still runs on the raw payload before normalisation. No validation rules were added or removed.
+
+| Check | Rule |
+|---|---|
+| JSON parse | `400 "Invalid JSON"` if not valid JSON |
+| Email | Must contain `@` — else `400 "Valid email required"` |
+| Name | `payload.name` or `payload.full_name` must be non-empty — else `400 "Name required"` |
+| Source | Must be exactly `"homepage_private_access"` or `"contact_page"` — else `400 "Invalid source"` |
+
+---
+
+### 5. Public API Response — Unchanged
+
+The response shape returned to the browser is identical to before:
+
+```json
+{ "ok": true, "mode": "local" }    // when MAKE_WEBHOOK_URL is not set
+{ "ok": true, "mode": "webhook" }  // when Make webhook succeeds
+{ "ok": false, "error": "..." }    // on validation failure or upstream error
+```
+
+No internal fields (inquiry_id, normalised data) are returned to the client.
+
+---
+
+### 6. Required Manual Make / Google Sheets Update
+
+The Make "Integration Webhooks" scenario → Google Sheets "Add a Row" module **must be remapped** to the new field names. Until this is done, Make may write to wrong columns or fail silently.
+
+**Required Make column mapping update (you do this manually in Make):**
+
+| Google Sheets column | Map from webhook | Notes |
+|---|---|---|
+| `inquiry_id` | `1. inquiry_id` | Now server-generated — use directly |
+| `timestamp` | `1. timestamp` | Now server-generated ISO UTC — use directly |
+| `source_page` | `1. source_page` | Same as before |
+| `name` | `1. name` | Replaces `1. full_name` / `1. name` ambiguity |
+| `email` | `1. email` | Same as before |
+| `company` | `1. company` | Replaces `1. company` / `1. organisation` ambiguity |
+| `request_type` | `1. request_type` | Replaces `1. inquiry_type` / `1. interest` ambiguity |
+| `message` | `1. message` | Same as before |
+| `raw_source` | `1. raw_source` | Optional — same value as `source_page` for now |
+| `status` | Leave blank | Operator fills manually |
+| `priority` | Leave blank | Operator fills manually |
+| `follow_up_owner` | Leave blank | Operator fills manually |
+| `notes` | Leave blank | Operator fills manually |
+
+**Google Sheets column headers to set (if creating a new/updated tab):**
+```
+inquiry_id | timestamp | source_page | name | email | company | request_type | message | raw_source | status | priority | follow_up_owner | notes
+```
+
+---
+
+### 7. Do Not Change
+
+- `src/components/ui/ContactForm.tsx` — untouched. Form fields unchanged.
+- `src/app/page.tsx` — untouched. Homepage form fields unchanged.
+- `MAKE_WEBHOOK_URL` env var — same env var, same location.
+- All Signal APIs — untouched.
+- All other routes — untouched.
+
+---
 
 ## ══════════════════════════════════════════════
 ## SIGNAL CALENDAR — GOOGLE SHEETS PLANNING LAYER — 2026-05-25
