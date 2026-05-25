@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-25 — First controlled signal switch — active signal is now signal-2026-05-25 (Human Control)_
+_Last updated: 2026-05-25 — Insight Report API + /system-preview §06 layer added_
 
 ---
 
@@ -60,6 +60,78 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## INSIGHT REPORT API + SYSTEM PREVIEW §06 — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`/api/insight-report` route created. `/system-preview` §06 layer added. TypeScript: 0 errors. Build: ✓ 16 pages, 4 Dynamic API routes. No other files changed.
+
+---
+
+### 2. New File
+
+**`src/app/api/insight-report/route.ts`** — GET handler. `export const dynamic = "force-dynamic"`. Server-side only.
+
+**Env var required:** `INSIGHT_REPORTS_CSV_URL`
+- How to get: Google Sheets → Insight Reports tab → File → Share → Publish to web → CSV → copy URL.
+- Locally: add to `.env.local` (do not commit).
+- Vercel: Settings → Environment Variables → `INSIGHT_REPORTS_CSV_URL` → Preview (and Production when ready).
+
+**Response shape:**
+```json
+{
+  "ok": true,
+  "mode": "live" | "fallback",
+  "report": {
+    "report_id": "insight-2026-05-24-week-01",
+    "date_created": "2026-05-24",
+    "signal_id": "signal-2026-05-23",
+    "signal_theme": "AI Anxiety",
+    "total_responses": 5,
+    "dominant_reaction": "anxiety + interest",
+    "dominant_percent": "40% / 40%",
+    "emotional_pattern": "...",
+    "interpretation": "...",
+    "experience_implication": "...",
+    "brand_partner_value": "...",
+    "recommended_next_signal": "...",
+    "status": "draft"
+  } | null
+}
+```
+
+**Selection logic:** last row with status `"draft"` or `"approved"` (case-insensitive); falls back to last row with any non-empty `report_id`.
+
+**All failure paths** (env var missing, fetch error, parse error, no rows) return `mode: "fallback"`, `report: null`. Never returns non-2xx.
+
+**CSV parser** uses RFC 4180-safe quoted-field handling — correctly handles commas inside interpretation/implication text fields.
+
+---
+
+### 3. /system-preview §06 — Latest Insight Report
+
+New section added to `src/app/system-preview/page.tsx`:
+- Fetches `/api/insight-report` client-side in `useEffect` (parallel to existing signal-summary fetch).
+- Status bar shows: `Connecting…` / `Report Loaded` (green dot) / `No Report` (dim dot).
+- **Fallback state:** shows "No insight report loaded yet." — calm, no error language.
+- **Live state:** identity rows (report_id, date_created, signal_id, theme, responses, dominant, status) + text fields (emotional_pattern, interpretation, experience_implication, brand_partner_value, recommended_next_signal). Text fields only render when content exists.
+
+---
+
+### 4. Insight Reports Tab — Still Manual MVP
+
+The Insight Reports Google Sheet tab is still manually authored. No automation has been added. The API reads and presents what is there — it does not write.
+
+---
+
+### 5. Make / Google Sheets
+
+No change required. No Make scenario change needed. No new webhook. No new column mapping.
+
+---
 
 ## ══════════════════════════════════════════════
 ## FIRST CONTROLLED SIGNAL SWITCH — 2026-05-25

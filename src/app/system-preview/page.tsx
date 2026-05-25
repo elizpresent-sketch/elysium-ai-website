@@ -30,6 +30,28 @@ interface SignalSummaryData {
   metrics:         SummaryMetric[];
 }
 
+interface InsightReport {
+  report_id:               string;
+  date_created:            string;
+  signal_id:               string;
+  signal_theme:            string;
+  total_responses:         number;
+  dominant_reaction:       string;
+  dominant_percent:        string;
+  emotional_pattern:       string;
+  interpretation:          string;
+  experience_implication:  string;
+  brand_partner_value:     string;
+  recommended_next_signal: string;
+  status:                  string;
+}
+
+interface InsightReportData {
+  ok:     boolean;
+  mode:   "live" | "fallback";
+  report: InsightReport | null;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SMALL COMPONENTS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -68,6 +90,8 @@ export default function SystemPreview() {
   const [summary, setSummary]           = useState<SignalSummaryData | null>(null);
   const [summaryLoading, setLoading]    = useState(true);
   const [mountedDate, setMountedDate]   = useState("");
+  const [insight, setInsight]           = useState<InsightReportData | null>(null);
+  const [insightLoading, setInsightLoading] = useState(true);
 
   useEffect(() => {
     setMountedDate(new Date().toISOString().slice(0, 10));
@@ -76,9 +100,16 @@ export default function SystemPreview() {
       .then((data: SignalSummaryData) => { if (data?.ok) setSummary(data); })
       .catch(() => {})
       .finally(() => setLoading(false));
+    fetch("/api/insight-report")
+      .then((r) => r.json())
+      .then((data: InsightReportData) => { if (data?.ok) setInsight(data); })
+      .catch(() => {})
+      .finally(() => setInsightLoading(false));
   }, []);
 
-  const isLive = summary?.mode === "live" && (summary?.total_responses ?? 0) > 0;
+  const isLive        = summary?.mode === "live" && (summary?.total_responses ?? 0) > 0;
+  const insightIsLive = insight?.mode === "live" && insight?.report !== null;
+  const insightReport = insight?.report ?? null;
 
   // Reaction rows — live metrics if available, else zero-value from active signal
   const reactionRows: SummaryMetric[] = summary?.metrics ?? ACTIVE_SIGNAL.reactions.map((r) => ({
@@ -482,6 +513,108 @@ export default function SystemPreview() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            §06 · LATEST INSIGHT REPORT
+        ══════════════════════════════════════════════════════════════════ */}
+        <section>
+          <SectionLabel label="Latest Insight Report" num="06" />
+
+          {/* Status bar */}
+          <div
+            className="flex items-center justify-between px-4 py-3"
+            style={{ border: "1px solid rgba(28,37,48,0.65)" }}
+          >
+            <div className="flex items-center gap-2.5">
+              <StatusDot active={insightIsLive} />
+              <span className="text-[8px] tracking-[0.28em] uppercase font-medium text-[#969CA2]">
+                {insightLoading
+                  ? "Connecting…"
+                  : insightIsLive
+                  ? "Report Loaded"
+                  : "No Report"}
+              </span>
+            </div>
+            {insightReport && (
+              <span className="text-[7.5px] tracking-[0.18em] text-[#6B7278]/50">
+                {insightReport.report_id}
+              </span>
+            )}
+          </div>
+
+          {/* Fallback */}
+          {!insightLoading && !insightIsLive && (
+            <div
+              className="px-4 py-5"
+              style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}
+            >
+              <p className="text-[12px] tracking-[0.05em] text-[#6B7278]/50">
+                No insight report loaded yet.
+              </p>
+            </div>
+          )}
+
+          {/* Live report */}
+          {insightIsLive && insightReport && (
+            <>
+              {/* Identity rows */}
+              <div style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}>
+                {[
+                  { key: "Report ID",       val: insightReport.report_id },
+                  { key: "Date Created",    val: insightReport.date_created },
+                  { key: "Signal ID",       val: insightReport.signal_id },
+                  { key: "Signal Theme",    val: insightReport.signal_theme },
+                  { key: "Total Responses", val: String(insightReport.total_responses) },
+                  {
+                    key: "Dominant",
+                    val: [insightReport.dominant_reaction, insightReport.dominant_percent]
+                      .filter(Boolean).join(" · ") || "—",
+                  },
+                  { key: "Status",          val: insightReport.status },
+                ].map(({ key, val }) => (
+                  <div
+                    key={key}
+                    className="flex items-baseline justify-between px-4 py-3"
+                    style={{ borderBottom: "1px solid rgba(28,37,48,0.45)" }}
+                  >
+                    <span className="text-[8px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">
+                      {key}
+                    </span>
+                    <span className="text-[10.5px] tracking-[0.08em] text-[#C8CDD2] text-right max-w-[65%]">
+                      {val}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Text fields — only rendered when content exists */}
+              <div style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}>
+                {[
+                  { key: "Emotional Pattern",       val: insightReport.emotional_pattern },
+                  { key: "Interpretation",          val: insightReport.interpretation },
+                  { key: "Experience Implication",  val: insightReport.experience_implication },
+                  { key: "Brand Partner Value",     val: insightReport.brand_partner_value },
+                  { key: "Recommended Next Signal", val: insightReport.recommended_next_signal },
+                ].map(({ key, val }) =>
+                  val ? (
+                    <div
+                      key={key}
+                      className="flex flex-col gap-2 px-4 py-4"
+                      style={{ borderBottom: "1px solid rgba(28,37,48,0.40)" }}
+                    >
+                      <span className="text-[8px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">
+                        {key}
+                      </span>
+                      <p className="text-[12.5px] text-[#969CA2] leading-relaxed tracking-[0.03em]">
+                        {val}
+                      </p>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            </>
+          )}
         </section>
 
         {/* ── Page foot ──────────────────────────────────────────────────────── */}
