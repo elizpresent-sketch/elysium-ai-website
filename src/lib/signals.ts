@@ -3,8 +3,8 @@
 // Single source of truth for all Signal of the Day data and related types.
 //
 // To rotate to a new signal:
-//   1. Update ACTIVE_SIGNAL below with the new signal's content.
-//   2. Make sure that signal also exists in SIGNAL_ARCHIVE (at position [0]).
+//   1. Change ACTIVE_SIGNAL_ID to the signal_id of the next signal.
+//   2. Ensure that signal exists in SIGNAL_ARCHIVE.
 //   3. Ensure the corresponding row exists in the Google Sheets Signal Summary tab.
 //   4. No other file needs to change.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -35,34 +35,27 @@ export interface Signal {
   reactions:   Reaction[]; // ordered list of allowed reactions for this signal
 }
 
-// ── Active Signal ─────────────────────────────────────────────────────────────
-// This is the signal currently displayed on the homepage.
-// All homepage §02 values and the signal-reaction API payload derive from here.
-// SIGNAL_ARCHIVE[0] must always match this signal.
-
-export const ACTIVE_SIGNAL: Signal = {
-  signal_id:   "signal-2026-05-23",
-  date:        "2026-05-23",
-  theme:       "AI Anxiety",
-  statistic:   "67%",
-  statement:   "experienced anxiety when AI began to speak too humanly.",
-  prompt:      "What did you feel?",
-  source_page: "homepage_signal_of_the_day",
-  reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
-};
-
 // ── Signal Archive ────────────────────────────────────────────────────────────
-// Complete ordered list of all signals — active and draft.
-// Index [0] is always the currently active signal.
-// Drafts below [0] are not displayed and do not affect any live system.
+// Complete list of all signals — active and draft.
+// The active signal is identified by ACTIVE_SIGNAL_ID below, not by array position.
+// Drafts are not displayed and do not affect any live system until activated.
 // Google Sheets Signal Summary should have one row per signal_id when activated.
 
 export const SIGNAL_ARCHIVE: Signal[] = [
 
-  // ── ACTIVE ────────────────────────────────────────────────────────────────
-  ACTIVE_SIGNAL,
+  // ── Currently active ──────────────────────────────────────────────────────
+  {
+    signal_id:   "signal-2026-05-23",
+    date:        "2026-05-23",
+    theme:       "AI Anxiety",
+    statistic:   "67%",
+    statement:   "experienced anxiety when AI began to speak too humanly.",
+    prompt:      "What did you feel?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
 
-  // ── DRAFT — do not activate without updating ACTIVE_SIGNAL above ──────────
+  // ── Drafts — do not activate without updating ACTIVE_SIGNAL_ID ───────────
 
   {
     signal_id:   "signal-2026-05-24",
@@ -99,14 +92,31 @@ export const SIGNAL_ARCHIVE: Signal[] = [
 
 ];
 
-// ── Archive helpers ───────────────────────────────────────────────────────────
+// ── Archive helper ────────────────────────────────────────────────────────────
 
 /** Look up a signal from the archive by its signal_id. Returns undefined if not found. */
 export function getSignalById(id: string): Signal | undefined {
   return SIGNAL_ARCHIVE.find((s) => s.signal_id === id);
 }
 
-/** Return the currently active signal. Equivalent to importing ACTIVE_SIGNAL directly. */
+// ── Active Signal ─────────────────────────────────────────────────────────────
+// Change ACTIVE_SIGNAL_ID to rotate to a different signal.
+// ACTIVE_SIGNAL is derived automatically — no other edits needed here.
+
+/** The signal_id of the currently active Signal of the Day. Change this to rotate. */
+export const ACTIVE_SIGNAL_ID = "signal-2026-05-23";
+
+/**
+ * The currently active Signal of the Day.
+ * Derived from SIGNAL_ARCHIVE via ACTIVE_SIGNAL_ID.
+ * Used by homepage §02, /api/signal-summary, and /api/signal-reaction payload.
+ *
+ * Non-null assertion is intentional: ACTIVE_SIGNAL_ID must always exist in SIGNAL_ARCHIVE.
+ * If it does not, a runtime error will surface immediately — by design.
+ */
+export const ACTIVE_SIGNAL: Signal = getSignalById(ACTIVE_SIGNAL_ID)!;
+
+/** Return the currently active signal. Convenience wrapper around ACTIVE_SIGNAL. */
 export function getActiveSignal(): Signal {
   return ACTIVE_SIGNAL;
 }

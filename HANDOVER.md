@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-24 — Signal Archive introduced — ACTIVE_SIGNAL remains signal-2026-05-23_
+_Last updated: 2026-05-25 — ACTIVE_SIGNAL_ID single-control-point refactor — active signal remains signal-2026-05-23_
 
 ---
 
@@ -60,6 +60,58 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## ACTIVE_SIGNAL_ID ROTATION CONTROL — 2026-05-25
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`ACTIVE_SIGNAL_ID` single-control-point refactor complete. TypeScript: 0 errors. Build: ✓ Dynamic routes confirmed. Only `src/lib/signals.ts` changed. No other files touched.
+
+---
+
+### 2. What changed in `src/lib/signals.ts`
+
+One new export introduced, one derivation changed:
+
+| Item | Before | After |
+|---|---|---|
+| `ACTIVE_SIGNAL_ID` | Did not exist | `export const ACTIVE_SIGNAL_ID = "signal-2026-05-23"` — single string constant |
+| `ACTIVE_SIGNAL` | Defined as an inline object literal | Derived: `getSignalById(ACTIVE_SIGNAL_ID)!` |
+
+All consumers of `ACTIVE_SIGNAL` (`page.tsx`, `/api/signal-summary`, `/api/signal-reaction`) are **unchanged** — `ACTIVE_SIGNAL` remains typed as `Signal`, not `Signal | undefined`.
+
+The non-null assertion `!` is intentional: if `ACTIVE_SIGNAL_ID` is ever set to an ID that does not exist in `SIGNAL_ARCHIVE`, a runtime error surfaces immediately — by design.
+
+---
+
+### 3. How to rotate to the next signal (AUTHORITATIVE — supersedes earlier instructions)
+
+**Only one edit is ever needed:**
+
+```ts
+// src/lib/signals.ts — change this one line only
+export const ACTIVE_SIGNAL_ID = "signal-2026-05-24";  // ← change to next signal_id
+```
+
+After changing `ACTIVE_SIGNAL_ID`:
+1. Confirm the `signal_id` exists in `SIGNAL_ARCHIVE` in the same file.
+2. Confirm a corresponding row exists in the Google Sheets Signal Summary tab for that `signal_id`.
+3. Deploy. No other file changes required.
+
+Do **not** edit `ACTIVE_SIGNAL` directly — it is now derived automatically.
+
+---
+
+### 4. Active Signal confirmed
+
+- `ACTIVE_SIGNAL_ID` → `"signal-2026-05-23"`
+- `ACTIVE_SIGNAL.signal_id` → `"signal-2026-05-23"` ✓
+- `ACTIVE_SIGNAL.theme` → `"AI Anxiety"` ✓
+- Signal reactions, Make webhook, Google Sheets: all unchanged
+
+---
 
 ## ══════════════════════════════════════════════
 ## SIGNAL ARCHIVE — 2026-05-24
