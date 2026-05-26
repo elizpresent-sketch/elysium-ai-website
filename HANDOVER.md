@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-25 — Inquiry API normalisation (Stage 3): consistent payload shape, inquiry_id, timestamp server-generated; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor; Human Control Insight Report live_
+_Last updated: 2026-05-26 — Both Make automations confirmed live (Signal Reactions + Inquiry CRM); Vercel project confirmed; Inquiry Log tab live; legacy Make scenario deleted; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
 
 ---
 
@@ -60,6 +60,92 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## AUTOMATION STATE CONFIRMED — 2026-05-26
+## ══════════════════════════════════════════════
+
+### 1. Vercel Project
+
+| Item | Value |
+|---|---|
+| **Correct project** | `elysium-ai-website` |
+| **Wrong project — do not use** | `elysium-ai-website-e837` — duplicate, ignore |
+
+Always deploy from the `elysium-ai-website` Vercel project on branch `platform-company-restructure`.
+
+---
+
+### 2. Active Make Scenarios
+
+Both scenarios are **LIVE** — set to trigger automatically without "Run once" or "Use existing data".
+
+| Scenario | Status | Trigger | Destination |
+|---|---|---|---|
+| **ELIZIUM Signal Reactions** | ✅ LIVE | Immediately as data arrives | `Sheet1` in Google Sheets |
+| **ELIZIUM Inquiry CRM** | ✅ LIVE | Immediately as data arrives | `Inquiry Log` tab in Google Sheets |
+
+**Deleted legacy scenario:** `OLD — Website Inquiry Legacy — DO NOT USE` — removed. Do not recreate.
+
+---
+
+### 3. Environment Variables — Confirmed
+
+| Env var | Status | Used by | Notes |
+|---|---|---|---|
+| `MAKE_WEBHOOK_URL` | ✅ Set — Vercel Preview + Production | `/api/inquiry` | Confirmed working — last 8 chars: `dhdpyr43` (host: `hook.eu1.make.com`) |
+| `MAKE_SIGNAL_REACTION_WEBHOOK_URL` | ✅ Set — Vercel Preview + Production | `/api/signal-reaction` | Signal Reactions scenario — unchanged |
+| `SIGNAL_SUMMARY_CSV_URL` | ✅ Set | `/api/signal-summary` | Signal Summary tab published CSV |
+| `INSIGHT_REPORTS_CSV_URL` | ✅ Set | `/api/insight-report` | Insight Reports tab published CSV |
+
+Do NOT commit `.env.local`. Do NOT add `NEXT_PUBLIC_` prefixes to any of these.
+
+---
+
+### 4. Inquiry CRM — Confirmed Payload Shape
+
+`/api/inquiry` normalises all submissions before forwarding to Make. Make always receives:
+
+```json
+{
+  "inquiry_id":   "inq-20260526-143022-a7f3",
+  "timestamp":    "2026-05-26T14:30:22.123Z",
+  "source_page":  "homepage_private_access",
+  "name":         "Full Name",
+  "email":        "email@example.com",
+  "company":      "Company Name",
+  "request_type": "Partnership",
+  "message":      "Message text",
+  "raw_source":   "homepage_private_access",
+  "status":       ""
+}
+```
+
+`status` is blank on arrival — operators fill it manually in the Inquiry Log sheet (`new` → `reviewed` → `replied` → `rejected` → `converted`).
+
+---
+
+### 5. Google Sheets — Full Tab Inventory
+
+| Tab | Purpose | Written by | Read by |
+|---|---|---|---|
+| `Sheet1` | Raw signal reactions log | Make — ELIZIUM Signal Reactions scenario | Nothing (internal only) |
+| `Signal Summary` | Aggregate counts + percentages per signal | Google Sheets formulas on Sheet1 | `/api/signal-summary` → homepage Live Emotional Data + /system-preview §02 |
+| `Insight Reports` | Manual/AI written strategic interpretation | Operator (manually authored) | `/api/insight-report` → /system-preview §06 |
+| `Signal Calendar` | Future signal planning and scheduling | Operator (manually managed) | Not connected — planning layer only |
+| `Inquiry Log` | Partner / contact CRM | Make — ELIZIUM Inquiry CRM scenario | Not yet connected to website |
+
+---
+
+### 6. Do Not Change
+
+- Make scenario names — do not rename.
+- `MAKE_WEBHOOK_URL` — confirmed working; do not regenerate unless broken.
+- `MAKE_SIGNAL_REACTION_WEBHOOK_URL` — confirmed working; do not touch.
+- Google Sheets tab names — API routes and Make modules depend on exact tab names.
+- `/api/debug-inquiry-env` route — temporary diagnostic; leave in place until explicitly removed.
+
+---
 
 ## ══════════════════════════════════════════════
 ## INQUIRY API NORMALISATION — 2026-05-25
