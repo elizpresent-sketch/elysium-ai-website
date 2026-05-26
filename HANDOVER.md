@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-26 — Both Make automations confirmed live (Signal Reactions + Inquiry CRM); Vercel project confirmed; Inquiry Log tab live; legacy Make scenario deleted; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
+_Last updated: 2026-05-26 — Inquiry Pipeline visibility layer: /api/inquiry-summary + /system-preview §07; both Make automations live; Vercel confirmed; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
 
 ---
 
@@ -60,6 +60,101 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## INQUIRY PIPELINE VISIBILITY LAYER — 2026-05-26
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`/api/inquiry-summary` route created. `/system-preview` §07 Inquiry Pipeline section added. TypeScript: 0 errors. Build: ✓ 16 pages, 5 Dynamic routes (was 4). Only `src/app/api/inquiry-summary/route.ts` (new) and `src/app/system-preview/page.tsx` changed.
+
+---
+
+### 2. New File — `src/app/api/inquiry-summary/route.ts`
+
+GET handler. `export const dynamic = "force-dynamic"`. Server-side only.
+
+**Env var required:** `INQUIRY_LOG_CSV_URL`
+- How to get: Google Sheets → Inquiry Log tab → File → Share → Publish to web → CSV → copy URL.
+- Locally: add to `.env.local` (do not commit).
+- Vercel: Settings → Environment Variables → `INQUIRY_LOG_CSV_URL` → Preview (and Production when ready).
+
+**Privacy rule (hard):** `email`, `message`, `notes`, and `follow_up_owner` are NEVER included in the response. Only operational metadata is returned.
+
+**Response shape:**
+```json
+{
+  "ok": true,
+  "mode": "live" | "fallback",
+  "total_inquiries": 4,
+  "new_inquiries": 2,
+  "reviewed_inquiries": 1,
+  "replied_inquiries": 1,
+  "converted_inquiries": 0,
+  "latest_inquiry_timestamp": "2026-05-26T14:30:22.123Z",
+  "source_breakdown": {
+    "contact_page": 2,
+    "homepage_private_access": 2,
+    "other": 0
+  },
+  "request_type_breakdown": [
+    { "request_type": "Partnership", "count": 2 },
+    { "request_type": "Investor", "count": 1 }
+  ],
+  "latest_inquiries": [
+    {
+      "inquiry_id": "inq-20260526-143022-a7f3",
+      "timestamp": "2026-05-26T14:30:22.123Z",
+      "source_page": "homepage_private_access",
+      "name": "Name",
+      "company": "Company",
+      "request_type": "Partnership",
+      "status": "new"
+    }
+  ]
+}
+```
+
+**Status counting rule:** blank `status` field is counted as `new` (inquiries not yet reviewed by operator).
+
+**All failure paths** (env var missing, fetch error, parse error, no rows) return `mode: "fallback"`, zero counts, empty arrays. Never returns non-2xx.
+
+**CSV parser:** RFC 4180-safe quoted-field handling — identical to `/api/insight-report`. Correctly handles commas inside quoted fields (e.g. message text, names with commas).
+
+---
+
+### 3. /system-preview §07 — Inquiry Pipeline
+
+New section added to `src/app/system-preview/page.tsx`:
+- Fetches `/api/inquiry-summary` client-side in `useEffect` (parallel to existing fetches).
+- Status bar: `Connecting…` / `Live Data` (green dot) / `Fallback Mode` (dim dot) + total count + last timestamp.
+- **Stat tiles (5-column):** Total / New / Reviewed / Replied / Converted.
+- **Source breakdown:** Contact Page vs Homepage PA vs Other.
+- **Request type breakdown:** all types sorted by count descending.
+- **Latest 3 inquiries:** inquiry_id, name, company, source, request_type, status — no email/message/notes.
+- **Fallback notice:** "Set INQUIRY_LOG_CSV_URL to enable live Inquiry Pipeline data." — shown only when no live data.
+
+---
+
+### 4. Long-Term Migration Note
+
+The MVP reads the Inquiry Log as a **publicly published CSV** (same pattern as Signal Summary and Insight Reports). This is adequate for internal operator use.
+
+For production: migrate to **private Google Sheets API** with a service account, so the Inquiry Log does not need to be published. This prevents any accidental exposure of the tab URL. The route interface is the same — only the fetch mechanism changes.
+
+Do not implement private Sheets API access until explicitly instructed.
+
+---
+
+### 5. Do Not Change
+
+- `/api/inquiry/route.ts` — untouched. Inquiry submission pipeline unchanged.
+- Signal APIs — untouched.
+- Homepage — untouched.
+- Make / Google Sheets — no change required.
+
+---
 
 ## ══════════════════════════════════════════════
 ## AUTOMATION STATE CONFIRMED — 2026-05-26

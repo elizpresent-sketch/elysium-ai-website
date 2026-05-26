@@ -52,6 +52,34 @@ interface InsightReportData {
   report: InsightReport | null;
 }
 
+interface LatestInquiry {
+  inquiry_id:   string;
+  timestamp:    string;
+  source_page:  string;
+  name:         string;
+  company:      string;
+  request_type: string;
+  status:       string;
+}
+
+interface InquirySummaryData {
+  ok:                       boolean;
+  mode:                     "live" | "fallback";
+  total_inquiries:          number;
+  new_inquiries:            number;
+  reviewed_inquiries:       number;
+  replied_inquiries:        number;
+  converted_inquiries:      number;
+  latest_inquiry_timestamp: string | null;
+  source_breakdown: {
+    contact_page:            number;
+    homepage_private_access: number;
+    other:                   number;
+  };
+  request_type_breakdown:   Array<{ request_type: string; count: number }>;
+  latest_inquiries:         LatestInquiry[];
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SMALL COMPONENTS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -90,8 +118,10 @@ export default function SystemPreview() {
   const [summary, setSummary]           = useState<SignalSummaryData | null>(null);
   const [summaryLoading, setLoading]    = useState(true);
   const [mountedDate, setMountedDate]   = useState("");
-  const [insight, setInsight]           = useState<InsightReportData | null>(null);
-  const [insightLoading, setInsightLoading] = useState(true);
+  const [insight, setInsight]                             = useState<InsightReportData | null>(null);
+  const [insightLoading, setInsightLoading]               = useState(true);
+  const [inquirySummary, setInquirySummary]               = useState<InquirySummaryData | null>(null);
+  const [inquirySummaryLoading, setInquirySummaryLoading] = useState(true);
 
   useEffect(() => {
     setMountedDate(new Date().toISOString().slice(0, 10));
@@ -105,11 +135,17 @@ export default function SystemPreview() {
       .then((data: InsightReportData) => { if (data?.ok) setInsight(data); })
       .catch(() => {})
       .finally(() => setInsightLoading(false));
+    fetch("/api/inquiry-summary")
+      .then((r) => r.json())
+      .then((data: InquirySummaryData) => { if (data?.ok) setInquirySummary(data); })
+      .catch(() => {})
+      .finally(() => setInquirySummaryLoading(false));
   }, []);
 
-  const isLive        = summary?.mode === "live" && (summary?.total_responses ?? 0) > 0;
-  const insightIsLive = insight?.mode === "live" && insight?.report !== null;
-  const insightReport = insight?.report ?? null;
+  const isLive          = summary?.mode === "live" && (summary?.total_responses ?? 0) > 0;
+  const insightIsLive   = insight?.mode === "live" && insight?.report !== null;
+  const insightReport   = insight?.report ?? null;
+  const inquiryIsLive   = inquirySummary?.mode === "live";
 
   // Reaction rows — live metrics if available, else zero-value from active signal
   const reactionRows: SummaryMetric[] = summary?.metrics ?? ACTIVE_SIGNAL.reactions.map((r) => ({
@@ -629,6 +665,204 @@ export default function SystemPreview() {
                 )}
               </div>
             </>
+          )}
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            §07 · INQUIRY PIPELINE
+        ══════════════════════════════════════════════════════════════════ */}
+        <section>
+          <SectionLabel label="Inquiry Pipeline" num="07" />
+
+          {/* Status bar */}
+          <div
+            className="flex items-center justify-between px-4 py-3"
+            style={{ border: "1px solid rgba(28,37,48,0.65)" }}
+          >
+            <div className="flex items-center gap-2.5">
+              <StatusDot active={inquiryIsLive} />
+              <span className="text-[8px] tracking-[0.28em] uppercase font-medium text-[#969CA2]">
+                {inquirySummaryLoading
+                  ? "Connecting…"
+                  : inquiryIsLive
+                  ? "Live Data"
+                  : "Fallback Mode"}
+              </span>
+            </div>
+            <div className="flex items-center gap-5">
+              {!inquirySummaryLoading && inquirySummary && (
+                <span className="text-[8px] tracking-[0.20em] uppercase text-[#6B7278]">
+                  {inquirySummary.total_inquiries} total
+                </span>
+              )}
+              {inquirySummary?.latest_inquiry_timestamp && (
+                <span className="text-[7.5px] tracking-[0.14em] text-[#6B7278]/50">
+                  last {inquirySummary.latest_inquiry_timestamp.slice(0, 10)}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Stat tiles */}
+          <div
+            className="grid grid-cols-5"
+            style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}
+          >
+            {[
+              { label: "Total",     val: inquirySummary?.total_inquiries    ?? 0 },
+              { label: "New",       val: inquirySummary?.new_inquiries       ?? 0 },
+              { label: "Reviewed",  val: inquirySummary?.reviewed_inquiries  ?? 0 },
+              { label: "Replied",   val: inquirySummary?.replied_inquiries   ?? 0 },
+              { label: "Converted", val: inquirySummary?.converted_inquiries ?? 0 },
+            ].map(({ label, val }, i) => (
+              <div
+                key={label}
+                className="flex flex-col gap-1.5 px-4 py-4"
+                style={{
+                  borderRight: i < 4 ? "1px solid rgba(28,37,48,0.55)" : "none",
+                }}
+              >
+                <span className="text-[7.5px] tracking-[0.28em] uppercase text-[#6B7278]/60 font-medium">
+                  {label}
+                </span>
+                <span
+                  className="font-display font-normal leading-none tracking-[0.04em]"
+                  style={{
+                    fontSize: "clamp(1.4rem, 3vw, 2rem)",
+                    color: val > 0 ? "#C8CDD2" : "#3A4048",
+                  }}
+                >
+                  {val}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Source breakdown + Request type breakdown */}
+          <div
+            className="grid grid-cols-2"
+            style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}
+          >
+            {/* Source */}
+            <div style={{ borderRight: "1px solid rgba(28,37,48,0.55)" }}>
+              <div
+                className="px-4 py-2.5"
+                style={{ borderBottom: "1px solid rgba(28,37,48,0.55)" }}
+              >
+                <span className="text-[7.5px] tracking-[0.30em] uppercase text-[#6B7278]/45 font-medium">
+                  Source
+                </span>
+              </div>
+              {[
+                { label: "Contact Page",   val: inquirySummary?.source_breakdown.contact_page ?? 0 },
+                { label: "Homepage PA",    val: inquirySummary?.source_breakdown.homepage_private_access ?? 0 },
+                { label: "Other",          val: inquirySummary?.source_breakdown.other ?? 0 },
+              ].map(({ label, val }) => (
+                <div
+                  key={label}
+                  className="flex items-center justify-between px-4 py-3"
+                  style={{ borderBottom: "1px solid rgba(28,37,48,0.35)" }}
+                >
+                  <span className="text-[8.5px] tracking-[0.18em] uppercase text-[#8E949A]">{label}</span>
+                  <span
+                    className="text-[10px] tracking-[0.06em]"
+                    style={{ color: val > 0 ? "#C8CDD2" : "#3A4048" }}
+                  >
+                    {val > 0 ? val : "—"}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Request type */}
+            <div>
+              <div
+                className="px-4 py-2.5"
+                style={{ borderBottom: "1px solid rgba(28,37,48,0.55)" }}
+              >
+                <span className="text-[7.5px] tracking-[0.30em] uppercase text-[#6B7278]/45 font-medium">
+                  Request Type
+                </span>
+              </div>
+              {inquirySummary?.request_type_breakdown.length ? (
+                inquirySummary.request_type_breakdown.map(({ request_type, count }) => (
+                  <div
+                    key={request_type}
+                    className="flex items-center justify-between px-4 py-3"
+                    style={{ borderBottom: "1px solid rgba(28,37,48,0.35)" }}
+                  >
+                    <span className="text-[8.5px] tracking-[0.18em] uppercase text-[#8E949A]">
+                      {request_type || "—"}
+                    </span>
+                    <span className="text-[10px] tracking-[0.06em] text-[#C8CDD2]">{count}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="px-4 py-3">
+                  <span className="text-[10px] tracking-[0.06em] text-[#3A4048]">—</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Latest 3 inquiries */}
+          {inquirySummary && inquirySummary.latest_inquiries.length > 0 && (
+            <div style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}>
+              <div
+                className="grid grid-cols-[1.6fr_0.8fr_0.9fr_0.7fr] gap-4 px-4 py-2.5"
+                style={{ borderBottom: "1px solid rgba(28,37,48,0.55)" }}
+              >
+                {["ID / Name", "Source", "Type", "Status"].map((h) => (
+                  <span
+                    key={h}
+                    className="text-[7.5px] tracking-[0.30em] uppercase text-[#6B7278]/45 font-medium"
+                  >
+                    {h}
+                  </span>
+                ))}
+              </div>
+              {inquirySummary.latest_inquiries.map((inq) => (
+                <div
+                  key={inq.inquiry_id || inq.timestamp}
+                  className="grid grid-cols-[1.6fr_0.8fr_0.9fr_0.7fr] gap-4 items-start px-4 py-3"
+                  style={{ borderBottom: "1px solid rgba(28,37,48,0.35)" }}
+                >
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[8.5px] tracking-[0.04em] text-[#C8CDD2]">
+                      {inq.name || "—"}
+                    </span>
+                    {inq.company && (
+                      <span className="text-[8px] tracking-[0.04em] text-[#6B7278]">
+                        {inq.company}
+                      </span>
+                    )}
+                    <span className="text-[7.5px] tracking-[0.04em] text-[#505860]">
+                      {inq.inquiry_id || "—"}
+                    </span>
+                  </div>
+                  <span className="text-[8px] tracking-[0.10em] uppercase text-[#8E949A] pt-0.5">
+                    {inq.source_page === "contact_page"
+                      ? "Contact"
+                      : inq.source_page === "homepage_private_access"
+                      ? "Homepage"
+                      : inq.source_page || "—"}
+                  </span>
+                  <span className="text-[8px] tracking-[0.10em] uppercase text-[#8E949A] pt-0.5">
+                    {inq.request_type || "—"}
+                  </span>
+                  <span className="text-[8px] tracking-[0.16em] uppercase text-[#969CA2] pt-0.5">
+                    {inq.status || "new"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Fallback notice */}
+          {!inquirySummaryLoading && !inquiryIsLive && (
+            <p className="text-[8px] tracking-[0.18em] uppercase text-[#6B7278]/45 mt-2.5">
+              Set INQUIRY_LOG_CSV_URL to enable live Inquiry Pipeline data.
+            </p>
           )}
         </section>
 
