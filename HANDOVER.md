@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — Signal Calendar visibility layer: /api/signal-calendar + /system-preview §08; Inquiry Pipeline visibility layer: /api/inquiry-summary + /system-preview §07; both Make automations live; Vercel confirmed; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
+_Last updated: 2026-05-27 — System Status / Next Actions §00 added to /system-preview; Signal Calendar visibility layer: /api/signal-calendar + /system-preview §08; Inquiry Pipeline visibility layer: /api/inquiry-summary + /system-preview §07; both Make automations live; Vercel confirmed; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
 
 ---
 
@@ -60,6 +60,81 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## SYSTEM STATUS / NEXT ACTIONS — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`/system-preview` §00 System Status / Next Actions section added. TypeScript: 0 errors. Build: ✓. Only `src/app/system-preview/page.tsx` changed. No new API routes, no new env vars, no new packages.
+
+---
+
+### 2. What It Is
+
+A new operator-facing overview panel inserted at the **top** of `/system-preview` (§00), before the detailed sections (§01–§08). It aggregates state already fetched by the page — no additional API calls or data sources.
+
+Purpose: an operator landing on `/system-preview` sees the system health and priority actions immediately, without scrolling through the detailed sections.
+
+---
+
+### 3. Section Layout
+
+**API Connections (left column):**
+
+| Row | Source | Live condition |
+|---|---|---|
+| Signal Reactions | `/api/signal-summary` | `summary?.mode === "live"` |
+| Signal Calendar | `/api/signal-calendar` | `calendarData?.mode === "live"` |
+| Inquiry CRM | `/api/inquiry-summary` | `inquirySummary?.mode === "live"` |
+| Insight Reports | `/api/insight-report` | `insight?.mode === "live"` |
+
+Each row shows: `StatusDot` + label + `"Connecting…"` / `"Live"` / `"Fallback"`.
+
+**Active Signal (right column):**
+- Signal ID: from `ACTIVE_SIGNAL_ID` (code constant — always available)
+- Theme: from `ACTIVE_SIGNAL.theme` (code constant — always available)
+- Report Status: from `calendarData?.latest_active_signal?.report_status` (live from Signal Calendar CSV)
+
+**Next Actions (full-width below):**
+
+Computed once all four fetches complete (`allLoaded`). Shows `"Analyzing…"` while loading. Prioritised list built from these conditions:
+
+| Condition | Action shown |
+|---|---|
+| `calendarData?.report_pending > 0` | Review pending insight report |
+| `inquirySummary?.new_inquiries > 0` | Review new inquiries |
+| `calendarData?.upcoming_signals.length > 0` | Prepare next signal |
+| Any API in fallback mode | Check CSV env / published sheet connection |
+| None of the above | System stable — continue monitoring |
+
+Multiple conditions can be true simultaneously — all matching actions are shown as a numbered list.
+
+---
+
+### 4. Implementation
+
+**New derived values added to `SystemPreview` component:**
+```ts
+const signalSummaryConnected = summary?.mode === "live";
+const insightConnected       = insight?.mode === "live";
+const allLoaded              = !summaryLoading && !insightLoading && !inquirySummaryLoading && !calendarLoading;
+// nextActions: string[] — computed from allLoaded guard + above conditions
+```
+
+**No new state, no new fetches, no new API routes, no new env vars.**
+
+---
+
+### 5. Do Not Change
+
+- No API routes touched — all unchanged.
+- No homepage changes.
+- No Make/webhook changes.
+- Do not change the section logic or action conditions without a scoped task.
+
+---
 
 ## ══════════════════════════════════════════════
 ## SIGNAL CALENDAR VISIBILITY LAYER — 2026-05-27

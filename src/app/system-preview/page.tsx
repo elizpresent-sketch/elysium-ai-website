@@ -183,11 +183,26 @@ export default function SystemPreview() {
       .finally(() => setCalendarLoading(false));
   }, []);
 
-  const isLive          = summary?.mode === "live" && (summary?.total_responses ?? 0) > 0;
-  const insightIsLive   = insight?.mode === "live" && insight?.report !== null;
-  const insightReport   = insight?.report ?? null;
-  const inquiryIsLive   = inquirySummary?.mode === "live";
-  const calendarIsLive  = calendarData?.mode === "live";
+  const isLive                 = summary?.mode === "live" && (summary?.total_responses ?? 0) > 0;
+  const insightIsLive          = insight?.mode === "live" && insight?.report !== null;
+  const insightReport          = insight?.report ?? null;
+  const inquiryIsLive          = inquirySummary?.mode === "live";
+  const calendarIsLive         = calendarData?.mode === "live";
+
+  // §00 — derived connection states (mode only, not data presence)
+  const signalSummaryConnected = summary?.mode === "live";
+  const insightConnected       = insight?.mode === "live";
+  const allLoaded              = !summaryLoading && !insightLoading && !inquirySummaryLoading && !calendarLoading;
+
+  const nextActions: string[] = [];
+  if (allLoaded) {
+    if ((calendarData?.report_pending  ?? 0) > 0)          nextActions.push("Review pending insight report");
+    if ((inquirySummary?.new_inquiries ?? 0) > 0)          nextActions.push("Review new inquiries");
+    if ((calendarData?.upcoming_signals.length ?? 0) > 0)  nextActions.push("Prepare next signal");
+    const anyFallback = !signalSummaryConnected || !calendarIsLive || !inquiryIsLive || !insightConnected;
+    if (anyFallback) nextActions.push("Check CSV env / published sheet connection");
+    if (nextActions.length === 0) nextActions.push("System stable — continue monitoring");
+  }
 
   // Reaction rows — live metrics if available, else zero-value from active signal
   const reactionRows: SummaryMetric[] = summary?.metrics ?? ACTIVE_SIGNAL.reactions.map((r) => ({
@@ -232,6 +247,120 @@ export default function SystemPreview() {
 
       {/* ── Body ────────────────────────────────────────────────────────────── */}
       <div className={`${W} pt-10 pb-24 flex flex-col gap-14`}>
+
+        {/* ══════════════════════════════════════════════════════════════════
+            §00 · SYSTEM STATUS / NEXT ACTIONS
+        ══════════════════════════════════════════════════════════════════ */}
+        <section>
+          <SectionLabel label="System Status / Next Actions" num="00" />
+
+          {/* API connections + Active signal */}
+          <div
+            className="grid grid-cols-2"
+            style={{ border: "1px solid rgba(28,37,48,0.65)" }}
+          >
+            {/* Left — API connections */}
+            <div style={{ borderRight: "1px solid rgba(28,37,48,0.55)" }}>
+              <div
+                className="px-4 py-2.5"
+                style={{ borderBottom: "1px solid rgba(28,37,48,0.55)" }}
+              >
+                <span className="text-[7.5px] tracking-[0.30em] uppercase text-[#6B7278]/45 font-medium">
+                  API Connections
+                </span>
+              </div>
+              {[
+                { label: "Signal Reactions", connected: signalSummaryConnected, loading: summaryLoading },
+                { label: "Signal Calendar",  connected: calendarIsLive,         loading: calendarLoading },
+                { label: "Inquiry CRM",      connected: inquiryIsLive,          loading: inquirySummaryLoading },
+                { label: "Insight Reports",  connected: insightConnected,       loading: insightLoading },
+              ].map(({ label, connected, loading }) => (
+                <div
+                  key={label}
+                  className="flex items-center justify-between px-4 py-3"
+                  style={{ borderBottom: "1px solid rgba(28,37,48,0.40)" }}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <StatusDot active={!loading && connected} />
+                    <span className="text-[8px] tracking-[0.22em] uppercase text-[#969CA2] font-medium">
+                      {label}
+                    </span>
+                  </div>
+                  <span className="text-[8px] tracking-[0.18em] uppercase font-medium text-[#C8CDD2]">
+                    {loading ? "Connecting…" : connected ? "Live" : "Fallback"}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Right — Active signal identity */}
+            <div>
+              <div
+                className="px-4 py-2.5"
+                style={{ borderBottom: "1px solid rgba(28,37,48,0.55)" }}
+              >
+                <span className="text-[7.5px] tracking-[0.30em] uppercase text-[#6B7278]/45 font-medium">
+                  Active Signal
+                </span>
+              </div>
+              {[
+                { key: "Signal ID",     val: ACTIVE_SIGNAL_ID },
+                { key: "Theme",         val: ACTIVE_SIGNAL.theme },
+                {
+                  key: "Report Status",
+                  val: calendarLoading
+                    ? "Connecting…"
+                    : (calendarData?.latest_active_signal?.report_status ?? "—"),
+                },
+              ].map(({ key, val }) => (
+                <div
+                  key={key}
+                  className="flex items-center justify-between px-4 py-3"
+                  style={{ borderBottom: "1px solid rgba(28,37,48,0.40)" }}
+                >
+                  <span className="text-[8px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">
+                    {key}
+                  </span>
+                  <span className="text-[10px] tracking-[0.08em] text-[#C8CDD2] text-right max-w-[60%]">
+                    {val}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Next actions */}
+          <div style={{ border: "1px solid rgba(28,37,48,0.65)", borderTop: "none" }}>
+            <div
+              className="px-4 py-2.5"
+              style={{ borderBottom: "1px solid rgba(28,37,48,0.55)" }}
+            >
+              <span className="text-[7.5px] tracking-[0.30em] uppercase text-[#6B7278]/45 font-medium">
+                Next Actions
+              </span>
+            </div>
+            {!allLoaded ? (
+              <div className="px-4 py-4">
+                <span className="text-[10px] tracking-[0.06em] text-[#3A4048]">Analyzing…</span>
+              </div>
+            ) : (
+              nextActions.map((action, i) => (
+                <div
+                  key={action}
+                  className="flex items-start gap-5 px-4 py-4"
+                  style={{ borderBottom: "1px solid rgba(28,37,48,0.35)" }}
+                >
+                  <span className="text-[8px] tracking-[0.32em] uppercase text-[#6B7278]/45 font-medium w-5 flex-shrink-0 pt-0.5">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="text-[12.5px] text-[#8E949A] leading-relaxed tracking-[0.03em]">
+                    {action}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
 
         {/* ══════════════════════════════════════════════════════════════════
             §01 · ACTIVE SIGNAL
