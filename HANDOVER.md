@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — System Status / Next Actions §00 added to /system-preview; Signal Calendar visibility layer: /api/signal-calendar + /system-preview §08; Inquiry Pipeline visibility layer: /api/inquiry-summary + /system-preview §07; both Make automations live; Vercel confirmed; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
+_Last updated: 2026-05-27 — ELIZIUM Operating Manual added; System Status / Next Actions §00 added to /system-preview; Signal Calendar visibility layer: /api/signal-calendar + /system-preview §08; Inquiry Pipeline visibility layer: /api/inquiry-summary + /system-preview §07; both Make automations live; Vercel confirmed; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
 
 ---
 
@@ -17,6 +17,163 @@ _Last updated: 2026-05-27 — System Status / Next Actions §00 added to /system
 - All copy/written text — must remain word-for-word.
 - All routes/hrefs — must remain unchanged.
 - Read all target files before editing. Smallest possible changes only.
+
+---
+
+## ══════════════════════════════════════════════
+## ELIZIUM OPERATING MANUAL — MVP SYSTEM
+## ══════════════════════════════════════════════
+
+This section is the practical day-to-day operating reference for the ELIZIUM MVP system. Read this before touching anything.
+
+---
+
+### 1. Correct Project Locations
+
+| Item | Value |
+|---|---|
+| **GitHub repo** | `elysium-ai-website` |
+| **Local folder** | `/Users/elizavetazhuravleva/Desktop/elysium-ai-website` |
+| **Active branch** | `platform-company-restructure` |
+| **Correct Vercel project** | `elysium-ai-website` |
+| **Duplicate — do not use** | `elysium-ai-website-e837` — ignore entirely |
+
+Always deploy from `elysium-ai-website` on branch `platform-company-restructure`. Never use the `e837` duplicate — it is a stale fork and will not reflect the correct codebase.
+
+---
+
+### 2. Live Make Scenarios
+
+Both scenarios must remain **ON** at all times. They trigger automatically as data arrives — do not put them in "Run once" or "Use existing data" mode.
+
+| Scenario | Status | What it does |
+|---|---|---|
+| **ELIZIUM Signal Reactions** | ✅ LIVE | Receives signal reaction payloads from `/api/signal-reaction` via webhook. Writes one row to `Sheet1` in Google Sheets for every reaction submitted on the homepage. |
+| **ELIZIUM Inquiry CRM** | ✅ LIVE | Receives normalised inquiry payloads from `/api/inquiry` via webhook. Writes one row to `Inquiry Log` in Google Sheets for every contact/private inquiry form submission. |
+
+If either scenario is OFF, data silently stops flowing. Check Make first if reactions or inquiries stop appearing in Google Sheets.
+
+---
+
+### 3. Google Sheets Tabs
+
+All tabs live in a single Google Sheets workbook. Do not rename tabs — API routes and Make modules depend on the exact names.
+
+| Tab | Purpose | Written by | Read by |
+|---|---|---|---|
+| **Sheet1** | Raw signal reaction log — one row per reaction click | Make — ELIZIUM Signal Reactions | Nothing (internal audit only) |
+| **Signal Summary** | Aggregated emotional response counts and percentages per signal | Google Sheets formulas on Sheet1 | `/api/signal-summary` → homepage Live Emotional Data + `/system-preview §02` |
+| **Insight Reports** | Manually authored or AI-assisted strategic interpretation of signal data | Operator (manual) | `/api/insight-report` → `/system-preview §06` |
+| **Signal Calendar** | Planned signal queue — dates, themes, content, status, report status | Operator (manual) | `/api/signal-calendar` → `/system-preview §08` |
+| **Inquiry Log** | CRM for all contact and private-access inquiry submissions | Make — ELIZIUM Inquiry CRM | `/api/inquiry-summary` → `/system-preview §07` |
+
+---
+
+### 4. Environment Variables
+
+These variables must be set in both `.env.local` (local dev) and Vercel (Preview + Production). Do not commit `.env.local`. Do not add `NEXT_PUBLIC_` prefixes to any of them — all are server-side only.
+
+| Variable | Used by | Notes |
+|---|---|---|
+| `MAKE_WEBHOOK_URL` | `/api/inquiry` | Inquiry CRM webhook. Do not regenerate unless broken. |
+| `MAKE_SIGNAL_REACTION_WEBHOOK_URL` | `/api/signal-reaction` | Signal Reactions webhook. Do not regenerate unless broken. |
+| `SIGNAL_SUMMARY_CSV_URL` | `/api/signal-summary` | Google Sheets → Signal Summary tab → publish as CSV → copy URL. |
+| `INSIGHT_REPORTS_CSV_URL` | `/api/insight-report` | Google Sheets → Insight Reports tab → publish as CSV → copy URL. |
+| `INQUIRY_LOG_CSV_URL` | `/api/inquiry-summary` | Google Sheets → Inquiry Log tab → publish as CSV → copy URL. |
+| `SIGNAL_CALENDAR_CSV_URL` | `/api/signal-calendar` | Google Sheets → Signal Calendar tab → publish as CSV → copy URL. |
+
+To get a CSV URL: open the Google Sheet → File → Share → Publish to web → select the specific tab → CSV format → Publish → copy URL.
+
+---
+
+### 5. How to Add a New Signal of the Day
+
+1. Add a new row to the **Signal Calendar** tab with the planned `signal_id`, `date`, `theme`, `statistic`, `statement`, `prompt`, `reactions`. Set `status` to `draft` and `report_status` to `report_pending`.
+2. Add a corresponding row to the **Signal Summary** tab so `/api/signal-summary` can return live data once the signal is active. The row must use the same `signal_id`.
+3. Keep `status` as `draft` until content is confirmed and ready to go live.
+4. When ready to activate: set `status` to `active` in Signal Calendar **and** update `ACTIVE_SIGNAL_ID` in `src/lib/signals.ts` to match. Deploy. The homepage and `/system-preview §01` will update.
+5. Keep `ACTIVE_SIGNAL_MODE = "manual"` in `src/lib/signals.ts`. Date-based automatic rotation (`"date"` mode) is prepared but not enabled — do not switch to it until the full pre-flight checklist in the HANDOVER is satisfied.
+6. Archive the previous signal by setting its Signal Calendar `status` to `archived`.
+
+---
+
+### 6. How to Review Inquiries
+
+1. New submissions arrive in the **Inquiry Log** tab automatically via Make. Each row starts with `status` blank (treated as `new` by the system).
+2. Open the Inquiry Log tab. Review each new row.
+3. Update the `status` column using one of the standard values:
+   - `new` — not yet reviewed
+   - `reviewed` — read but no response yet
+   - `replied` — response sent
+   - `converted` — became a partner, client, or confirmed attendee
+   - `rejected` — not a fit
+4. Update `priority` as appropriate: `high` / `medium` / `low`.
+5. Update `follow_up_owner` with your name or initials if someone is responsible for following up.
+6. Add free-text `notes` as needed.
+7. `/api/inquiry-summary` and `/system-preview §07` automatically reflect status counts on next load — no action needed in code.
+
+Privacy rule: `email`, `message`, `notes`, and `follow_up_owner` are never included in any API response. Only operational metadata is returned.
+
+---
+
+### 7. How to Publish an Insight Report
+
+1. In the **Insight Reports** tab, create a new row with a unique `report_id` (e.g. `insight-2026-05-25-week-02`), `date_created`, the matching `signal_id`, and all content fields.
+2. Set `status` to `draft` when writing. Set to `approved` when the report is confirmed as official ELIZIUM METHOD language.
+3. `/api/insight-report` automatically returns the latest `draft` or `approved` row — no code change needed.
+4. In the **Signal Calendar** tab, update `report_status` for the matching signal to `report_created` once the report is published.
+5. Reports should be manually reviewed and approved before being treated as official ELIZIUM METHOD language. Do not auto-publish without operator sign-off.
+
+---
+
+### 8. /system-preview Usage
+
+`/system-preview` is the internal operator command centre. It is not linked from any public page. Access it directly at `/system-preview`.
+
+It shows, in order:
+
+| § | Section | What it shows |
+|---|---|---|
+| 00 | System Status / Next Actions | API connection health (Live/Fallback), active signal identity, computed priority action list |
+| 01 | Active Signal | Full identity card for the current active signal from `signals.ts` |
+| 02 | Live Summary | Real-time reaction distribution from `/api/signal-summary` |
+| 03 | Signal Archive | All signals in `SIGNAL_ARCHIVE` with status labels |
+| 04 | System Status | Individual subsystem health rows |
+| 05 | Next Operational Steps | Hardcoded operator checklist |
+| 06 | Latest Insight Report | Full report content from `/api/insight-report` |
+| 07 | Inquiry Pipeline | CRM summary from `/api/inquiry-summary` — counts, source, request types, latest 3 inquiries |
+| 08 | Scheduled Signals | Signal Calendar breakdown from `/api/signal-calendar` |
+
+All data is fetched client-side in parallel on page load. No auth — hidden by virtue of being unlinked.
+
+---
+
+### 9. MVP Testing Checklist
+
+Run this checklist after any deployment or env var change to confirm the full system is working end-to-end.
+
+- [ ] Submit one Signal reaction on the homepage — confirm `Sheet1` in Google Sheets receives a new row
+- [ ] Confirm `Sheet1` data flows to `Signal Summary` tab (formulas auto-update — may take a moment)
+- [ ] Submit one inquiry form (homepage §09 or `/contact`) — confirm `Inquiry Log` receives a new row
+- [ ] Open `/api/signal-summary` — confirm `"mode": "live"` and correct `signal_id`
+- [ ] Open `/api/insight-report` — confirm `"mode": "live"` and correct `report_id`
+- [ ] Open `/api/inquiry-summary` — confirm `"mode": "live"` and correct `total_inquiries`
+- [ ] Open `/api/signal-calendar` — confirm `"mode": "live"` and correct signal count
+- [ ] Open `/system-preview` — confirm §00 shows all four APIs as "Live" and Next Actions are correct
+- [ ] Confirm both Make scenarios are ON (not paused, not in Run Once mode)
+
+---
+
+### 10. Do Not Change / Avoid
+
+- Do not touch `MAKE_WEBHOOK_URL` or `MAKE_SIGNAL_REACTION_WEBHOOK_URL` unless intentionally rotating a broken webhook — both are confirmed working.
+- Do not use the duplicate Vercel project `elysium-ai-website-e837` for any deployment.
+- Do not expose `email`, `message`, `notes`, or `follow_up_owner` in any public API response — privacy rule is hard.
+- Do not migrate to Airtable, Webflow, Supabase, or any other data layer until the MVP workflow is locked and a scoped migration task is opened.
+- Do not enable `ACTIVE_SIGNAL_MODE = "date"` (automatic signal rotation) until the full pre-flight checklist in the ACTIVE SIGNAL MODE section is satisfied and explicitly approved.
+- Do not merge `platform-company-restructure` to `main` without explicit instruction.
+- Do not commit `.env.local`.
+- Do not git push unless explicitly asked.
 
 ---
 
