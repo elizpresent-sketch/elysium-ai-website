@@ -3,28 +3,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
-import SectionLabel from "@/components/ui/SectionLabel";
-import PlatformCard from "@/components/ui/PlatformCard";
-import FeatureGrid from "@/components/ui/FeatureGrid";
-import CTASection from "@/components/ui/CTASection";
+import CurrentSignalModule from "@/components/ui/CurrentSignalModule";
+import EmotionalSpacesGrid from "@/components/ui/EmotionalSpacesGrid";
+import PrivateAccessStrip from "@/components/ui/PrivateAccessStrip";
 
 // ─── shared constants ────────────────────────────────────────────────────────
-const W   = "max-w-[1440px] mx-auto px-6 lg:px-12";
-const BG  = "#050505";
+const W  = "max-w-[1440px] mx-auto px-6 lg:px-12";
+const BG = "#050505";
 
 // ─── FadeImage ───────────────────────────────────────────────────────────────
 interface FadeImageProps {
-  src: string;
-  alt: string;
-  className?: string;
-  position?: string;
-  fadeLeft?: number;
-  fadeRight?: number;
-  fadeTop?: number;
-  fadeBottom?: number;
-  sizes?: string;
-  priority?: boolean;
-  objectFit?: "cover" | "contain";
+  src: string; alt: string; className?: string; position?: string;
+  fadeLeft?: number; fadeRight?: number; fadeTop?: number; fadeBottom?: number;
+  sizes?: string; priority?: boolean; objectFit?: "cover" | "contain";
   loading?: "lazy" | "eager";
 }
 function FadeImage({
@@ -52,87 +43,123 @@ function FadeImage({
   );
 }
 
+// ─── SectionHead ─────────────────────────────────────────────────────────────
+function SectionHead({ label, num }: { label: string; num?: string }) {
+  return (
+    <div className="flex items-center justify-between border-t border-[#1C2530]/60 pt-3.5 mb-8">
+      <span className="text-[9px] tracking-[0.36em] uppercase font-medium text-[#969CA2]">{label}</span>
+      {num && <span className="text-[9px] tracking-[0.36em] font-normal text-[#6B7278]/40">{num}</span>}
+    </div>
+  );
+}
+
+// ─── StatusDot ───────────────────────────────────────────────────────────────
+function StatusDot({ live = false }: { live?: boolean }) {
+  return (
+    <span className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 mt-[1px] ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+  );
+}
+
 // ─── data ────────────────────────────────────────────────────────────────────
-const PLATFORM_COMPONENTS = [
+const PLATFORM_LAYERS = [
   {
-    tag: "Layer 01",
-    title: "AI-Assisted Creative Systems",
+    tag: "01",
+    live: true,
+    status: "Live",
+    title: "Signal Layer",
     description:
-      "Generative and responsive AI tools that shape narrative, visual output and real-time show direction — adapting to audience behaviour, environmental variables and creative intent.",
+      "A daily emotional provocation — the Signal of the Day — is published to the platform. Each signal captures a real statistic about AI-human experience and invites public emotional response. Active and updating daily.",
+    io: "Provocation Published → Audience Encounter",
   },
   {
-    tag: "Layer 02",
-    title: "Immersive Visual Architecture",
+    tag: "02",
+    live: true,
+    status: "Live",
+    title: "Interaction Layer",
     description:
-      "High-resolution projection mapping, volumetric display and spatial light design engineered to transform any venue into an inhabited world.",
+      "Audience encounters the active signal and responds emotionally in real time. Every reaction is timestamped, recorded and mapped against the signal — building a continuous live record of collective emotional state.",
+    io: "Signal Encounter → Timestamped Reaction",
   },
   {
-    tag: "Layer 03",
-    title: "Live Audience Interaction",
+    tag: "03",
+    live: true,
+    status: "Live",
+    title: "Data Layer",
     description:
-      "Real-time audience data capture and response systems that make every attendee an active participant in the experience — not a passive observer.",
+      "Raw emotional responses are aggregated into structured signal summaries — distributions, reaction patterns and collective emotional state calculated per signal. Feeds directly into the insight layer.",
+    io: "Raw Reactions → Distribution Calculated",
   },
   {
-    tag: "Layer 04",
-    title: "Robotic AI Presence",
+    tag: "04",
+    live: true,
+    status: "Active",
+    title: "Insight Layer",
     description:
-      "Physical robotic systems that embody artificial intelligence on stage — creating moments of genuine encounter between human and machine.",
+      "Signal data is processed into structured Insight Reports — AI-assisted pattern analysis identifying emotional peaks, inflection points and collective response direction across each deployment.",
+    io: "Pattern Data → Insight Report",
   },
   {
-    tag: "Layer 05",
-    title: "Scalable Show Logic",
+    tag: "05",
+    live: false,
+    status: "Pre-Launch",
+    title: "Experience Layer",
     description:
-      "A modular technical and creative framework that allows the platform to be adapted, licensed and deployed across venues, territories and formats.",
+      "Future Human is the first flagship deployment — a live AI-human immersive experience in which audience emotional signals are captured spatially in real time. Premiering in London.",
+    io: "Platform Intelligence → Live Experience",
   },
   {
-    tag: "Layer 06",
-    title: "Global Licensing Format",
+    tag: "06",
+    live: false,
+    status: "By Inquiry",
+    title: "Partner Application Layer",
     description:
-      "A production-ready framework designed for international rollout — built with venue operators, promoters and creative institutions in mind.",
+      "Brands, venues and institutions access the platform's structured intelligence — Signal Reports, Experience Data and co-commissioned deployments. Available by private inquiry only.",
+    io: "Experience Data → Structured Intelligence",
   },
 ];
 
-const FEATURE_ITEMS = [
+const SIGNAL_OUTPUT = [
   {
-    label: "Deployment",
-    title: "Venue-Agnostic",
-    description: "Configurable for black box theatres, arenas, museums, and purpose-built installations.",
+    n: "01",
+    title: "Emotional Archives",
+    body: "Timestamped signal records from every deployment — a structured record of collective emotional state across the full experience.",
   },
   {
-    label: "Technology",
-    title: "Real-Time AI",
-    description: "Live inference, generative response and adaptive show logic running in production environments.",
+    n: "02",
+    title: "Collective Response Patterns",
+    body: "Aggregate analysis of audience response: emotional peaks, inflection points and pattern maps across individual and group behaviour.",
   },
   {
-    label: "Format",
-    title: "Licensable",
-    description: "A turnkey creative and technical package designed for partners, promoters and venue operators.",
+    n: "03",
+    title: "Partner Insight Reports",
+    body: "Post-event intelligence reports structured for brand partners, venue operators and creative institutions.",
   },
-  {
-    label: "Scalability",
-    title: "Global Ready",
-    description: "Engineered from day one for international deployment, cultural adaptation and multi-territory operation.",
-  },
+];
+
+const PLATFORM_PROPERTIES = [
+  { label: "Deployment",   title: "Venue-Agnostic",  description: "Black box theatres, arenas, museums and purpose-built installations.",          detail: "Theatre · Arena · Museum · Installation" },
+  { label: "Technology",   title: "Real-Time AI",    description: "Live inference, generative response and adaptive signal logic in production.",   detail: "Live Inference · Generative Response" },
+  { label: "Format",       title: "Licensable",      description: "A complete creative and technical package for partners, promoters and operators.", detail: "Creative + Technical · Full Package" },
+  { label: "Scalability",  title: "Global-Ready",    description: "Designed from day one for international deployment and cultural adaptation.",     detail: "Multi-Territory · Cultural Adaptation" },
 ];
 
 // ─── page ────────────────────────────────────────────────────────────────────
 export default function PlatformPage() {
   return (
     <>
-      {/* ── HERO — full-bleed cinematic background, left text overlay ── */}
+      {/* ── HERO ── */}
       <section
         className="relative min-h-screen flex flex-col overflow-hidden"
         style={{ background: BG }}
       >
-        {/* Cinematic background image */}
         <div className="absolute inset-0">
           <Image
-            src="/images/elysium-ai/dark/creatingworlds.webp"
+            src="/images/elysium-ai/dark/generated/elizium-system-aperture-hero-optimised.webp"
             alt=""
             fill
             priority
             className="object-cover"
-            style={{ objectPosition: "65% center" }}
+            style={{ objectPosition: "60% center" }}
             sizes="100vw"
             aria-hidden
           />
@@ -157,9 +184,8 @@ export default function PlatformPage() {
           />
         </div>
 
-        {/* Content */}
         <div className={`relative z-10 flex-1 flex items-center w-full ${W} pt-24 pb-8 lg:pt-32 lg:pb-14`}>
-          <div className="w-full lg:max-w-[560px]">
+          <div className="w-full lg:max-w-[580px]">
             <motion.div
               initial="hidden"
               animate="visible"
@@ -173,20 +199,43 @@ export default function PlatformPage() {
                 </span>
                 <div className="w-8 h-px bg-[#1C2530]/60" />
               </motion.div>
+
               <motion.h1
                 variants={fadeUp}
                 className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
                 style={{ fontSize: "clamp(1.8rem, 4vw, 3.8rem)" }}
               >
-                Modular.
-                <br />AI-powered.
-                <br />Immersive.
+                AI-Human
+                <br />Emotional
+                <br />Interaction
+                <br />Platform
               </motion.h1>
-              <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-[400px]">
-                ELIZIUM AI brings together AI-assisted creative systems, immersive visual
-                architecture, audience interaction and scalable show logic into a single
-                deployable platform.
+
+              <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-[420px]">
+                ELIZIUM is a six-layer operating system — from daily emotional signal to live
+                immersive experience to structured partner intelligence. Active now.
               </motion.p>
+
+              <motion.div variants={fadeUp} className="flex items-center gap-3 pt-1">
+                <StatusDot live />
+                <span className="text-[8px] tracking-[0.3em] uppercase text-[#4ADE80] font-medium">
+                  Signal Layer Active
+                </span>
+              </motion.div>
+
+              <motion.div variants={fadeUp} className="grid grid-cols-3 gap-px" style={{ background: "rgba(28,37,48,0.6)" }}>
+                {[
+                  { k: "Signal Cycle", v: "Daily" },
+                  { k: "Response Capture", v: "Live" },
+                  { k: "Partner Access", v: "By Inquiry" },
+                ].map(({ k, v }) => (
+                  <div key={k} className="flex flex-col gap-0.5 px-3 py-2.5" style={{ background: BG }}>
+                    <span className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">{k}</span>
+                    <span className="text-[10px] tracking-[0.18em] uppercase text-[#C8CDD2] font-medium">{v}</span>
+                  </div>
+                ))}
+              </motion.div>
+
               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 pt-1">
                 <Link
                   href="/contact"
@@ -198,177 +247,147 @@ export default function PlatformPage() {
                   href="/future-human"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-3 border border-[#1C2530]/55 text-[#969CA2] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:border-[#707880] hover:text-[#E2E8EE] transition-all duration-300"
                 >
-                  See Future Human
+                  Future Human Experience
                 </Link>
               </motion.div>
             </motion.div>
           </div>
         </div>
-
       </section>
 
-      {/* ── PLATFORM LABEL STRIP ── */}
-      <div
-        className="border-t border-[#1C2530]/50"
-        style={{ background: BG }}
-      >
+      {/* ── PLATFORM STATUS STRIP ── */}
+      <div className="border-t border-[#1C2530]/50" style={{ background: "#080808" }}>
         <div className={`${W} py-3`}>
           <div className="flex items-center gap-6">
             <span className="text-[8px] tracking-[0.38em] uppercase font-semibold text-[#7B8188] whitespace-nowrap">
-              The Platform
+              Platform Status
             </span>
             <span className="hidden sm:block w-px h-3 bg-[#1C2530]" />
             <div className="flex flex-wrap gap-x-6 gap-y-1">
-              {["Modular Architecture", "AI-Powered Systems", "Global Deployment", "Live Interaction"].map((t) => (
-                <span key={t} className="text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188]">{t}</span>
+              {[
+                { label: "Signal System",  status: "Live",       live: true },
+                { label: "Data Layer",     status: "Recording",  live: true },
+                { label: "Insight Layer",  status: "Active",     live: true },
+                { label: "Experience",     status: "Pre-Launch", live: false },
+              ].map(({ label, status, live }) => (
+                <span key={label} className="flex items-center gap-1.5 text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188]">
+                  <span className={`w-1 h-1 rounded-full ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+                  {label}: {status}
+                </span>
               ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── PLATFORM COMPONENTS ── */}
-      <section className="bg-porcelain py-10 lg:py-20">
+      {/* ── PLATFORM ARCHITECTURE ── */}
+      <section style={{ background: BG }} className="py-10 lg:py-20">
         <div className={W}>
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
             variants={stagger}
-            className="flex flex-col gap-4 mb-8 lg:mb-14"
+            className="flex flex-col gap-3 mb-8 lg:mb-12"
           >
-            <SectionLabel text="Architecture" animate={false} />
+            <SectionHead label="Platform Architecture" />
             <motion.h2
               variants={fadeUp}
               className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE] max-w-xl"
               style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
             >
-              Six integrated layers. One coherent system.
+              Six integrated layers.
+              <br />One operating system.
             </motion.h2>
+            <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-x-5 gap-y-1.5 pt-1">
+              {[
+                { label: "Layers 01–04", live: true,  status: "Live" },
+                { label: "Layer 05",     live: false, status: "Pre-Launch" },
+                { label: "Layer 06",     live: false, status: "By Inquiry" },
+              ].map(({ label, live, status }) => (
+                <span key={label} className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                  <StatusDot live={live} />
+                  {label}: {status}
+                </span>
+              ))}
+            </motion.div>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-silver-light">
-            {PLATFORM_COMPONENTS.map((card) => (
-              <PlatformCard key={card.tag} {...card} light />
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px"
+            style={{ background: "rgba(28,37,48,0.6)" }}
+          >
+            {PLATFORM_LAYERS.map((layer) => (
+              <motion.div
+                key={layer.tag}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                variants={fadeUp}
+                className="flex flex-col gap-3 p-5 lg:p-6"
+                style={{ background: BG }}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium">{layer.tag}</span>
+                  <span className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${layer.live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                    <StatusDot live={layer.live} />
+                    {layer.status}
+                  </span>
+                </div>
+                <span className="text-[12px] tracking-[0.08em] uppercase text-[#C8CDD2] font-medium">{layer.title}</span>
+                <p className="text-[13px] text-[#7B8188] leading-relaxed">{layer.description}</p>
+                <div className="pt-2 border-t border-[#1C2530]/40 mt-auto">
+                  <span className="text-[7px] tracking-[0.22em] uppercase text-[#4B5560] font-medium">{layer.io}</span>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── SYSTEM DESIGN ── */}
-      <section className="bg-pearl py-10 lg:py-20">
-        <div className={W}>
-          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-6 lg:gap-20 items-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={stagger}
-              className="flex flex-col gap-5 lg:gap-6"
-            >
-              <SectionLabel text="System Design" animate={false} />
-              <motion.h2
-                variants={fadeUp}
-                className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
-                style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
-              >
-                Designed for production. Built for scale.
-              </motion.h2>
-              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
-                Every component of the ELIZIUM AI platform is designed with
-                deployment in mind. From single-venue pilots to multi-territory
-                licensing arrangements — the system is modular, documented and
-                ready to operate at scale.
-              </motion.p>
-
-              {/* Mobile-only vertical tech element — portrait, full visibility, blends to black */}
-              <motion.div variants={scaleIn} className="lg:hidden flex justify-center">
-                <div className="relative aspect-[3/4] w-full max-w-[360px]">
-                  <Image
-                    src="/images/elysium-ai/dark/tech-final.webp"
-                    alt="Elizium AI — Technology System"
-                    fill
-                    className="object-contain"
-                    sizes="360px"
-                  />
-                </div>
-              </motion.div>
-
-              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
-                Technical specifications, venue requirements and licensing
-                frameworks are available to qualified partners and venue operators
-                on request.
-              </motion.p>
-              <motion.div variants={fadeUp}>
-                <Link
-                  href="/contact"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 text-[11px] tracking-[0.2em] uppercase font-medium text-[#E2E8EE] hover:text-[#8E949A] transition-colors group"
-                >
-                  Request Technical Briefing
-                  <span className="w-8 h-px bg-[#E2E8EE] group-hover:w-12 transition-all duration-300" />
-                </Link>
-              </motion.div>
-            </motion.div>
-
-            {/* Desktop-only vertical tech element — portrait container, object-contain, sits on pure black */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={scaleIn}
-              className="hidden lg:flex justify-center"
-            >
-              <div className="relative aspect-[3/4] w-full max-w-[520px]">
-                <Image
-                  src="/images/elysium-ai/dark/tech-final.webp"
-                  alt="Elizium AI — Technology System"
-                  fill
-                  className="object-contain"
-                  sizes="520px"
-                />
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      {/* ── SYSTEM ARCHITECTURE IMAGE ── */}
+      <div style={{ background: BG }} className="overflow-hidden border-t border-[#1C2530]/50">
+        <FadeImage
+          src="/images/elysium-ai/dark/generated/elizium-system-architecture-map-optimised.webp"
+          alt="ELIZIUM Platform — System Architecture Map"
+          className="w-full aspect-[21/7]"
+          fadeLeft={12} fadeRight={12} fadeTop={22} fadeBottom={22}
+          sizes="100vw"
+        />
+      </div>
 
       {/* ── SIGNAL OUTPUT ── */}
       <section style={{ background: "#080808" }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
         <div className={W}>
+          <SectionHead label="Signal Output" />
+          <motion.p
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            variants={fadeUp}
+            className="text-[13.5px] text-[#7B8188] leading-relaxed max-w-[600px] mb-8"
+          >
+            Every deployment produces a structured emotional archive: audience signals,
+            collective response patterns and partner-ready insight reports.
+          </motion.p>
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            variants={stagger}
-            className="flex flex-col gap-4 mb-8 lg:mb-10"
+            variants={fadeUp}
+            className="flex flex-wrap items-center gap-2 mb-6"
           >
-            <SectionLabel text="Signal Output" animate={false} />
-            <motion.p variants={fadeUp} className="text-[13.5px] text-[#7B8188] leading-relaxed max-w-[600px]">
-              Every deployment produces a structured emotional archive: audience signals,
-              collective response patterns and partner-ready insight reports.
-            </motion.p>
+            <span className="text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#4ADE80]">Live Audience Signal</span>
+            <span className="text-[#3B4550] text-[10px]">→</span>
+            <span className="text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#7B8188]">Aggregation + Analysis</span>
+            <span className="text-[#3B4550] text-[10px]">→</span>
+            <span className="text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#C8CDD2]">Structured Output</span>
           </motion.div>
           <div
             className="grid grid-cols-1 md:grid-cols-3 gap-px"
             style={{ background: "rgba(28,37,48,0.6)" }}
           >
-            {[
-              {
-                n: "01",
-                title: "Emotional Archives",
-                body: "Timestamped signal records from every live session — a structured record of collective emotional state across the full experience.",
-              },
-              {
-                n: "02",
-                title: "Collective Response Patterns",
-                body: "Aggregate analysis of audience response: emotional peaks, inflection points and pattern maps across individual and group behaviour.",
-              },
-              {
-                n: "03",
-                title: "Partner Insight Reports",
-                body: "Post-event intelligence reports structured for brand partners, venue operators and creative institutions.",
-              },
-            ].map(({ n, title, body }) => (
+            {SIGNAL_OUTPUT.map(({ n, title, body }) => (
               <motion.div
                 key={n}
                 initial="hidden"
@@ -387,106 +406,143 @@ export default function PlatformPage() {
         </div>
       </section>
 
-      {/* ── ROBOTICS ── */}
-      <section className="bg-porcelain py-10 lg:py-20 overflow-hidden">
+      {/* ── ACTIVE SIGNAL ── */}
+      <section style={{ background: BG }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
         <div className={W}>
-          <div className="grid grid-cols-1 lg:grid-cols-[4fr_8fr] gap-6 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-10 lg:gap-16 items-start">
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={viewport}
               variants={stagger}
-              className="flex flex-col gap-5 lg:gap-6"
+              className="flex flex-col gap-3"
             >
-              <SectionLabel text="Robotics & AI Embodiment" animate={false} />
-              <motion.h2
-                variants={fadeUp}
-                className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
-                style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
-              >
-                Artificial intelligence. Physical presence.
-              </motion.h2>
-
-              {/* Mobile-only image */}
-              <motion.div variants={scaleIn} className="lg:hidden">
-                <FadeImage
-                  src="/images/elysium-ai/dark/06-creative-production-stage.webp"
-                  alt="AI Presence on Stage — Elizium AI"
-                  className="aspect-[4/3]"
-                  position="center center"
-                  fadeRight={0} fadeTop={0} fadeBottom={0} fadeLeft={0}
-                  sizes="100vw"
-                  objectFit="cover"
-                />
-              </motion.div>
-
-              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
-                The ELIZIUM AI platform integrates robotic systems that give
-                artificial intelligence a physical form on stage — enabling
-                moments of genuine, unrepeatable encounter between human and
-                machine at the centre of each experience.
+              <SectionHead label="Active Signal" />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#7B8188] leading-relaxed">
+                Every day the ELIZIUM platform publishes an active signal — a real statistic
+                about AI-human experience, open to public emotional response.
+              </motion.p>
+              <motion.p variants={fadeUp} className="text-[12px] text-[#6B7278] leading-relaxed">
+                This is the live signal layer in operation. Signal 01 of the platform architecture.
               </motion.p>
             </motion.div>
-
-            {/* Desktop-only image — wider column, full image visible */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              variants={scaleIn}
-              className="hidden lg:block"
-            >
-              <FadeImage
-                src="/images/elysium-ai/dark/06-creative-production-stage.webp"
-                alt="AI Presence on Stage — Elizium AI"
-                className="aspect-[4/3]"
-                position="center center"
-                fadeRight={0} fadeTop={0} fadeBottom={0} fadeLeft={0}
-                sizes="66vw"
-                objectFit="cover"
-              />
-            </motion.div>
+            <div>
+              <CurrentSignalModule />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── FEATURE GRID ── */}
-      <section className="bg-pearl py-10 lg:py-20">
-        <div className={W}>
+      {/* ── EXPERIENCE DEPLOYMENT ── */}
+      <section
+        style={{ background: BG }}
+        className="py-10 lg:py-20 border-t border-[#1C2530]/50 relative overflow-hidden"
+      >
+        <div className="absolute inset-0 lg:left-[50%] pointer-events-none">
+          <Image
+            src="/images/elysium-ai/dark/generated/featured-experience-future-human-hall.webp"
+            alt=""
+            fill
+            aria-hidden
+            className="object-cover"
+            style={{ objectPosition: "center center" }}
+            sizes="(max-width: 1024px) 100vw, 55vw"
+          />
+        </div>
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `linear-gradient(to right, ${BG} 0%, ${BG} 24%, rgba(5,5,5,0.88) 45%, rgba(5,5,5,0.20) 72%, transparent 100%)`,
+          }}
+        />
+        <div className={`relative z-10 ${W}`}>
+          <SectionHead label="Experience Deployment" num="05" />
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
             variants={stagger}
-            className="flex flex-col gap-4 mb-8 lg:mb-12"
+            className="flex flex-col gap-5 max-w-[480px]"
           >
-            <SectionLabel text="Platform Properties" animate={false} />
+            <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+              Layer 05 — First Flagship Deployment
+            </motion.span>
             <motion.h2
               variants={fadeUp}
               className="font-display font-normal uppercase tracking-[0.08em] sm:tracking-[0.11em] leading-[0.97] text-[#E2E8EE]"
               style={{ fontSize: "clamp(1.6rem, 3.6vw, 3.6rem)" }}
             >
-              Built for the real world.
+              Future Human
+              <br />Premiering London
             </motion.h2>
+            <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+              The first flagship deployment of the ELIZIUM platform — a live AI-human immersive
+              experience in which audience emotional signals are captured spatially in real time.
+              The experience layer made visible.
+            </motion.p>
+            <motion.div variants={fadeUp}>
+              <Link
+                href="/future-human"
+                className="inline-flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase font-medium text-[#E2E8EE] hover:text-[#8E949A] transition-colors group"
+              >
+                Explore Future Human
+                <span className="w-8 h-px bg-[#E2E8EE] group-hover:w-12 transition-all duration-300" />
+              </Link>
+            </motion.div>
           </motion.div>
-          <FeatureGrid items={FEATURE_ITEMS} columns={4} light />
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="bg-porcelain py-10 lg:py-20 border-t border-[#1C2530]/50">
+      {/* ── PLATFORM PROPERTIES ── */}
+      <section style={{ background: "#080808" }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
         <div className={W}>
-          <CTASection
-            label="Private Access"
-            headline="Request a platform briefing or licensing conversation."
-            body="For venues, promoters, investors and strategic partners. All enquiries reviewed by the Elizium AI core team."
-            primaryHref="/contact"
-            primaryLabel="Request Private Access"
-            secondaryHref="/future-human"
-            secondaryLabel="See Future Human"
-          />
+          <SectionHead label="Platform Properties" />
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px"
+            style={{ background: "rgba(28,37,48,0.6)" }}
+          >
+            {PLATFORM_PROPERTIES.map(({ label, title, description, detail }) => (
+              <motion.div
+                key={label}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                variants={fadeUp}
+                className="flex flex-col gap-3 p-5 lg:p-6"
+                style={{ background: BG }}
+              >
+                <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium">{label}</span>
+                <span className="text-[12px] tracking-[0.08em] uppercase text-[#C8CDD2] font-medium">{title}</span>
+                <p className="text-[13px] text-[#7B8188] leading-relaxed">{description}</p>
+                <div className="pt-2 border-t border-[#1C2530]/40 mt-auto">
+                  <span className="text-[7px] tracking-[0.22em] uppercase text-[#4B5560] font-medium">{detail}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* ── EMOTIONAL SPACES ── */}
+      <section style={{ background: "#080808" }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="Emotional Spaces" />
+          <motion.p
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            variants={fadeUp}
+            className="text-[13.5px] text-[#7B8188] leading-relaxed max-w-[600px] mb-8"
+          >
+            Six emotional territories that define the AI-human encounter. Every ELIZIUM
+            signal and experience operates within one of these spaces.
+          </motion.p>
+          <EmotionalSpacesGrid />
+        </div>
+      </section>
+
+      {/* ── PRIVATE ACCESS ── */}
+      <PrivateAccessStrip />
     </>
   );
 }

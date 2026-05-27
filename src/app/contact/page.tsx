@@ -163,9 +163,37 @@ export default function ContactPage() {
               <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
                 We do not share your information with third parties.
               </motion.p>
+
+              <motion.div variants={fadeUp} className="flex flex-col gap-0 mt-2">
+                <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium mb-3 block">
+                  Inquiry Routes
+                </span>
+                {[
+                  { r: "Brand Partner",      d: "Partnerships, co-commissions, emotional data" },
+                  { r: "Technology Partner", d: "AI integration, platform access, R&D" },
+                  { r: "Venue / Investor",   d: "Future Human hosting, licensing, investment" },
+                  { r: "Press",              d: "Media enquiries and press access" },
+                  { r: "Private Access",     d: "Selective invitation, early platform access" },
+                ].map(({ r, d }) => (
+                  <div key={r} className="flex flex-col gap-0.5 py-2.5 border-t border-[#1C2530]/40">
+                    <span className="text-[8.5px] tracking-[0.22em] uppercase text-[#969CA2] font-medium">{r}</span>
+                    <span className="text-[12px] text-[#6B7278] leading-snug">{d}</span>
+                  </div>
+                ))}
+                <div className="border-t border-[#1C2530]/40" />
+              </motion.div>
             </motion.div>
 
             <div className="lg:col-span-8">
+              <div className="flex items-center justify-between border-t border-[#1C2530]/60 pt-3.5 mb-6">
+                <span className="text-[9px] tracking-[0.36em] uppercase font-medium text-[#969CA2]">
+                  Inquiry Form
+                </span>
+                <span className="flex items-center gap-1.5 text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#4ADE80]">
+                  <span className="w-1 h-1 rounded-full bg-[#4ADE80]" />
+                  Open for Submissions
+                </span>
+              </div>
               <ContactForm />
             </div>
           </div>

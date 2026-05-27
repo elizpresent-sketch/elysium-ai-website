@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
+import PrivateAccessStrip from "@/components/ui/PrivateAccessStrip";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS — same system as homepage
@@ -150,8 +151,16 @@ export default function FutureHumanPage() {
               </span>
               <span className="hidden sm:block w-px h-3 bg-[#1C2530]" />
               <div className="flex flex-wrap gap-x-6 gap-y-1">
-                {["AI-Human Interaction", "Immersive Environments", "Live Audience Systems", "London Launch"].map((t) => (
-                  <span key={t} className="text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188]">{t}</span>
+                {[
+                  { t: "AI-Human Interaction",   live: true },
+                  { t: "Immersive Environments",  live: false },
+                  { t: "Live Audience Systems",   live: true },
+                  { t: "London Launch",           live: false },
+                ].map(({ t, live }) => (
+                  <span key={t} className="flex items-center gap-1.5 text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188]">
+                    <span className={`w-1 h-1 rounded-full flex-shrink-0 ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+                    {t}
+                  </span>
                 ))}
               </div>
             </div>
@@ -533,7 +542,99 @@ export default function FutureHumanPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════
-          06 — PRIVATE ACCESS CTA
+          06 — PLATFORM INTELLIGENCE
+      ══════════════════════════════════════════════════════════════ */}
+      <section style={{ background: "#080808" }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <SectionHead label="Platform Intelligence" num="06" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-10 lg:gap-20 items-start mb-10">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-4 lg:gap-5"
+            >
+              <motion.span variants={fadeUp} className="text-[8.5px] tracking-[0.38em] uppercase text-[#7B8188] font-medium">
+                What Future Human Produces for the Platform
+              </motion.span>
+              <motion.h2
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.7rem, 4vw, 4rem)" }}
+              >
+                The experience
+                <br />is the proof.
+              </motion.h2>
+              <Rule />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+                Future Human is not just a live experience. It is the first full deployment of the
+                ELIZIUM platform operating at scale — generating structured emotional intelligence
+                from a live audience in real time.
+              </motion.p>
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#AAB0B6] leading-relaxed">
+                Every session produces a data archive, a collective pattern report and a strategic
+                insight document. This output is the foundation of the platform&apos;s partner intelligence
+                and the proof of the ELIZIUM Method in a live environment.
+              </motion.p>
+              <motion.div variants={fadeUp} className="grid grid-cols-3 gap-px" style={{ background: "rgba(28,37,48,0.6)" }}>
+                {[
+                  { k: "Outputs per Session", v: "4 Layers" },
+                  { k: "Data Format",         v: "Structured" },
+                  { k: "Partner Access",      v: "By Inquiry" },
+                ].map(({ k, v }) => (
+                  <div key={k} className="flex flex-col gap-0.5 px-3 py-2.5" style={{ background: "#080808" }}>
+                    <span className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">{k}</span>
+                    <span className="text-[10px] tracking-[0.18em] uppercase text-[#C8CDD2] font-medium">{v}</span>
+                  </div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-0"
+            >
+              {[
+                {
+                  id: "01",
+                  label: "Signal Layer",
+                  desc: "Live emotional responses captured from every audience session — timestamped, structured, archived",
+                },
+                {
+                  id: "02",
+                  label: "Data Layer",
+                  desc: "Aggregated pattern data: reaction distributions, collective emotional state, temporal shifts",
+                },
+                {
+                  id: "03",
+                  label: "Insight Layer",
+                  desc: "Structured Insight Reports generated from session data — emotional peaks, inflection points, interpretation",
+                },
+                {
+                  id: "04",
+                  label: "Partner Layer",
+                  desc: "Intelligence available to brand partners, venue operators and institutional collaborators",
+                },
+              ].map(({ id, label, desc }) => (
+                <motion.div key={id} variants={fadeUp}
+                  className="grid grid-cols-[2.5rem_1fr] gap-x-4 py-4 border-t border-[#1C2530]/45">
+                  <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278]/50 font-medium pt-0.5">{id}</span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[10px] tracking-[0.22em] uppercase text-[#969CA2] font-medium">{label}</span>
+                    <span className="text-[12.5px] text-[#7B8188] leading-snug">{desc}</span>
+                  </div>
+                </motion.div>
+              ))}
+              <div className="border-t border-[#1C2530]/45" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRIVATE ACCESS STRIP ── */}
+      <PrivateAccessStrip />
+
+      {/* ══════════════════════════════════════════════════════════════
+          07 — PRIVATE ACCESS CTA
       ══════════════════════════════════════════════════════════════ */}
       <section style={{ background: BG }} className="py-10 lg:py-20 border-t border-[#1C2530]/50 relative overflow-hidden">
         <div className="absolute inset-0 lg:left-[40%] pointer-events-none">
@@ -550,7 +651,7 @@ export default function FutureHumanPage() {
           style={{ background: `linear-gradient(to right, ${BG} 0%, ${BG} 20%, rgba(5,5,5,0.88) 42%, rgba(5,5,5,0.28) 72%, transparent 100%)` }}
         />
         <div className={`relative z-10 ${W}`}>
-          <SectionHead label="Private Access" num="06" />
+          <SectionHead label="Private Access" num="07" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             <motion.div
