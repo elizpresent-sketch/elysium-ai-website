@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getLondonDateString } from "@/lib/signals";
 
 // Force dynamic — must always run server-side, never statically cached.
 export const dynamic = "force-dynamic";
@@ -51,8 +52,10 @@ interface SignalCalendarResponse {
   skipped_signals:      number;
   report_pending:       number;
   report_created:       number;
+  today_signal:         CalendarActiveSignal | null;  // full content for today's London date
   latest_active_signal: CalendarActiveSignal | null;
-  upcoming_signals:     CalendarSignal[];
+  upcoming_signals:     CalendarSignal[];             // compact — draft signals, date asc
+  upcoming_signals_full: CalendarActiveSignal[];      // full content — draft signals, date asc
   all_signals:          CalendarSignal[];
 }
 
@@ -69,9 +72,11 @@ function buildFallback(): SignalCalendarResponse {
     skipped_signals:      0,
     report_pending:       0,
     report_created:       0,
-    latest_active_signal: null,
-    upcoming_signals:     [],
-    all_signals:          [],
+    today_signal:          null,
+    latest_active_signal:  null,
+    upcoming_signals:      [],
+    upcoming_signals_full: [],
+    all_signals:           [],
   };
 }
 
@@ -177,6 +182,22 @@ export async function GET(): Promise<NextResponse> {
     else if (reportStatus === "report_created") createdCount++;
   }
 
+  // Today's signal — full content for the row matching today's Europe/London date
+  const todayDate = getLondonDateString();
+  const todayRow  = rows.find((r) => (r["date"] ?? "").trim() === todayDate);
+  const today_signal: CalendarActiveSignal | null = todayRow
+    ? {
+        signal_id:     todayRow["signal_id"]     ?? "",
+        date:          todayRow["date"]           ?? "",
+        theme:         todayRow["theme"]          ?? "",
+        statistic:     todayRow["statistic"]      ?? "",
+        statement:     todayRow["statement"]      ?? "",
+        prompt:        todayRow["prompt"]         ?? "",
+        status:        todayRow["status"]         ?? "",
+        report_status: todayRow["report_status"]  ?? "",
+      }
+    : null;
+
   // Latest active signal — first row with status === "active"
   const activeRow = rows.find((r) => (r["status"] ?? "").toLowerCase().trim() === "active");
   const latest_active_signal: CalendarActiveSignal | null = activeRow
@@ -193,16 +214,29 @@ export async function GET(): Promise<NextResponse> {
     : null;
 
   // Upcoming signals — rows with status === "draft", sorted date ascending
-  const upcoming_signals: CalendarSignal[] = rows
+  const draftRows = rows
     .filter((r) => (r["status"] ?? "").toLowerCase().trim() === "draft")
-    .map((r) => ({
-      signal_id:     r["signal_id"]     ?? "",
-      date:          r["date"]          ?? "",
-      theme:         r["theme"]         ?? "",
-      status:        r["status"]        ?? "",
-      report_status: r["report_status"] ?? "",
-    }))
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .sort((a, b) => (a["date"] ?? "").localeCompare(b["date"] ?? ""));
+
+  const upcoming_signals: CalendarSignal[] = draftRows.map((r) => ({
+    signal_id:     r["signal_id"]     ?? "",
+    date:          r["date"]          ?? "",
+    theme:         r["theme"]         ?? "",
+    status:        r["status"]        ?? "",
+    report_status: r["report_status"] ?? "",
+  }));
+
+  // Full-content version of upcoming signals (statistic, statement, prompt included)
+  const upcoming_signals_full: CalendarActiveSignal[] = draftRows.map((r) => ({
+    signal_id:     r["signal_id"]     ?? "",
+    date:          r["date"]          ?? "",
+    theme:         r["theme"]         ?? "",
+    statistic:     r["statistic"]     ?? "",
+    statement:     r["statement"]     ?? "",
+    prompt:        r["prompt"]        ?? "",
+    status:        r["status"]        ?? "",
+    report_status: r["report_status"] ?? "",
+  }));
 
   // All signals — compact shape (no statistic, statement, prompt, reactions,
   // image_asset, mobile_image_asset, notes)
@@ -224,8 +258,10 @@ export async function GET(): Promise<NextResponse> {
     skipped_signals:      skippedCount,
     report_pending:       pendingCount,
     report_created:       createdCount,
+    today_signal,
     latest_active_signal,
     upcoming_signals,
+    upcoming_signals_full,
     all_signals,
   };
 

@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — ELIZIUM Operating Manual added; System Status / Next Actions §00 added to /system-preview; Signal Calendar visibility layer: /api/signal-calendar + /system-preview §08; Inquiry Pipeline visibility layer: /api/inquiry-summary + /system-preview §07; both Make automations live; Vercel confirmed; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
+_Last updated: 2026-05-27 — Full signal queue 2026-05-27 → 2026-06-02 added to SIGNAL_ARCHIVE; signal-calendar API exposes upcoming_signals_full; archive integrity check covers all 7 scheduled signals; dual-source architecture documented in Operating Manual §5; date resolver exact-match confirmed; ELIZIUM Operating Manual added; §00 System Status; Signal Calendar + Inquiry Pipeline visibility; both Make automations live; Vercel confirmed_
 
 ---
 
@@ -88,12 +88,28 @@ To get a CSV URL: open the Google Sheet → File → Share → Publish to web �
 
 ### 5. How to Add a New Signal of the Day
 
-1. Add a new row to the **Signal Calendar** tab with the planned `signal_id`, `date`, `theme`, `statistic`, `statement`, `prompt`, `reactions`. Set `status` to `draft` and `report_status` to `report_pending`.
-2. Add a corresponding row to the **Signal Summary** tab so `/api/signal-summary` can return live data once the signal is active. The row must use the same `signal_id`.
-3. Keep `status` as `draft` until content is confirmed and ready to go live.
-4. When ready to activate: set `status` to `active` in Signal Calendar **and** update `ACTIVE_SIGNAL_ID` in `src/lib/signals.ts` to match. Deploy. The homepage and `/system-preview §01` will update.
-5. Keep `ACTIVE_SIGNAL_MODE = "manual"` in `src/lib/signals.ts`. Date-based automatic rotation (`"date"` mode) is prepared but not enabled — do not switch to it until the full pre-flight checklist in the HANDOVER is satisfied.
-6. Archive the previous signal by setting its Signal Calendar `status` to `archived`.
+#### Architecture — dual source (MVP phase)
+
+During the MVP phase the website has **two parallel sources** for signal data:
+
+| Source | Role | Written by |
+|---|---|---|
+| **Signal Calendar** (Google Sheets) | Planning and control layer — dates, themes, content, status, report status. Single editor-facing source of truth. | Operator (manual) |
+| **`SIGNAL_ARCHIVE`** (`src/lib/signals.ts`) | Website runtime source — what actually renders on the homepage and powers the date resolver. | Code deployment |
+
+**Both must be kept in sync.** `ACTIVE_SIGNAL_MODE = "date"` resolves today's signal from `SIGNAL_ARCHIVE` by matching the current London date. If a signal date is not in `SIGNAL_ARCHIVE`, the resolver falls back to `ACTIVE_SIGNAL_ID` — it does NOT read from Signal Calendar at runtime.
+
+This dual-source model is intentional for the MVP (keeps the website independent of Google Sheets availability). A future migration can switch the active signal source fully to a private Sheets/API layer — that is a scoped task to be opened separately and should not be done ad-hoc.
+
+#### Steps to add a new signal
+
+1. Add a new row to the **Signal Calendar** tab with `signal_id`, `date`, `theme`, `statistic`, `statement`, `prompt`, `reactions`. Set `status` to `draft`, `report_status` to `report_pending`.
+2. Add the same signal as a new entry in `SIGNAL_ARCHIVE` in `src/lib/signals.ts` — copy the exact `statistic`, `statement`, `prompt` from Signal Calendar. Use `/api/signal-calendar` (`upcoming_signals_full` field) to retrieve the content if Signal Calendar is already filled.
+3. Add a corresponding row to the **Signal Summary** tab (same `signal_id`) so `/api/signal-summary` returns live data once the signal is active.
+4. Update `ACTIVE_SIGNAL_ID` in `src/lib/signals.ts` to this signal's `signal_id`. This becomes the resolver's fallback for any day without a matching archive entry.
+5. Add the new date + signal_id pair to the `_scheduledSignals` integrity check array at the bottom of `signals.ts`.
+6. Deploy. The date resolver auto-activates on the signal's date in London time. No further code change needed until the next new signal.
+7. After the signal has run, set its Signal Calendar `status` to `archived` and `report_status` to `report_pending` (or `report_created` once the insight report is published).
 
 ---
 
@@ -170,7 +186,7 @@ Run this checklist after any deployment or env var change to confirm the full sy
 - Do not use the duplicate Vercel project `elysium-ai-website-e837` for any deployment.
 - Do not expose `email`, `message`, `notes`, or `follow_up_owner` in any public API response — privacy rule is hard.
 - Do not migrate to Airtable, Webflow, Supabase, or any other data layer until the MVP workflow is locked and a scoped migration task is opened.
-- Do not enable `ACTIVE_SIGNAL_MODE = "date"` (automatic signal rotation) until the full pre-flight checklist in the ACTIVE SIGNAL MODE section is satisfied and explicitly approved.
+- Do not revert `ACTIVE_SIGNAL_MODE` back to `"manual"` unless a specific emergency override is needed — date mode is now the confirmed default.
 - Do not merge `platform-company-restructure` to `main` without explicit instruction.
 - Do not commit `.env.local`.
 - Do not git push unless explicitly asked.
@@ -217,6 +233,75 @@ Do not change:
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
 
+
+## ══════════════════════════════════════════════
+## DATE-BASED SIGNAL ACTIVATION — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+**Pass 1 (date mode enabled):** `ACTIVE_SIGNAL_MODE` switched from `"manual"` to `"date"`. `ACTIVE_SIGNAL_ID` fallback updated to `"signal-2026-05-26"`. London-time date resolver added. `/system-preview` §01 and §04 updated to expose resolved vs. fallback IDs. TypeScript: 0 errors. Build: ✓. Files changed: `src/lib/signals.ts`, `src/app/system-preview/page.tsx`.
+
+**Pass 2 (archive sync — bug fix):** `signal-2026-05-27` (Machine Intimacy, 61%) added to `SIGNAL_ARCHIVE`. `ACTIVE_SIGNAL_ID` fallback updated to `"signal-2026-05-27"`. Archive integrity check added to `signals.ts` (throws at build time if the entry is removed). `/api/signal-calendar` extended with `today_signal` field (full content for today's London date). `/system-preview` §01 now shows Expected ID + Date Match Found. TypeScript: 0 errors. Build: ✓.
+
+**Pass 3 (full queue pre-load):** Signals `2026-05-28` through `2026-06-02` added to `SIGNAL_ARCHIVE` with exact content from Signal Calendar. `/api/signal-calendar` extended with `upcoming_signals_full` (full statistic/statement/prompt for all draft signals). Integrity check updated to a loop covering all 7 scheduled signals. Dual-source architecture documented in Operating Manual §5. TypeScript: 0 errors. Build: ✓. Files changed: `src/lib/signals.ts`, `src/app/api/signal-calendar/route.ts`, `HANDOVER.md`.
+
+---
+
+### 2. What Changed
+
+| Item | Before | After |
+|---|---|---|
+| `ACTIVE_SIGNAL_MODE` | `"manual"` | `"date"` |
+| `ACTIVE_SIGNAL_ID` (fallback) | `"signal-2026-05-25"` | `"signal-2026-05-27"` |
+| Date resolver | UTC (`toISOString().slice(0,10)`) | Europe/London (`toLocaleDateString("en-CA", { timeZone: "Europe/London" })`) |
+| `getLondonDateString()` | Did not exist | Exported from `signals.ts` |
+
+---
+
+### 3. Resolution Logic (as of 2026-05-27)
+
+```
+Today (London) = "2026-05-27"
+SIGNAL_ARCHIVE lookup for "2026-05-27" → signal-2026-05-27 (Machine Intimacy, 61%) ✓
+→ Exact date match found — ACTIVE_SIGNAL resolves to signal-2026-05-27
+```
+
+All reaction submissions from the homepage now correctly record `signal_id: "signal-2026-05-27"` (Machine Intimacy). The previous fallback (`signal-2026-05-26`) is no longer used unless no date match exists.
+
+When a new signal entry is added to `SIGNAL_ARCHIVE` with `date: "2026-05-28"` (or any future date), it will automatically become active on that date in London time — no deployment needed as long as the code is already deployed with that entry. Use `/api/signal-calendar?today_signal` to verify full content before adding to `SIGNAL_ARCHIVE`.
+
+---
+
+### 4. How to Add a New Date-Based Signal
+
+1. Add a new entry to `SIGNAL_ARCHIVE` in `src/lib/signals.ts` with `date: "YYYY-MM-DD"`.
+2. Ensure a matching row exists in the Google Sheets **Signal Summary** tab for that `signal_id` before the date arrives.
+3. Ensure a matching row exists in the **Signal Calendar** tab with `status: "draft"` until ready, then `"active"`.
+4. Deploy. On the matching London date, `getResolvedActiveSignal()` will return the new signal automatically.
+5. Update `ACTIVE_SIGNAL_ID` (fallback) to point to the new signal once it's confirmed stable.
+
+---
+
+### 5. Architecture Note — Static Build + Client Date Resolution
+
+`ACTIVE_SIGNAL` is a module-level constant: `getResolvedActiveSignal()` is called once at import time.
+
+- **Client (browser)**: the module loads fresh for each user session — `getLondonDateString()` evaluates to today's date. The `signal_id` sent to `/api/signal-reaction` is always correct for the current day.
+- **Server (API routes with `force-dynamic`)**: module is cached per server process. `ACTIVE_SIGNAL` may reflect the date the server process started. For `/api/signal-summary`, this means the correct signal row is found as long as the server was started on the same day. For MVP this is acceptable.
+- **Implication**: the homepage HTML is pre-rendered at build time (static). If the build was done on a different day, the HTML may show the previous signal's content. The client JS re-hydrates with the correct date. This does not affect the `signal_id` recorded in Google Sheets (client-driven).
+- **Future improvement**: move `getResolvedActiveSignal()` into a per-request server call rather than module scope to eliminate the static staleness issue. Do not implement until explicitly instructed.
+
+---
+
+### 6. Do Not Change
+
+- `ACTIVE_SIGNAL_MODE` — now `"date"`. Do not revert to `"manual"` unless an emergency override is needed.
+- `getLondonDateString()` — must remain `Europe/London` timezone.
+- `ACTIVE_SIGNAL_ID` — keep pointing to the most recently confirmed safe signal. Update when a new signal is confirmed.
+- `/api/signal-reaction` — trusts client-provided `signal_id`. No change needed.
+
+---
 
 ## ══════════════════════════════════════════════
 ## SYSTEM STATUS / NEXT ACTIONS — 2026-05-27

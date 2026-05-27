@@ -2,11 +2,15 @@
 // ELIZIUM SIGNAL CONFIG
 // Single source of truth for all Signal of the Day data and related types.
 //
-// To rotate to a new signal:
-//   1. Change ACTIVE_SIGNAL_ID to the signal_id of the next signal.
-//   2. Ensure that signal exists in SIGNAL_ARCHIVE.
-//   3. Ensure the corresponding row exists in the Google Sheets Signal Summary tab.
-//   4. No other file needs to change.
+// ACTIVE_SIGNAL_MODE = "date" — signals activate automatically on their date (Europe/London).
+//
+// To add a new scheduled signal:
+//   1. Add an entry to SIGNAL_ARCHIVE below with the correct date, theme, statistic,
+//      statement, prompt. Use Signal Calendar as the content source.
+//   2. Update ACTIVE_SIGNAL_ID to this signal's signal_id (becomes the fallback).
+//   3. Add a row to the Google Sheets Signal Summary tab (same signal_id) before
+//      the activation date is reached — required for live reaction data.
+//   4. No other file needs to change — the resolver auto-activates on the date.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -45,25 +49,94 @@ export const SIGNAL_ARCHIVE: Signal[] = [
 
   // ── Currently active ──────────────────────────────────────────────────────
   {
-    signal_id:   "signal-2026-05-23",
-    date:        "2026-05-23",
-    theme:       "AI Anxiety",
-    statistic:   "67%",
-    statement:   "experienced anxiety when AI began to speak too humanly.",
-    prompt:      "What did you feel?",
+    signal_id:   "signal-2026-05-27",
+    date:        "2026-05-27",
+    theme:       "Machine Intimacy",
+    statistic:   "61%",
+    statement:   "felt that intelligent systems become more powerful when they feel personally close.",
+    prompt:      "When does technology begin to feel intimate rather than useful?",
     source_page: "homepage_signal_of_the_day",
     reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
   },
 
-  // ── Drafts — do not activate without updating ACTIVE_SIGNAL_ID ───────────
+  // ── Scheduled — add to Signal Summary tab before each date is reached ──────
+  // Source: Signal Calendar Google Sheet. Add new entries here + update ACTIVE_SIGNAL_ID.
 
   {
-    signal_id:   "signal-2026-05-24",
-    date:        "2026-05-24",
-    theme:       "System Trust",
-    statistic:   "72%",
-    statement:   "hesitated before trusting an AI system that seemed emotionally aware.",
-    prompt:      "What makes you trust a system that seems to understand you?",
+    signal_id:   "signal-2026-05-28",
+    date:        "2026-05-28",
+    theme:       "Future Trust",
+    statistic:   "69%",
+    statement:   "said they would trust AI more if the system showed its limits clearly.",
+    prompt:      "What makes an intelligent system feel trustworthy?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-05-29",
+    date:        "2026-05-29",
+    theme:       "Synthetic Presence",
+    statistic:   "54%",
+    statement:   "felt emotionally aware of an artificial presence even when they knew it was not human.",
+    prompt:      "Can something artificial still feel present?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-05-30",
+    date:        "2026-05-30",
+    theme:       "Artificial Empathy",
+    statistic:   "63%",
+    statement:   "said AI empathy feels powerful but difficult to fully believe.",
+    prompt:      "When does simulated empathy become emotionally convincing?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-05-31",
+    date:        "2026-05-31",
+    theme:       "The Right to Refuse AI",
+    statistic:   "71%",
+    statement:   "felt safer when human refusal remained part of the system.",
+    prompt:      "Should people always have the right to refuse intelligent systems?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-01",
+    date:        "2026-06-01",
+    theme:       "Emotional Memory",
+    statistic:   "58%",
+    statement:   "felt that systems become more unsettling when they remember emotional behaviour over time.",
+    prompt:      "Would you let a system remember how you felt?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-02",
+    date:        "2026-06-02",
+    theme:       "Human Override",
+    statistic:   "66%",
+    statement:   "said intelligent assistance feels safer when human override remains visible.",
+    prompt:      "At what point should human control interrupt AI decision-making?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  // ── Archived — past signals ───────────────────────────────────────────────
+
+  {
+    signal_id:   "signal-2026-05-26",
+    date:        "2026-05-26",
+    theme:       "Emotional Memory",
+    statistic:   "64%",
+    statement:   "felt uneasy imagining a system that remembers emotional responses over time.",
+    prompt:      "Would you let a system remember how you felt?",
     source_page: "homepage_signal_of_the_day",
     reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
   },
@@ -80,12 +153,23 @@ export const SIGNAL_ARCHIVE: Signal[] = [
   },
 
   {
-    signal_id:   "signal-2026-05-26",
-    date:        "2026-05-26",
-    theme:       "Emotional Memory",
-    statistic:   "64%",
-    statement:   "felt uneasy imagining a system that remembers emotional responses over time.",
-    prompt:      "Would you let a system remember how you felt?",
+    signal_id:   "signal-2026-05-24",
+    date:        "2026-05-24",
+    theme:       "System Trust",
+    statistic:   "72%",
+    statement:   "hesitated before trusting an AI system that seemed emotionally aware.",
+    prompt:      "What makes you trust a system that seems to understand you?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-05-23",
+    date:        "2026-05-23",
+    theme:       "AI Anxiety",
+    statistic:   "67%",
+    statement:   "experienced anxiety when AI began to speak too humanly.",
+    prompt:      "What did you feel?",
     source_page: "homepage_signal_of_the_day",
     reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
   },
@@ -102,30 +186,42 @@ export function getSignalById(id: string): Signal | undefined {
 // ── Activation Mode ───────────────────────────────────────────────────────────
 // Controls how the active signal is chosen.
 //
-//   "manual" (current) — always use ACTIVE_SIGNAL_ID below. Safe, explicit, default.
-//   "date"             — select the signal whose date matches today (YYYY-MM-DD).
-//                        Falls back to ACTIVE_SIGNAL_ID if no signal matches today.
+//   "manual" — always use ACTIVE_SIGNAL_ID below. Explicit override.
+//   "date"   — select the signal whose date matches today in Europe/London time.
+//              Falls back to ACTIVE_SIGNAL_ID if no signal in SIGNAL_ARCHIVE
+//              matches today's date.
 //
-// ⚠️  DO NOT switch to "date" until:
-//   1. Google Sheets Signal Summary has a row for every scheduled signal_id.
-//   2. A decision has been made on whether Insight Reports are auto or manually approved.
-//   3. All signals in the archive have been reviewed and their content confirmed.
+// Current mode: "date" — automatic date-based selection is active.
+// ACTIVE_SIGNAL_ID below is the fallback when no date match exists.
 
 export type ActiveSignalMode = "manual" | "date";
 
 /**
  * Activation mode for the Signal of the Day.
- * Change to "date" to enable automatic date-based signal selection.
- * Must remain "manual" until the checklist above is satisfied.
+ * "date" — resolves by matching today's Europe/London date against signal.date.
+ * Falls back to ACTIVE_SIGNAL_ID when no archive entry matches today.
  */
-export const ACTIVE_SIGNAL_MODE: ActiveSignalMode = "manual";
+export const ACTIVE_SIGNAL_MODE: ActiveSignalMode = "date";
 
-// ── Active Signal ─────────────────────────────────────────────────────────────
-// In manual mode: change ACTIVE_SIGNAL_ID to rotate to a different signal.
-// In date mode: ACTIVE_SIGNAL_ID is used as the fallback when no date match exists.
+// ── Fallback Signal ID ────────────────────────────────────────────────────────
+// In date mode: used when today's date has no matching signal in SIGNAL_ARCHIVE.
+// In manual mode: the always-active signal.
+//
+// Keep this pointing to the most recently confirmed, safe signal.
+// When adding a new signal to SIGNAL_ARCHIVE, also add a row to the
+// Google Sheets Signal Summary tab before that date is reached.
 
-/** The signal_id used in manual mode, or as fallback in date mode. */
-export const ACTIVE_SIGNAL_ID = "signal-2026-05-25";
+/** Fallback signal_id when no date-based match is found. */
+export const ACTIVE_SIGNAL_ID = "signal-2026-05-27";
+
+/**
+ * Returns today's date as YYYY-MM-DD in the Europe/London timezone.
+ * Correctly handles both GMT (UTC+0) and BST (UTC+1) transitions.
+ * Used by getResolvedActiveSignal() and available for display in system-preview.
+ */
+export function getLondonDateString(): string {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" });
+}
 
 /**
  * Returns the signal whose date field matches the given YYYY-MM-DD string.
@@ -138,13 +234,14 @@ export function getSignalForDate(dateString: string): Signal | null {
 /**
  * Resolves the active signal based on ACTIVE_SIGNAL_MODE.
  * - "manual": returns the signal matching ACTIVE_SIGNAL_ID.
- * - "date":   returns the signal matching today's date, falling back to ACTIVE_SIGNAL_ID.
+ * - "date":   returns the signal matching today's Europe/London date,
+ *             falling back to ACTIVE_SIGNAL_ID if no match.
  *
  * Always returns a valid Signal. Throws if ACTIVE_SIGNAL_ID is not in SIGNAL_ARCHIVE.
  */
 export function getResolvedActiveSignal(): Signal {
   if (ACTIVE_SIGNAL_MODE === "date") {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getLondonDateString();
     return getSignalForDate(today) ?? getSignalById(ACTIVE_SIGNAL_ID)!;
   }
   return getSignalById(ACTIVE_SIGNAL_ID)!;
@@ -163,6 +260,31 @@ export const ACTIVE_SIGNAL: Signal = getResolvedActiveSignal();
 /** Return the currently active signal. Convenience wrapper around ACTIVE_SIGNAL. */
 export function getActiveSignal(): Signal {
   return ACTIVE_SIGNAL;
+}
+
+// ── Archive integrity check ───────────────────────────────────────────────
+// Verifies that every scheduled signal (2026-05-27 through 2026-06-02) is
+// present in SIGNAL_ARCHIVE with the correct signal_id.
+// Runs at module initialisation — any build will catch a missing or
+// mis-dated entry before it reaches production.
+// Update this list whenever new signals are added to SIGNAL_ARCHIVE.
+const _scheduledSignals: Array<[string, string]> = [
+  ["2026-05-27", "signal-2026-05-27"],
+  ["2026-05-28", "signal-2026-05-28"],
+  ["2026-05-29", "signal-2026-05-29"],
+  ["2026-05-30", "signal-2026-05-30"],
+  ["2026-05-31", "signal-2026-05-31"],
+  ["2026-06-01", "signal-2026-06-01"],
+  ["2026-06-02", "signal-2026-06-02"],
+];
+for (const [date, expectedId] of _scheduledSignals) {
+  const match = getSignalForDate(date);
+  if (!match || match.signal_id !== expectedId) {
+    throw new Error(
+      `[signals] Archive integrity failure: ${expectedId} not found in SIGNAL_ARCHIVE. ` +
+      `Add the entry (date: ${date}) before deploying.`
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
