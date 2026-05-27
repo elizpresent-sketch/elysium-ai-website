@@ -1,5 +1,83 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — Image/layout pass in progress; method + company visual layout NOT yet approved; next task is focused layout correction only on method and company pages_
+_Last updated: 2026-05-27 — Method + Company visual layout correction complete. Local visual QA passed. Pending Vercel visual QA._
+
+---
+
+## ══════════════════════════════════════════════
+## METHOD + COMPANY VISUAL LAYOUT FIX — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+Method + Company visual layout correction complete. TypeScript: 0 errors (`npx tsc --noEmit`). Build: ✓ 16 pages (`npm run build`). Local visual QA passed. Backend, APIs, Make, env vars, Google Sheets, ContactForm, `/api/inquiry`, `/api/signal-reaction`, and `/system-preview` were not changed.
+
+---
+
+### 2. New Image Assets
+
+Two generated assets were added in the previous session and are now correctly integrated:
+
+| Asset | Path |
+|---|---|
+| Method hero signal field | `public/images/elysium-ai/dark/generated/elizium-method-hero-signal-field.webp` |
+| Company identity interior | `public/images/elysium-ai/dark/generated/elizium-company-identity-interior.webp` |
+
+---
+
+### 3. /method — Changes
+
+- Hero image (`elizium-method-hero-signal-field.webp`) placed in the right hero column.
+- Image is now aligned with the headline top: `position="center top"`, `fadeTop={0}` — no longer floats lower than the text.
+- Right edge fade added (`fadeRight={15}`) — removes the hard crop; all edges now fade intentionally.
+- Left edge fade increased (`fadeLeft={18}`) for better text-column blend.
+- The confusing five-symbol image strip below the hero was removed entirely.
+- Replaced with a coded **01–06 six-stage marker row** — no images required:
+
+```
+01  Signal
+02  Response
+03  Pattern
+04  Insight
+05  Experience
+06  Application
+```
+
+Each marker uses a 1px CSS vertical line, number, and stage name. Grid dividers are 1px `rgba(28,37,48,0.45)`. Matches the six-stage method precisely.
+
+---
+
+### 4. /company — Changes
+
+- Hero converted from single-column to **two-column grid** (`lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-start`).
+- `elizium-company-identity-interior.webp` integrated as the right-side hero column — desktop only (`hidden lg:block`), `aspect-[4/5]`, soft left/right/bottom fades.
+- The giant standalone full-width image panel that appeared below the hero was **removed entirely**.
+- Hero now flows directly into the Signal Layer — Live section, then Platform Status table.
+- All subsequent sections (Registration, Mission, System Architecture strip, Platform Roadmap, Private Access, London & Global) are unchanged.
+
+---
+
+### 5. Files Changed
+
+- `src/app/method/page.tsx`
+- `src/app/company/page.tsx`
+
+---
+
+### 6. Checks
+
+- `npx tsc --noEmit` — 0 errors
+- `npm run build` — ✓ 16 pages
+- Local visual QA passed
+
+---
+
+### 7. Next Tasks
+
+1. **Vercel visual QA** — review `/method` and `/company` on deployed preview before treating as final.
+2. **Extend Signal Queue beyond 2026-06-02** — add new signals to `SIGNAL_ARCHIVE` in `src/lib/signals.ts` and Signal Calendar tab.
+3. **Add signal coverage warning to `/system-preview`** — show operator alert when the signal queue runs out within N days.
+4. **Prepare boss-facing summary / Notion** — after Vercel visual QA is confirmed.
+5. **Later (optional):** Contact threshold image, Future Human London image, analytics, Google Workspace, Airtable, multilingual versions.
 
 ---
 
