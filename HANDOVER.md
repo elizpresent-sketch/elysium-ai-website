@@ -1,5 +1,129 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — Public platform coherence pass complete; CurrentSignalModule, EmotionalSpacesGrid, PrivateAccessStrip added; all 5 public pages updated; Contact page Inquiry Routes panel added; TypeScript 0 errors, build ✓; backend untouched_
+_Last updated: 2026-05-27 — Public breathing platform layer complete; platform modules unified across all public pages; active-state language moved to cold white / silver-blue; local TypeScript and build checks passed; backend untouched_
+
+---
+
+## ══════════════════════════════════════════════
+## PUBLIC BREATHING PLATFORM LAYER — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. What Was Done
+
+Public pages now share reusable platform modules. The goal of this pass was to make the site feel like a living ELIZIUM emotional interaction platform, not separate brochure pages.
+
+---
+
+### 2. Components Added / Used
+
+| Component | Role |
+|---|---|
+| `CurrentSignalModule` | Compact live signal console panel — displays active signal theme, statistic, statement and response dimensions. Used across key public pages. |
+| `EmotionalSpacesGrid` | Six portal-like emotional spaces: Human, Memory, Control, Loneliness, Trust, AI. Each space is a card with image, gradient overlay, label and question. Used on platform and for-brands pages. |
+| `PrivateAccessStrip` | Partner access CTA strip — links to `/contact#inquiry-form`. Appears across key public pages. |
+| `LiveEmotionalDataPreview` | Fetches `/api/signal-summary` and displays 5 aggregate reaction bars. No private data. Falls back gracefully if API is unreachable. Used on /platform, /method, /for-brands. |
+
+---
+
+### 3. Active-State Language
+
+Public active-state language was unified toward cold white / silver-blue rather than generic green dashboard style. All `#4ADE80` green indicators on public pages replaced with `bg-[#E2E8EE]` silver-white pulse dots and `text-[#B8BEC4]` text. Green is now reserved for `/system-preview` (internal dashboard) only.
+
+---
+
+### 4. Contact Page
+
+Contact page has clearer Inquiry Routes and Inquiry Form / Access Request framing. "Access Request — Open" eyebrow added. Route cards show explicit "Open" status. Form submit label updated to "Submit Partner Inquiry".
+
+---
+
+### 5. What Was Not Changed
+
+Backend, APIs, Make, env vars, Google Sheets, signal logic and inquiry form functionality were not changed.
+
+---
+
+### 6. Local Checks
+
+- `npx tsc --noEmit` — 0 errors
+- `npm run build` — ✓ 16 pages
+- Local visual QA passed
+
+---
+
+### 7. Next Recommended Tasks
+
+1. Vercel visual QA — review all public pages on deployed preview before treating as final.
+2. Extend signal queue beyond 2026-06-02.
+3. Replace any weak temporary images only if needed.
+4. Prepare boss-facing summary / Notion after website is locked.
+5. Later: analytics, Google Workspace, Airtable, multilingual versions.
+
+---
+
+## ══════════════════════════════════════════════
+## BREATHING PLATFORM PASS — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+Breathing platform pass complete. TypeScript: 0 errors (`npx tsc --noEmit`). Build: ✓ 16 pages (`npm run build`). All backend, APIs, Make, env vars, Google Sheets, signal logic, and inquiry logic were not changed.
+
+---
+
+### 2. New Component
+
+| File | What it does |
+|---|---|
+| `src/components/ui/LiveEmotionalDataPreview.tsx` | **New** — fetches `/api/signal-summary`, displays 5 reaction bars (aggregate only, no private data) with 1px gradient track. Falls back to zero-value bars if API is unreachable. Shows signal theme + total count, dominant reaction when live. Silver-white pulse header dot. Used on `/platform`, `/method`, `/for-brands`. |
+
+---
+
+### 3. Files Changed
+
+| File | Change summary |
+|---|---|
+| `src/components/ui/LiveEmotionalDataPreview.tsx` | **New** — live aggregate emotional response preview |
+| `src/components/ui/CurrentSignalModule.tsx` | Header dot → `bg-[#E2E8EE]/70 animate-pulse` with glow; "Recording" label added; "Signal Cycle: Daily \| London Time" footer row added |
+| `src/components/ui/PrivateAccessStrip.tsx` | Dot → silver-white pulse; description now includes "Access is reviewed manually by the ELIZIUM team."; added "Selected Collaborators" chip (5 total); CTA text → "Request Private Access" |
+| `src/components/ui/EmotionalSpacesGrid.tsx` | Numbered markers 01–06 added (top-left, 28% opacity → 55% on hover); card border-top brightens on hover |
+| `src/app/contact/page.tsx` | Added "ACCESS REQUEST — OPEN" eyebrow with silver pulse dot; "Submit Inquiry" → "Submit Partner Inquiry"; "Open for Submissions" chip → silver-white; route cards now show right-aligned "Open" label |
+| `src/app/platform/page.tsx` | All green `#4ADE80` active indicators → silver-white `bg-[#E2E8EE]/65 animate-pulse`; "Daily signal rotation · London time" micro-copy added; new "Live Response Data" section inserted before Experience Deployment |
+| `src/app/method/page.tsx` | All `text-[#4ADE80]` live-state text → `text-[#B8BEC4]`; new "Live Response Data" section inserted before Platform Output |
+| `src/app/for-brands/page.tsx` | Capabilities card dots → silver-white with glow; new "Live Response Data" section inserted before Capabilities |
+| `src/app/company/page.tsx` | Hero "Platform Active" dot → silver-white pulse; all `text-[#4ADE80]` live-state text → `text-[#B8BEC4]` |
+| `src/app/future-human/page.tsx` | Hero status strip dots → `bg-[#E2E8EE]/65` with inline glow boxShadow |
+
+---
+
+### 4. Active-State Color System Change
+
+All public pages now use **cold silver-white** for live/active indicators:
+- Dots: `bg-[#E2E8EE]/55–70` + `animate-pulse` + `boxShadow: "0 0 5px 1px rgba(226,232,238,0.15)"`
+- Text: `text-[#B8BEC4]`
+- Inactive dots: `bg-[#3B4550]` (unchanged)
+- Green `#4ADE80` is now reserved exclusively for `/system-preview` (internal dashboard)
+
+---
+
+### 5. What Was Not Changed
+
+- No API routes (`/api/*`)
+- No Make scenarios, webhooks, Vercel env vars
+- No `.env.local`
+- No Google Sheets, signal logic, or inquiry flow
+- No form submission logic
+- No signal reaction system
+- No `/system-preview` internal dashboard
+- No new packages added
+
+---
+
+### 6. Next Actions
+
+1. **Visual QA on Vercel preview** — review all pages on deployed preview; the dark background makes local screenshots hard to read, so Vercel preview is the correct QA environment.
+2. **Replace temporary Emotional Spaces images only if needed** — existing `emotional-space-*.webp` assets are in use; replace only if visually wrong for their label.
+3. **Prepare boss-facing summary / Notion after visual lock** — not before.
+4. **Analytics and Google Workspace later** — not before visual lock.
 
 ---
 
