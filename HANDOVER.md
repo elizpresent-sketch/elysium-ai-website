@@ -1,5 +1,138 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — Public breathing platform layer complete; platform modules unified across all public pages; active-state language moved to cold white / silver-blue; local TypeScript and build checks passed; backend untouched_
+_Last updated: 2026-05-27 — Image/layout pass in progress; method + company visual layout NOT yet approved; next task is focused layout correction only on method and company pages_
+
+---
+
+## ══════════════════════════════════════════════
+## IMAGE / METHOD / COMPANY VISUAL STATE — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. Current Working System State
+
+- Public website breathing-platform layer is implemented and works locally.
+- Forms and reactions still work.
+- Backend and system should not be touched in the next visual task.
+- New image audit confirmed most existing images are good enough.
+- Homepage images should be left alone.
+- Emotional Spaces images are good enough for now.
+- The only essential new images generated for this pass were:
+  - `public/images/elysium-ai/dark/generated/elizium-method-hero-signal-field.webp`
+  - `public/images/elysium-ai/dark/generated/elizium-company-identity-interior.webp`
+
+---
+
+### 2. What Was Implemented in This Chat
+
+Claude inserted:
+- `elizium-method-hero-signal-field.webp` into `/method` hero right column
+- `elizium-company-identity-interior.webp` into `/company` as a full-width company identity visual panel below the hero
+
+**Files changed:**
+- `src/app/method/page.tsx`
+- `src/app/company/page.tsx`
+
+**Checks passed:**
+- `npx tsc --noEmit` — 0 errors
+- `npm run build` — ✓ 16 pages
+
+---
+
+### 3. Visual QA Result — NOT FINAL
+
+**Important: Although the implementation technically works, the visual layout is not approved.**
+
+**Method page issues:**
+- The hero image is too low / not aligned with the top of the main headline.
+- The image feels pasted into the right column rather than integrated.
+- The right edge appears hard-cut while other edges fade, making the crop feel awkward.
+- The five-symbol image section below the hero is confusing because the page is about a six-stage method.
+- The symbols have no labels, only five icons, too much empty space, and unclear relationship to the six-stage method.
+- The Method page needs layout correction before commit/approval.
+
+**Company page issues:**
+- The company image was inserted as a huge full-width panel below the hero.
+- On a 16-inch Mac it takes too much vertical space and feels random/interruptive.
+- It does not feel connected to the hero copy.
+- The crop/right-side edge feels awkward.
+- Better approach: integrate the company image into the hero as a right-side visual or subtle atmospheric hero background, not as a giant standalone panel.
+
+---
+
+### 4. Next Required Task for New Claude Chat
+
+The next Claude chat should start by reading HANDOVER.md, then do a focused layout correction only.
+
+**Touch only:**
+- `src/app/method/page.tsx`
+- `src/app/company/page.tsx`
+
+Do not touch backend or any other pages.
+
+---
+
+### 5. Recommended Next Method Fix
+
+**Preferred:**
+- Keep the Method image asset for now.
+- Align the image with the top of the main hero headline — both columns should start at the same vertical level.
+- Make image crop/fades feel intentional and balanced on all edges (no hard-cut right edge).
+- Replace the five-symbol image strip with a coded six-stage method marker row — no new images required:
+
+```
+01  Signal
+02  Response
+03  Pattern
+04  Insight
+05  Experience
+06  Application
+```
+
+Each marker uses a small abstract CSS dot/line, not an image.
+
+**Alternative:**
+- If the symbols image is kept, reframe it clearly as "Signal Symbols" / "Method Markers", add labels/captions, and reduce empty vertical space.
+- Do not leave it as an unexplained five-symbol strip under a six-stage method page.
+
+---
+
+### 6. Recommended Next Company Fix
+
+**Preferred:**
+- Remove the giant standalone company image panel as currently implemented.
+- Integrate `elizium-company-identity-interior.webp` into the Company hero:
+  - right-side hero visual (two-column hero), or
+  - subtle low-opacity atmospheric background behind hero text, or
+  - controlled narrow letterbox module within the hero section
+- Do not let the image dominate the viewport.
+- Keep: company headline, metrics, platform status, registration/company info, roadmap, London/global positioning, Active Signal section, and all public system modules.
+
+---
+
+### 7. Exact Constraints for Next Task
+
+**Do not touch:**
+- Backend APIs
+- Make/webhooks
+- Env vars
+- Google Sheets logic
+- ContactForm
+- `/api/inquiry`
+- `/api/signal-reaction`
+- `/system-preview`
+- Homepage
+- Platform, For Brands, Future Human, Contact pages
+
+**Run after next task:**
+```
+npx tsc --noEmit
+npm run build
+```
+
+Report files changed and visual check notes.
+
+---
+
+**Next chat task: Method + Company visual layout correction only. Do not commit current image layout until visually approved.**
 
 ---
 
