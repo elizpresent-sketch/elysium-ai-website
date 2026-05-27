@@ -1,5 +1,189 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — Gmail notification layer documented; Inquiry CRM Make scenario confirmed as 3-module (Webhooks → Sheets → Gmail); full system map added to Operating Manual; MVP testing checklist finalised; date-based signal logic and inquiry workflow fully documented; both Make scenarios live and confirmed_
+_Last updated: 2026-05-27 — Public website first visual/structure pass complete; platform, method, company, for-brands, future-human pages restructured; TypeScript 0 errors, build ✓; second visual densification pass documented as next task_
+
+---
+
+## ══════════════════════════════════════════════
+## PUBLIC WEBSITE VISUAL PASS STATE — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. Current Confirmed Working Backend / System
+
+Everything below is confirmed working as of 2026-05-27. Do not touch any of it in the next chat.
+
+| System | Status | Notes |
+|---|---|---|
+| Signal reactions automation | ✅ Working | Website Signal of the Day → `/api/signal-reaction` → Make → Sheet1 |
+| Date-based Signal of the Day | ✅ Working | `ACTIVE_SIGNAL_MODE = "date"`, London timezone resolver |
+| Active signal on 2026-05-27 | ✅ Correct | Resolves to `signal-2026-05-27` / Machine Intimacy |
+| Sheet1 signal_id | ✅ Correct | Reactions record the current signal_id |
+| Signal Summary formulas | ✅ Working | Sheet1 reactions update Signal Summary |
+| `/api/signal-calendar` | ✅ Live | Returns `mode: live` — includes `today_signal`, `latest_active_signal`, `upcoming_signals`, `upcoming_signals_full`, `all_signals` |
+| Signal Calendar statuses | ✅ Aligned | 2026-05-27 status set to `active` in Signal Calendar |
+| Inquiry CRM | ✅ Working | Contact / private inquiry form → `/api/inquiry` → Make → Inquiry Log |
+| Gmail notification | ✅ Working | Make scenario ELIZIUM Inquiry CRM — WORKING: 3 modules (Webhooks → Sheets → Gmail). Internal admin alert to `elizpresent@gmail.com`. Requires scenario saved and ON. |
+| `/system-preview` | ✅ Working | Internal operator command centre — all 8 sections, all 4 APIs live |
+
+Do not regenerate webhooks. Do not change env vars. Do not modify Make scenarios. Do not alter signal logic or inquiry flow.
+
+---
+
+### 2. Recent Website Page Restructure — First Pass
+
+A first public-page structure pass was completed in this session. TypeScript: 0 errors. Build: ✓ 16 pages.
+
+**Files changed:**
+
+| File | Change |
+|---|---|
+| `src/app/platform/page.tsx` | Full rewrite — platform architecture page |
+| `src/app/method/page.tsx` | Full rewrite — 6-stage ELIZIUM METHOD |
+| `src/app/company/page.tsx` | Full rewrite — expanded platform identity |
+| `src/app/for-brands/page.tsx` | Two sections added — Why Emotional Intelligence + Target Partners |
+| `src/app/future-human/page.tsx` | One section added — Platform Intelligence (§06) |
+
+**Summary of first pass:**
+- Platform page rebuilt as a platform architecture overview — six layers (Signal, Interaction, Data, Insight, Experience, Partner) with live/pre-launch status dots. New hero image (`elizium-system-aperture-hero-optimised.webp`), system architecture image strip, Experience Deployment panel, Signal Output cards.
+- Method page rebuilt around the ELIZIUM METHOD six stages: Signal → Response → Pattern → Insight → Experience → Application. New live system status table. Stage status column on desktop (live/pre-launch). Old five stages (Read/Process/Respond/Record/Scale) removed.
+- Company page expanded from 134 lines to ~350 lines: hero, Platform Status "What Has Been Built" table (7 systems, live status), Registration + Mission, Platform Roadmap (4 milestones), London & Global positioning.
+- For Brands page received two new sections: "Why Emotional Intelligence" (proof metrics + reasoning) and "Target Partners" (8-card client category grid: AI companies, luxury, automotive, fashion-tech, exhibitions, technology, premium real estate, finance/future-tech).
+- Future Human page received a new "Platform Intelligence" section (§06) before the CTA — documents what each FH deployment produces for the platform (Signal, Data, Insight, Partner layers).
+- Homepage was not touched (per constraint).
+- Contact was not touched (form must remain working).
+
+---
+
+### 3. Visual QA Result — First Pass Assessment
+
+**Important: the first pass improved content and structure but is NOT yet reference-level final.**
+
+The pages are better — they are now architecturally correct, have the right terminology and use modular card/table patterns. However:
+
+- Current pages still feel like dark premium brochure pages with cards and text blocks.
+- The reference direction feels like a dense AI-human emotional operating system — a live platform interface with data grammar, status chips, modular console panels and system density.
+- The first pass fixed the structure and content. The second pass needs to fix the visual density and interface feel.
+
+**Do not treat the first restructure as the final public or boss-facing version. A second pass is required.**
+
+---
+
+### 4. Page-by-Page Visual QA — First Pass State
+
+| Page | State | What's needed next |
+|---|---|---|
+| **Homepage** | Closest to intended world | Minor consistency refinements only. Do not over-redesign. |
+| **Platform** `/platform` | Good new architecture structure | Needs a stronger live platform console panel near the top. Needs more compact dashboard/system density. Less static text. |
+| **Method** `/method` | Correct 6-stage methodology content | Still needs to feel like a live method engine. Add flow, input/output logic, status chips, live example. Less essay. |
+| **Future Human** `/future-human` | Visually strong, good cinematic sections | Still too show-like. Needs clearer reframing as flagship field-test / output of ELIZIUM platform. Needs before/during/after experience loop tightened. |
+| **For Brands** `/for-brands` | Commercially improved | Needs stronger partner intelligence / proof interface. Must feel like a measurable emotional interaction system, not a services listing page. |
+| **Company** `/company` | Much improved but still visually generic | Needs stronger company/platform architecture: live now / in development / next upgrades / scale. Dense and direct. |
+| **Contact** `/contact` | Functional | Do not break form. Optional: small inquiry route/status panel only if safe. |
+
+---
+
+### 5. Next Task — Second Visual/Interface Densification Pass
+
+**The next task is NOT backend. The next task is a second public website visual/interface densification pass against the reference.**
+
+**What the next Claude chat should do:**
+1. Read HANDOVER.md in full first.
+2. Attach (or request) the latest current website screenshots/ZIP and the reference screenshots/ZIP.
+3. Perform a visual QA comparison — current vs reference — before making any edits.
+4. Produce a page-by-page QA/plan and get approval before implementing.
+5. Implement the second visual pass after plan approval.
+
+**Focus pages for second pass:**
+- `/platform` — highest priority
+- `/method`
+- `/for-brands`
+- `/future-human`
+- `/company`
+- `/contact` — lightly only, do not break form
+- Homepage — consistency refinements only, do not redesign
+
+**Do not change in the next chat:**
+- Backend, APIs, Make, env vars, Google Sheets integration
+- Signal logic or inquiry flow
+- Form functionality in `/contact`
+- Homepage hero, Signal of the Day, or reaction buttons
+- Any API route files
+
+---
+
+### 6. Recommended Design Direction for Second Pass
+
+**The target feel:**
+- Dense modular command-centre interface
+- Dashboard / system panels — not brochure cards
+- Live-platform visual language throughout
+- Data / signal / interface grammar
+- Fewer large static text-only sections
+- Premium dark graphite / cold silver-blue light
+- Cinematic but system-like
+- Structured, dense, alive
+
+**Not:**
+- Neon
+- Cyberpunk
+- Generic SaaS templates
+- Random rebuilds
+- Decorative complexity without information
+
+**Specific patterns to add in second pass:**
+- Compact numbered module panels (like `/system-preview` sections)
+- Status indicator rows (live/active/pre-launch/planned)
+- Dense data tables with label/value pairs
+- Input → Process → Output flow diagrams as visual elements
+- Signal/data pulse indicators
+- Narrower, denser typography blocks interspersed with interface panels
+- Section-level live status chips
+
+---
+
+### 7. Opening Prompt for Next Claude Chat (Second Visual Pass)
+
+Paste this verbatim into the next Claude Code chat:
+
+---
+
+> You are continuing work on the ELIZIUM AI website.
+>
+> Branch: `platform-company-restructure` (deployed to Vercel Preview — do NOT merge to `main` without explicit instruction).
+> Local folder: `/Users/elizavetazhuravleva/Desktop/elysium-ai-website`
+> Do not git push unless explicitly asked.
+>
+> **Read HANDOVER.md in full first.** It documents the current system state, what has already been built and what the next task is.
+>
+> **The backend is complete and working.** Do not touch:
+> - Any API routes (`/api/*`)
+> - Make scenarios or webhook URLs
+> - `.env.local` or Vercel env vars
+> - Google Sheets integration, signal logic, or inquiry flow
+> - Signal reaction system
+> - Form functionality in `/contact`
+>
+> **The next task is a second visual/interface densification pass on the public pages.**
+>
+> Before editing anything:
+> 1. Read HANDOVER.md — specifically the "PUBLIC WEBSITE VISUAL PASS STATE" section.
+> 2. I will attach the latest current website screenshots/ZIP and the reference screenshots/ZIP.
+> 3. Perform a visual QA — compare current state to reference direction.
+> 4. Produce a page-by-page plan and present it before making edits.
+> 5. Wait for approval on the plan before implementing.
+>
+> Focus pages: `/platform`, `/method`, `/for-brands`, `/future-human`, `/company`.
+> Light touch only: `/contact` (do not break form), homepage (consistency only, no redesign).
+>
+> Target feel: dense modular command-centre interface, live-platform language, data/signal grammar, fewer static text-only sections. Not neon, not cyberpunk, not SaaS.
+>
+> Hard constraints:
+> - Do not change backend, APIs, Make, env vars or signal/inquiry logic.
+> - Do not redesign the homepage.
+> - Do not break the contact form.
+> - Do not merge `platform-company-restructure` to `main`.
+> - Do not commit `.env.local`.
+> - Do not git push unless explicitly asked.
+> - Read all target files before editing. Smallest changes only.
 
 ---
 
