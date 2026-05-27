@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ACTIVE_SIGNAL_ID, ACTIVE_SIGNAL, ACTIVE_SIGNAL_MODE, SIGNAL_ARCHIVE } from "@/lib/signals";
+import { ACTIVE_SIGNAL_ID, ACTIVE_SIGNAL, ACTIVE_SIGNAL_MODE, SIGNAL_ARCHIVE, getSignalForDate } from "@/lib/signals";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS — mirror homepage values so page inherits the same dark foundation
@@ -109,6 +109,7 @@ interface SignalCalendarData {
   skipped_signals:      number;
   report_pending:       number;
   report_created:       number;
+  today_signal:         CalendarActiveSignal | null;
   latest_active_signal: CalendarActiveSignal | null;
   upcoming_signals:     CalendarSignal[];
   all_signals:          CalendarSignal[];
@@ -160,7 +161,7 @@ export default function SystemPreview() {
   const [calendarLoading, setCalendarLoading]             = useState(true);
 
   useEffect(() => {
-    setMountedDate(new Date().toISOString().slice(0, 10));
+    setMountedDate(new Date().toLocaleDateString("en-CA", { timeZone: "Europe/London" }));
     fetch("/api/signal-summary")
       .then((r) => r.json())
       .then((data: SignalSummaryData) => { if (data?.ok) setSummary(data); })
@@ -188,6 +189,10 @@ export default function SystemPreview() {
   const insightReport          = insight?.report ?? null;
   const inquiryIsLive          = inquirySummary?.mode === "live";
   const calendarIsLive         = calendarData?.mode === "live";
+
+  // §01 — date-based resolver diagnostics (computed client-side after mount)
+  const expectedSignalId = mountedDate ? `signal-${mountedDate}` : "—";
+  const exactMatchFound  = mountedDate ? getSignalForDate(mountedDate) !== null : null;
 
   // §00 — derived connection states (mode only, not data presence)
   const signalSummaryConnected = summary?.mode === "live";
@@ -304,8 +309,8 @@ export default function SystemPreview() {
                 </span>
               </div>
               {[
-                { key: "Signal ID",     val: ACTIVE_SIGNAL_ID },
-                { key: "Theme",         val: ACTIVE_SIGNAL.theme },
+                { key: "Resolved ID",  val: ACTIVE_SIGNAL.signal_id },
+                { key: "Theme",        val: ACTIVE_SIGNAL.theme },
                 {
                   key: "Report Status",
                   val: calendarLoading
@@ -372,12 +377,16 @@ export default function SystemPreview() {
             {/* Identity table */}
             <div style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
               {[
-                { key: "Signal ID",       val: ACTIVE_SIGNAL_ID },
-                { key: "Activation Mode", val: ACTIVE_SIGNAL_MODE === "manual" ? "Manual" : "Date-Based" },
-                { key: "Theme",           val: ACTIVE_SIGNAL.theme },
-                { key: "Date",       val: ACTIVE_SIGNAL.date },
-                { key: "Status",     val: "Active" },
-                { key: "Source",     val: ACTIVE_SIGNAL.source_page },
+                { key: "Activation Mode",    val: ACTIVE_SIGNAL_MODE === "manual" ? "Manual" : "Date-Based" },
+                { key: "Today (London)",     val: mountedDate || "—" },
+                { key: "Expected ID",        val: expectedSignalId },
+                { key: "Date Match Found",   val: exactMatchFound === null ? "—" : exactMatchFound ? "Yes" : "No — add to SIGNAL_ARCHIVE" },
+                { key: "Resolved Signal ID", val: ACTIVE_SIGNAL.signal_id },
+                { key: "Fallback Signal ID", val: ACTIVE_SIGNAL_ID },
+                { key: "Theme",              val: ACTIVE_SIGNAL.theme },
+                { key: "Date",               val: ACTIVE_SIGNAL.date },
+                { key: "Status",             val: "Active" },
+                { key: "Source",             val: ACTIVE_SIGNAL.source_page },
               ].map(({ key, val }) => (
                 <div
                   key={key}
@@ -625,7 +634,7 @@ export default function SystemPreview() {
               {
                 label:  "Signal Collection",
                 value:  "Active",
-                detail: `signal_id: ${ACTIVE_SIGNAL_ID}`,
+                detail: `resolved: ${ACTIVE_SIGNAL.signal_id}`,
                 active: true,
               },
               {
@@ -649,13 +658,13 @@ export default function SystemPreview() {
               {
                 label:  "Signal Rotation",
                 value:  ACTIVE_SIGNAL_MODE === "manual" ? "Manual" : "Date-Based",
-                detail: `mode: ${ACTIVE_SIGNAL_MODE} · id: ${ACTIVE_SIGNAL_ID}`,
+                detail: `active: ${ACTIVE_SIGNAL.signal_id} · fallback: ${ACTIVE_SIGNAL_ID}`,
                 active: ACTIVE_SIGNAL_MODE === "date",
               },
               {
                 label:  "Date Activation",
                 value:  ACTIVE_SIGNAL_MODE === "date" ? "Active" : "Prepared",
-                detail: "Set ACTIVE_SIGNAL_MODE to 'date' in signals.ts",
+                detail: "Resolves by Europe/London date — see signals.ts",
                 active: ACTIVE_SIGNAL_MODE === "date",
               },
               {
