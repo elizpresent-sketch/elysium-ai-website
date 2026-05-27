@@ -9,6 +9,33 @@ import PrivateAccessStrip from "@/components/ui/PrivateAccessStrip";
 const BG = "#050505";
 const W  = "max-w-[1440px] mx-auto px-6 lg:px-12";
 
+// ─── FadeImage ───────────────────────────────────────────────────────────────
+interface FadeImageProps {
+  src: string; alt: string; className?: string; position?: string;
+  fadeLeft?: number; fadeRight?: number; fadeTop?: number; fadeBottom?: number;
+  sizes?: string;
+}
+function FadeImage({
+  src, alt, className = "", position = "center center",
+  fadeLeft = 0, fadeRight = 0, fadeTop = 10, fadeBottom = 10, sizes = "100vw",
+}: FadeImageProps) {
+  const layers: string[] = [];
+  if (fadeTop > 0)    layers.push(`linear-gradient(to bottom, ${BG} 0%, transparent ${fadeTop}%)`);
+  if (fadeBottom > 0) layers.push(`linear-gradient(to top,    ${BG} 0%, transparent ${fadeBottom}%)`);
+  if (fadeLeft > 0)   layers.push(`linear-gradient(to right,  ${BG} 0%, transparent ${fadeLeft}%)`);
+  if (fadeRight > 0)  layers.push(`linear-gradient(to left,   ${BG} 0%, transparent ${fadeRight}%)`);
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      <Image src={src} alt={alt} fill className="object-cover"
+        style={{ objectPosition: position }} sizes={sizes} />
+      {layers.length > 0 && (
+        <div aria-hidden className="absolute inset-0 pointer-events-none z-10"
+          style={{ background: layers.join(", ") }} />
+      )}
+    </div>
+  );
+}
+
 // ─── SectionHead ─────────────────────────────────────────────────────────────
 function SectionHead({ label }: { label: string }) {
   return (
@@ -63,52 +90,77 @@ export default function CompanyPage() {
       <section style={{ background: BG }} className="pt-24 pb-16 lg:pt-36 lg:pb-24">
         <div className={W}>
           <SectionHead label="Company" />
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-            className="flex flex-col gap-6 max-w-[680px]"
-          >
-            <motion.h1
-              variants={fadeUp}
-              className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
-              style={{ fontSize: "clamp(1.8rem, 4vw, 4rem)" }}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-start">
+
+            {/* Left: text */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={stagger}
+              className="flex flex-col gap-6"
             >
-              A creative-technology platform building the systems for AI-human emotional interaction.
-            </motion.h1>
-            <div className="h-px w-8 bg-[#1C2530]/60" />
-            <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-[520px]">
-              ELIZIUM is operated by Original Tema Ltd — a United Kingdom-registered
-              creative-technology company building platforms, systems and experiences at the
-              intersection of artificial intelligence, live performance and human emotional response.
-            </motion.p>
-            <motion.div variants={fadeUp} className="grid grid-cols-2 sm:grid-cols-4 gap-px" style={{ background: "rgba(28,37,48,0.6)" }}>
-              {[
-                { k: "Systems Built",    v: "7" },
-                { k: "Signal Platform",  v: "Live" },
-                { k: "Experience Layer", v: "In Dev" },
-                { k: "Partner Access",   v: "By Inquiry" },
-              ].map(({ k, v }) => (
-                <div key={k} className="flex flex-col gap-0.5 px-3 py-2.5" style={{ background: BG }}>
-                  <span className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">{k}</span>
-                  <span className="text-[10px] tracking-[0.18em] uppercase text-[#C8CDD2] font-medium">{v}</span>
-                </div>
-              ))}
+              <motion.h1
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.8rem, 4vw, 4rem)" }}
+              >
+                A creative-technology platform building the systems for AI-human emotional interaction.
+              </motion.h1>
+              <div className="h-px w-8 bg-[#1C2530]/60" />
+              <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-[520px]">
+                ELIZIUM is operated by Original Tema Ltd — a United Kingdom-registered
+                creative-technology company building platforms, systems and experiences at the
+                intersection of artificial intelligence, live performance and human emotional response.
+              </motion.p>
+              <motion.div variants={fadeUp} className="grid grid-cols-2 sm:grid-cols-4 gap-px" style={{ background: "rgba(28,37,48,0.6)" }}>
+                {[
+                  { k: "Systems Built",    v: "7" },
+                  { k: "Signal Platform",  v: "Live" },
+                  { k: "Experience Layer", v: "In Dev" },
+                  { k: "Partner Access",   v: "By Inquiry" },
+                ].map(({ k, v }) => (
+                  <div key={k} className="flex flex-col gap-0.5 px-3 py-2.5" style={{ background: BG }}>
+                    <span className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">{k}</span>
+                    <span className="text-[10px] tracking-[0.18em] uppercase text-[#C8CDD2] font-medium">{v}</span>
+                  </div>
+                ))}
+              </motion.div>
+              <motion.div variants={fadeUp} className="flex items-center gap-4 pt-1">
+                <span className="flex items-center gap-2 text-[8px] tracking-[0.3em] uppercase text-[#B8BEC4] font-medium">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-[#E2E8EE]/65 animate-pulse"
+                    style={{ boxShadow: "0 0 4px 1px rgba(226,232,238,0.15)" }}
+                  />
+                  Platform Active
+                </span>
+                <span className="w-px h-3 bg-[#1C2530]" />
+                <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium">
+                  London, United Kingdom
+                </span>
+              </motion.div>
             </motion.div>
-            <motion.div variants={fadeUp} className="flex items-center gap-4 pt-1">
-              <span className="flex items-center gap-2 text-[8px] tracking-[0.3em] uppercase text-[#B8BEC4] font-medium">
-                <span
-                  className="w-1.5 h-1.5 rounded-full bg-[#E2E8EE]/65 animate-pulse"
-                  style={{ boxShadow: "0 0 4px 1px rgba(226,232,238,0.15)" }}
-                />
-                Platform Active
-              </span>
-              <span className="w-px h-3 bg-[#1C2530]" />
-              <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium">
-                London, United Kingdom
-              </span>
+
+            {/* Right: company identity image (desktop only) */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              className="hidden lg:block"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/generated/elizium-company-identity-interior.webp"
+                alt="ELIZIUM — Company Identity"
+                className="w-full aspect-[4/5]"
+                position="center center"
+                fadeLeft={15}
+                fadeRight={12}
+                fadeBottom={20}
+                fadeTop={0}
+                sizes="50vw"
+              />
             </motion.div>
-          </motion.div>
+
+          </div>
         </div>
       </section>
 

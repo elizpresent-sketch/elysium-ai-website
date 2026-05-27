@@ -146,66 +146,94 @@ export default function MethodPage() {
       <section style={{ background: BG }} className="pt-24 pb-16 lg:pt-36 lg:pb-24">
         <div className={W}>
           <SectionHead label="The Method" />
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-            className="flex flex-col gap-6 max-w-[680px]"
-          >
-            <motion.h1
-              variants={fadeUp}
-              className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
-              style={{ fontSize: "clamp(1.8rem, 4vw, 4rem)" }}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-10 lg:gap-14 items-start">
+
+            {/* Left: text */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={stagger}
+              className="flex flex-col gap-6"
             >
-              A six-stage operating methodology for reading, shaping and archiving emotional response.
-            </motion.h1>
-            <div className="h-px w-8 bg-[#1C2530]/60" />
-            <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-[480px]">
-              The ELIZIUM Method is a structured operational system — from daily signal to live
-              experience to structured partner intelligence. Each stage produces data that feeds
-              the next.
-            </motion.p>
-            <motion.div variants={fadeUp} className="flex items-center gap-3">
-              <StatusDot live />
-              <span className="text-[8px] tracking-[0.3em] uppercase text-[#B8BEC4] font-medium">
-                Stages 01 – 04 Active
-              </span>
-            </motion.div>
-            <motion.div variants={fadeUp}>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-3 px-7 py-3 border border-[#E2E8EE]/65 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300"
+              <motion.h1
+                variants={fadeUp}
+                className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
+                style={{ fontSize: "clamp(1.6rem, 2.8vw, 3.4rem)" }}
               >
-                Discuss the Method <span className="w-4 h-px bg-current" />
-              </Link>
+                A six-stage operating methodology for reading, shaping and archiving emotional response.
+              </motion.h1>
+              <div className="h-px w-8 bg-[#1C2530]/60" />
+              <motion.p variants={fadeUp} className="text-[14px] text-[#AAB0B6] leading-relaxed max-w-[440px]">
+                The ELIZIUM Method is a structured operational system — from daily signal to live
+                experience to structured partner intelligence. Each stage produces data that feeds
+                the next.
+              </motion.p>
+              <motion.div variants={fadeUp} className="flex items-center gap-3">
+                <StatusDot live />
+                <span className="text-[8px] tracking-[0.3em] uppercase text-[#B8BEC4] font-medium">
+                  Stages 01 – 04 Active
+                </span>
+              </motion.div>
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-3 px-7 py-3 border border-[#E2E8EE]/65 text-[#E2E8EE] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#E2E8EE] hover:text-[#050505] transition-all duration-300"
+                >
+                  Discuss the Method <span className="w-4 h-px bg-current" />
+                </Link>
+              </motion.div>
+              <motion.div variants={fadeUp} className="grid grid-cols-2 sm:grid-cols-4 gap-px" style={{ background: "rgba(28,37,48,0.6)" }}>
+                {[
+                  { k: "Live Signal",   v: "Machine Intimacy" },
+                  { k: "Top Response",  v: "Interest" },
+                  { k: "Pattern",       v: "Trust + Latent Anxiety" },
+                  { k: "Output",        v: "Insight Report" },
+                ].map(({ k, v }) => (
+                  <div key={k} className="flex flex-col gap-0.5 px-3 py-2.5" style={{ background: BG }}>
+                    <span className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">{k}</span>
+                    <span className="text-[9px] tracking-[0.15em] uppercase text-[#C8CDD2] font-medium leading-snug">{v}</span>
+                  </div>
+                ))}
+              </motion.div>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="grid grid-cols-2 sm:grid-cols-4 gap-px" style={{ background: "rgba(28,37,48,0.6)" }}>
-              {[
-                { k: "Live Signal",   v: "Machine Intimacy" },
-                { k: "Top Response",  v: "Interest" },
-                { k: "Pattern",       v: "Trust + Latent Anxiety" },
-                { k: "Output",        v: "Insight Report" },
-              ].map(({ k, v }) => (
-                <div key={k} className="flex flex-col gap-0.5 px-3 py-2.5" style={{ background: BG }}>
-                  <span className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278] font-medium">{k}</span>
-                  <span className="text-[9px] tracking-[0.15em] uppercase text-[#C8CDD2] font-medium leading-snug">{v}</span>
-                </div>
-              ))}
+            {/* Right: image (desktop only) */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              className="hidden lg:block"
+            >
+              <FadeImage
+                src="/images/elysium-ai/dark/generated/elizium-method-hero-signal-field.webp"
+                alt="ELIZIUM Method — Signal Field"
+                className="w-full aspect-[4/5]"
+                position="center top"
+                fadeLeft={18}
+                fadeRight={15}
+                fadeBottom={25}
+                fadeTop={0}
+                sizes="50vw"
+              />
             </motion.div>
-          </motion.div>
+
+          </div>
         </div>
       </section>
 
-      {/* ── METHOD IMAGE ── */}
-      <div style={{ background: BG }} className="overflow-hidden border-t border-[#1C2530]/50">
-        <FadeImage
-          src="/images/elysium-ai/dark/generated/elizium-method-symbols-set-clean-optimised.webp"
-          alt="ELIZIUM Method — Signal and Pattern System"
-          className="w-full aspect-[21/7]"
-          fadeLeft={12} fadeRight={12} fadeTop={22} fadeBottom={22}
-          sizes="100vw"
-        />
+      {/* ── METHOD STAGE MARKERS ── */}
+      <div style={{ background: BG }} className="border-t border-[#1C2530]/50">
+        <div className={W}>
+          <div className="grid grid-cols-3 lg:grid-cols-6" style={{ gap: "1px", background: "rgba(28,37,48,0.45)" }}>
+            {STAGES.map(({ num, name }) => (
+              <div key={num} className="flex flex-col gap-2 px-4 lg:px-5 py-6 lg:py-8" style={{ background: BG }}>
+                <div className="w-px h-4 bg-[#1C2530]/70" />
+                <span className="text-[8px] tracking-[0.28em] uppercase text-[#6B7278]/50 font-medium">{num}</span>
+                <span className="text-[8.5px] tracking-[0.18em] uppercase text-[#969CA2] font-medium">{name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* ── SIX STAGES ── */}
