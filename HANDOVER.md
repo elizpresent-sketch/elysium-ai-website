@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — Full signal queue 2026-05-27 → 2026-06-02 added to SIGNAL_ARCHIVE; signal-calendar API exposes upcoming_signals_full; archive integrity check covers all 7 scheduled signals; dual-source architecture documented in Operating Manual §5; date resolver exact-match confirmed; ELIZIUM Operating Manual added; §00 System Status; Signal Calendar + Inquiry Pipeline visibility; both Make automations live; Vercel confirmed_
+_Last updated: 2026-05-27 — Gmail notification layer documented; Inquiry CRM Make scenario confirmed as 3-module (Webhooks → Sheets → Gmail); full system map added to Operating Manual; MVP testing checklist finalised; date-based signal logic and inquiry workflow fully documented; both Make scenarios live and confirmed_
 
 ---
 
@@ -28,6 +28,42 @@ This section is the practical day-to-day operating reference for the ELIZIUM MVP
 
 ---
 
+### 0. Full System Map
+
+#### Signal reaction flow
+```
+User clicks Signal reaction
+  → POST /api/signal-reaction
+  → Make (ELIZIUM Signal Reactions) — LIVE
+  → Sheet1 (raw reaction log)
+  → Signal Summary formulas (aggregate counts + percentages)
+  → /api/signal-summary
+  → Homepage Live Emotional Data + /system-preview §02
+```
+
+#### Inquiry flow
+```
+User submits inquiry form (homepage §09 or /contact)
+  → POST /api/inquiry
+  → Make (ELIZIUM Inquiry CRM — WORKING) — LIVE:
+      Module 1: Webhooks — receives normalised payload
+      Module 2: Google Sheets — writes row to Inquiry Log
+      Module 3: Gmail — sends internal notification to elizpresent@gmail.com
+  → /api/inquiry-summary
+  → /system-preview §07
+```
+
+#### Operator read-back flow
+```
+/api/signal-summary   → reads Signal Summary CSV     → emotional distribution per signal
+/api/insight-report   → reads Insight Reports CSV    → latest written insight report
+/api/inquiry-summary  → reads Inquiry Log CSV        → CRM status summary
+/api/signal-calendar  → reads Signal Calendar CSV    → upcoming signal queue
+All four → /system-preview (client-side parallel fetch, §00 aggregates health + next actions)
+```
+
+---
+
 ### 1. Correct Project Locations
 
 | Item | Value |
@@ -49,9 +85,29 @@ Both scenarios must remain **ON** at all times. They trigger automatically as da
 | Scenario | Status | What it does |
 |---|---|---|
 | **ELIZIUM Signal Reactions** | ✅ LIVE | Receives signal reaction payloads from `/api/signal-reaction` via webhook. Writes one row to `Sheet1` in Google Sheets for every reaction submitted on the homepage. |
-| **ELIZIUM Inquiry CRM** | ✅ LIVE | Receives normalised inquiry payloads from `/api/inquiry` via webhook. Writes one row to `Inquiry Log` in Google Sheets for every contact/private inquiry form submission. |
+| **ELIZIUM Inquiry CRM — WORKING** | ✅ LIVE | 3-module scenario: (1) Webhooks — receives inquiry payload from `/api/inquiry`. (2) Google Sheets — writes row to Inquiry Log. (3) Gmail — sends internal admin notification to elizpresent@gmail.com. See §2a below. |
 
 If either scenario is OFF, data silently stops flowing. Check Make first if reactions or inquiries stop appearing in Google Sheets.
+
+---
+
+### 2a. Gmail Notification — Inquiry CRM
+
+The Inquiry CRM scenario includes a Gmail module as its third step. It sends an internal admin alert each time a new inquiry is received.
+
+| Detail | Value |
+|---|---|
+| **Recipient** | `elizpresent@gmail.com` (internal admin only — not the submitter) |
+| **Make connection name** | `ELIZIUM Gmail Notifications` |
+| **Trigger** | Every new inquiry — fires after the Sheets row is written |
+| **Purpose** | Internal operator alert only — not client-facing |
+
+Important rules:
+- The scenario must be **saved and ON** before Gmail will fire. Recovered but unsaved changes = no email.
+- Do not add attachments to the Gmail module.
+- Do not expose the notification or recipient address publicly.
+- If inquiry rows appear in Sheets but Gmail notifications do not arrive: check the Gmail module in the Make scenario run history first, before debugging any code.
+- The Make connection is named `ELIZIUM Gmail Notifications` — do not rename or reconnect unless explicitly instructed.
 
 ---
 
@@ -88,6 +144,8 @@ To get a CSV URL: open the Google Sheet → File → Share → Publish to web �
 
 ### 5. How to Add a New Signal of the Day
 
+**Current state (2026-05-27):** `ACTIVE_SIGNAL_MODE = "date"`. The active signal resolves automatically from `SIGNAL_ARCHIVE` by matching today's London date to `signal-YYYY-MM-DD`. If no exact match is found, falls back to `ACTIVE_SIGNAL_ID`. Every date in Signal Calendar must also exist in `SIGNAL_ARCHIVE`. Archive coverage: `2026-05-27` through `2026-06-02`. To add a new daily signal: add to Signal Calendar, Signal Summary tab, and `SIGNAL_ARCHIVE`.
+
 #### Architecture — dual source (MVP phase)
 
 During the MVP phase the website has **two parallel sources** for signal data:
@@ -115,7 +173,7 @@ This dual-source model is intentional for the MVP (keeps the website independent
 
 ### 6. How to Review Inquiries
 
-1. New submissions arrive in the **Inquiry Log** tab automatically via Make. Each row starts with `status` blank (treated as `new` by the system).
+1. New submissions arrive in the **Inquiry Log** tab automatically via Make. Each row starts with `status` blank (treated as `new` by the system). An internal Gmail notification is also sent to `elizpresent@gmail.com` at the same time (Make module 3 — see §2a).
 2. Open the Inquiry Log tab. Review each new row.
 3. Update the `status` column using one of the standard values:
    - `new` — not yet reviewed
@@ -168,9 +226,12 @@ All data is fetched client-side in parallel on page load. No auth — hidden by 
 
 Run this checklist after any deployment or env var change to confirm the full system is working end-to-end.
 
-- [ ] Submit one Signal reaction on the homepage — confirm `Sheet1` in Google Sheets receives a new row
-- [ ] Confirm `Sheet1` data flows to `Signal Summary` tab (formulas auto-update — may take a moment)
-- [ ] Submit one inquiry form (homepage §09 or `/contact`) — confirm `Inquiry Log` receives a new row
+- [ ] Click one Signal reaction on the homepage
+- [ ] Confirm `Sheet1` receives the row with the correct `signal_id`
+- [ ] Confirm `Signal Summary` tab updates (formulas auto-update — may take a moment)
+- [ ] Submit one inquiry form (homepage §09 or `/contact`)
+- [ ] Confirm `Inquiry Log` receives the row
+- [ ] Confirm Gmail notification arrives at `elizpresent@gmail.com`
 - [ ] Open `/api/signal-summary` — confirm `"mode": "live"` and correct `signal_id`
 - [ ] Open `/api/insight-report` — confirm `"mode": "live"` and correct `report_id`
 - [ ] Open `/api/inquiry-summary` — confirm `"mode": "live"` and correct `total_inquiries`
@@ -187,6 +248,9 @@ Run this checklist after any deployment or env var change to confirm the full sy
 - Do not expose `email`, `message`, `notes`, or `follow_up_owner` in any public API response — privacy rule is hard.
 - Do not migrate to Airtable, Webflow, Supabase, or any other data layer until the MVP workflow is locked and a scoped migration task is opened.
 - Do not revert `ACTIVE_SIGNAL_MODE` back to `"manual"` unless a specific emergency override is needed — date mode is now the confirmed default.
+- Do not expose Gmail notification recipient address or Make connection name in any public API response.
+- Do not add attachments to the Gmail module in Make.
+- Do not disable or restructure the Gmail module without an explicitly scoped task.
 - Do not merge `platform-company-restructure` to `main` without explicit instruction.
 - Do not commit `.env.local`.
 - Do not git push unless explicitly asked.
