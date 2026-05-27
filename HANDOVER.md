@@ -1,5 +1,69 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — Public website first visual/structure pass complete; platform, method, company, for-brands, future-human pages restructured; TypeScript 0 errors, build ✓; second visual densification pass documented as next task_
+_Last updated: 2026-05-27 — Public platform coherence pass complete; CurrentSignalModule, EmotionalSpacesGrid, PrivateAccessStrip added; all 5 public pages updated; Contact page Inquiry Routes panel added; TypeScript 0 errors, build ✓; backend untouched_
+
+---
+
+## ══════════════════════════════════════════════
+## PUBLIC PLATFORM COHERENCE PASS — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+Public platform coherence pass complete. TypeScript: 0 errors (`npx tsc --noEmit`). Build: ✓ 16 pages (`npm run build`). Forms and signal reactions confirmed still working. Backend, APIs, Make, env vars, Google Sheets, signal logic, and inquiry logic were not changed. Do not commit `.env.local`. Do not git push unless explicitly asked.
+
+---
+
+### 2. New Components
+
+| File | What it does |
+|---|---|
+| `src/components/ui/CurrentSignalModule.tsx` | Reads `ACTIVE_SIGNAL` (and `REACTION_LABELS`) from `src/lib/signals.ts` at import time — no API call. Displays active signal theme, statistic, statement, prompt, and response dimensions as a compact console panel with a green "Active Signal" header dot. Used on `/platform`, `/method`, `/company`. |
+| `src/components/ui/EmotionalSpacesGrid.tsx` | Six-card portal grid — Human, Memory, Control, Loneliness, Trust, AI. Each card: aspect-[3/4] image (opacity-55, hover 75%), gradient fade-to-black overlay, label, question. 2-col mobile / 3-col tablet / 6-col desktop. Uses existing images in `/public/images/elysium-ai/dark/generated/emotional-space-*.webp`. Used on `/platform`, `/for-brands`. |
+| `src/components/ui/PrivateAccessStrip.tsx` | Self-contained `<section>` with internal `W` wrapper. Shows "Private Access / Partner Inquiry" label, description, four partner-type tags (Brand Partner, Technology Partner, Venue / Investor, Press), and "Request Access →" button linking to `/contact#inquiry-form`. Drop-in between any two page sections. Used on `/platform`, `/method`, `/for-brands`, `/future-human`, `/company`. |
+
+---
+
+### 3. Files Changed
+
+| File | Change summary |
+|---|---|
+| `src/components/ui/CurrentSignalModule.tsx` | **New** — compact live signal console panel |
+| `src/components/ui/EmotionalSpacesGrid.tsx` | **New** — six emotional space portal cards |
+| `src/components/ui/PrivateAccessStrip.tsx` | **New** — private access / partner inquiry CTA strip |
+| `src/app/platform/page.tsx` | Added "Active Signal" 2-col section (description + CurrentSignalModule) between Signal Output and Experience Deployment; added "Emotional Spaces" section (EmotionalSpacesGrid) after Platform Properties; replaced old CTASection with PrivateAccessStrip |
+| `src/app/method/page.tsx` | Added "Active Signal" 2-col section after Live System Status; added PrivateAccessStrip before existing CTA section |
+| `src/app/for-brands/page.tsx` | Added "Emotional Spaces" section after "Why Emotional Intelligence" with tailored copy; replaced bottom CTA section with PrivateAccessStrip |
+| `src/app/future-human/page.tsx` | Added PrivateAccessStrip between §06 Platform Intelligence and §07 Private Access CTA |
+| `src/app/company/page.tsx` | Added "Signal Layer — Live" 2-col section (description + CurrentSignalModule) after hero; added PrivateAccessStrip before London & Global section |
+| `src/app/contact/page.tsx` | Added Inquiry Routes panel in left column of inquiry form section (5 routes: Brand Partner, Technology Partner, Venue / Investor, Press, Private Access); added "Inquiry Form" section header with green "● Open for Submissions" status chip above ContactForm |
+
+---
+
+### 4. What Was Not Changed
+
+- No API routes (`/api/*`)
+- No Make scenarios or webhook URLs
+- No `.env.local` or Vercel env vars
+- No Google Sheets integration, signal logic, or inquiry flow
+- No form logic in `ContactForm.tsx` or homepage forms
+- No signal reaction system
+- No new packages added
+- Homepage not touched
+
+---
+
+### 5. Visual Intent
+
+This pass makes the public site feel like a live ELIZIUM platform interface rather than separate dark brochure pages. The repeated system modules (CurrentSignalModule, PrivateAccessStrip), emotional portal grid, and explicit inquiry routes create platform coherence across all five public pages. The Contact page now clearly signals its inquiry function with routes and a form status chip.
+
+---
+
+### 6. Next Actions
+
+1. **Visual QA on Vercel preview** — review all five pages (`/platform`, `/method`, `/for-brands`, `/future-human`, `/company`) and the contact page on the deployed preview branch before treating as final.
+2. **Replace temporary Emotional Spaces images only if needed** — the six `emotional-space-*.webp` images are already in production assets; replace only if a specific image is visually wrong for its space label.
+3. **Prepare boss-facing summary / Notion after public website is locked** — do not prepare external-facing documentation before visual QA is complete.
+4. **Analytics and Google Workspace later, not before visual lock** — do not add tracking, analytics, or workspace integrations until the public website visual pass is confirmed final.
 
 ---
 
