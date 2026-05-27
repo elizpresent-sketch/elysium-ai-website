@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { fadeUp, stagger, scaleIn, viewport } from "@/lib/motion";
 import CurrentSignalModule from "@/components/ui/CurrentSignalModule";
 import EmotionalSpacesGrid from "@/components/ui/EmotionalSpacesGrid";
+import LiveEmotionalDataPreview from "@/components/ui/LiveEmotionalDataPreview";
 import PrivateAccessStrip from "@/components/ui/PrivateAccessStrip";
 
 // ─── shared constants ────────────────────────────────────────────────────────
@@ -56,7 +57,10 @@ function SectionHead({ label, num }: { label: string; num?: string }) {
 // ─── StatusDot ───────────────────────────────────────────────────────────────
 function StatusDot({ live = false }: { live?: boolean }) {
   return (
-    <span className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 mt-[1px] ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+    <span
+      className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 mt-[1px] ${live ? "bg-[#E2E8EE]/65 animate-pulse" : "bg-[#3B4550]"}`}
+      style={live ? { boxShadow: "0 0 4px 1px rgba(226,232,238,0.15)" } : undefined}
+    />
   );
 }
 
@@ -218,7 +222,7 @@ export default function PlatformPage() {
 
               <motion.div variants={fadeUp} className="flex items-center gap-3 pt-1">
                 <StatusDot live />
-                <span className="text-[8px] tracking-[0.3em] uppercase text-[#4ADE80] font-medium">
+                <span className="text-[8px] tracking-[0.3em] uppercase text-[#B8BEC4] font-medium">
                   Signal Layer Active
                 </span>
               </motion.div>
@@ -271,11 +275,18 @@ export default function PlatformPage() {
                 { label: "Experience",     status: "Pre-Launch", live: false },
               ].map(({ label, status, live }) => (
                 <span key={label} className="flex items-center gap-1.5 text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188]">
-                  <span className={`w-1 h-1 rounded-full ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+                  <span
+                    className={`w-1 h-1 rounded-full ${live ? "bg-[#E2E8EE]/65" : "bg-[#3B4550]"}`}
+                    style={live ? { boxShadow: "0 0 3px 1px rgba(226,232,238,0.12)" } : undefined}
+                  />
                   {label}: {status}
                 </span>
               ))}
             </div>
+            <span className="hidden lg:block w-px h-3 bg-[#1C2530]" />
+            <span className="hidden lg:block text-[7px] tracking-[0.22em] uppercase text-[#3B4550] font-medium">
+              Daily signal rotation · London time
+            </span>
           </div>
         </div>
       </div>
@@ -305,7 +316,7 @@ export default function PlatformPage() {
                 { label: "Layer 05",     live: false, status: "Pre-Launch" },
                 { label: "Layer 06",     live: false, status: "By Inquiry" },
               ].map(({ label, live, status }) => (
-                <span key={label} className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                <span key={label} className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
                   <StatusDot live={live} />
                   {label}: {status}
                 </span>
@@ -329,7 +340,7 @@ export default function PlatformPage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium">{layer.tag}</span>
-                  <span className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${layer.live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                  <span className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${layer.live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
                     <StatusDot live={layer.live} />
                     {layer.status}
                   </span>
@@ -377,7 +388,7 @@ export default function PlatformPage() {
             variants={fadeUp}
             className="flex flex-wrap items-center gap-2 mb-6"
           >
-            <span className="text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#4ADE80]">Live Audience Signal</span>
+            <span className="text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#B8BEC4]">Live Audience Signal</span>
             <span className="text-[#3B4550] text-[10px]">→</span>
             <span className="text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#7B8188]">Aggregation + Analysis</span>
             <span className="text-[#3B4550] text-[10px]">→</span>
@@ -428,6 +439,30 @@ export default function PlatformPage() {
             </motion.div>
             <div>
               <CurrentSignalModule />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── LIVE RESPONSE DATA ── */}
+      <section style={{ background: "#080808" }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-10 lg:gap-16 items-start">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-3"
+            >
+              <SectionHead label="Live Response Data" />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#7B8188] leading-relaxed">
+                The platform is receiving emotional responses now. Aggregate signal data
+                from the current active signal — updated as each response arrives.
+              </motion.p>
+              <motion.p variants={fadeUp} className="text-[12px] text-[#6B7278] leading-relaxed">
+                No personal data. No private information. Collective emotional aggregate only.
+              </motion.p>
+            </motion.div>
+            <div>
+              <LiveEmotionalDataPreview />
             </div>
           </div>
         </div>

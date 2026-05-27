@@ -21,7 +21,10 @@ function SectionHead({ label }: { label: string }) {
 // ─── StatusDot ───────────────────────────────────────────────────────────────
 function StatusDot({ live = false }: { live?: boolean }) {
   return (
-    <span className={`inline-block w-1 h-1 rounded-full flex-shrink-0 ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+    <span
+      className={`inline-block w-1 h-1 rounded-full flex-shrink-0 ${live ? "bg-[#E2E8EE]/65" : "bg-[#3B4550]"}`}
+      style={live ? { boxShadow: "0 0 3px 1px rgba(226,232,238,0.12)" } : undefined}
+    />
   );
 }
 
@@ -93,8 +96,11 @@ export default function CompanyPage() {
               ))}
             </motion.div>
             <motion.div variants={fadeUp} className="flex items-center gap-4 pt-1">
-              <span className="flex items-center gap-2 text-[8px] tracking-[0.3em] uppercase text-[#4ADE80] font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80]" />
+              <span className="flex items-center gap-2 text-[8px] tracking-[0.3em] uppercase text-[#B8BEC4] font-medium">
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-[#E2E8EE]/65 animate-pulse"
+                  style={{ boxShadow: "0 0 4px 1px rgba(226,232,238,0.15)" }}
+                />
                 Platform Active
               </span>
               <span className="w-px h-3 bg-[#1C2530]" />
@@ -157,7 +163,7 @@ export default function CompanyPage() {
                 <span className="text-[9px] tracking-[0.3em] font-normal text-[#6B7278]/50 pt-0.5">{id}</span>
                 <span className="text-[11px] tracking-[0.2em] uppercase text-[#C8CDD2] font-medium pt-0.5">{label}</span>
                 <p className="col-start-2 lg:col-start-3 text-[13px] text-[#7B8188] leading-relaxed mt-1 lg:mt-0">{desc}</p>
-                <span className={`hidden lg:flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium justify-end ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                <span className={`hidden lg:flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium justify-end ${live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
                   <StatusDot live={live} />
                   {status}
                 </span>
@@ -267,7 +273,7 @@ export default function CompanyPage() {
                 <span className="text-[9px] tracking-[0.3em] font-normal text-[#6B7278]/50 pt-0.5">{n}</span>
                 <span className="text-[11px] tracking-[0.2em] uppercase text-[#C8CDD2] font-medium pt-0.5">{title}</span>
                 <p className="col-start-2 lg:col-start-3 text-[13px] text-[#7B8188] leading-relaxed mt-2 lg:mt-0">{desc}</p>
-                <span className={`hidden lg:flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium justify-end pt-0.5 ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                <span className={`hidden lg:flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium justify-end pt-0.5 ${live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
                   <StatusDot live={live} />
                   {status}
                 </span>
@@ -340,7 +346,7 @@ export default function CompanyPage() {
                   { label: "Phase 03 · Experience",        live: false, status: "In Development" },
                   { label: "Phase 04 · Global Deployment", live: false, status: "Planned" },
                 ].map(({ label, live, status }) => (
-                  <span key={label} className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                  <span key={label} className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
                     <StatusDot live={live} />
                     {label}: {status}
                   </span>

@@ -74,6 +74,15 @@ export default function ContactPage() {
               initial="hidden" animate="visible" variants={stagger}
               className="lg:col-span-7 flex flex-col gap-4 lg:gap-5"
             >
+              <motion.div variants={fadeUp} className="flex items-center gap-2.5">
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-[#E2E8EE]/55 flex-shrink-0 animate-pulse"
+                  style={{ boxShadow: "0 0 4px 1px rgba(226,232,238,0.12)" }}
+                />
+                <span className="text-[7.5px] tracking-[0.32em] uppercase font-medium text-[#B8BEC4]">
+                  Access Request — Open
+                </span>
+              </motion.div>
               <motion.h1
                 variants={fadeUp}
                 className="font-display font-normal uppercase text-[#E2E8EE] leading-[0.97] tracking-[0.08em] sm:tracking-[0.11em]"
@@ -105,7 +114,7 @@ export default function ContactPage() {
                   onClick={() => document.getElementById("inquiry-form")?.scrollIntoView({ behavior: "smooth" })}
                   className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3 bg-[#E2E8EE] text-[#050505] text-[8.5px] tracking-[0.28em] uppercase font-medium hover:bg-[#C8CDD2] transition-colors duration-300"
                 >
-                  Submit Inquiry
+                  Submit Partner Inquiry
                 </button>
               </motion.div>
             </motion.div>
@@ -176,7 +185,10 @@ export default function ContactPage() {
                   { r: "Private Access",     d: "Selective invitation, early platform access" },
                 ].map(({ r, d }) => (
                   <div key={r} className="flex flex-col gap-0.5 py-2.5 border-t border-[#1C2530]/40">
-                    <span className="text-[8.5px] tracking-[0.22em] uppercase text-[#969CA2] font-medium">{r}</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[8.5px] tracking-[0.22em] uppercase text-[#969CA2] font-medium">{r}</span>
+                      <span className="text-[6.5px] tracking-[0.25em] uppercase text-[#5B6168] font-medium">Open</span>
+                    </div>
                     <span className="text-[12px] text-[#6B7278] leading-snug">{d}</span>
                   </div>
                 ))}
@@ -189,8 +201,11 @@ export default function ContactPage() {
                 <span className="text-[9px] tracking-[0.36em] uppercase font-medium text-[#969CA2]">
                   Inquiry Form
                 </span>
-                <span className="flex items-center gap-1.5 text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#4ADE80]">
-                  <span className="w-1 h-1 rounded-full bg-[#4ADE80]" />
+                <span className="flex items-center gap-1.5 text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#B8BEC4]">
+                  <span
+                    className="w-1 h-1 rounded-full bg-[#E2E8EE]/70 animate-pulse"
+                    style={{ boxShadow: "0 0 4px 1px rgba(226,232,238,0.15)" }}
+                  />
                   Open for Submissions
                 </span>
               </div>

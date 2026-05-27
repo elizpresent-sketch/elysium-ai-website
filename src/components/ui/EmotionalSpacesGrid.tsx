@@ -6,36 +6,12 @@ import { fadeUp, viewport } from "@/lib/motion";
 const BG = "#050505";
 
 const SPACES = [
-  {
-    label: "Human",
-    question: "What makes a response distinctly human?",
-    img: "/images/elysium-ai/dark/generated/emotional-space-human.webp",
-  },
-  {
-    label: "Memory",
-    question: "Can a system carry emotional memory?",
-    img: "/images/elysium-ai/dark/generated/emotional-space-memory.webp",
-  },
-  {
-    label: "Control",
-    question: "When does assistance become dependency?",
-    img: "/images/elysium-ai/dark/generated/emotional-space-control.webp",
-  },
-  {
-    label: "Loneliness",
-    question: "Is connection possible without presence?",
-    img: "/images/elysium-ai/dark/generated/emotional-space-solitude.webp",
-  },
-  {
-    label: "Trust",
-    question: "What would make you trust an artificial mind?",
-    img: "/images/elysium-ai/dark/generated/emotional-space-trust.webp",
-  },
-  {
-    label: "AI",
-    question: "What does intelligence look like from outside?",
-    img: "/images/elysium-ai/dark/generated/emotional-space-ai.webp",
-  },
+  { num: "01", label: "Human",     question: "What makes a response distinctly human?",        img: "/images/elysium-ai/dark/generated/emotional-space-human.webp" },
+  { num: "02", label: "Memory",    question: "Can a system carry emotional memory?",             img: "/images/elysium-ai/dark/generated/emotional-space-memory.webp" },
+  { num: "03", label: "Control",   question: "When does assistance become dependency?",          img: "/images/elysium-ai/dark/generated/emotional-space-control.webp" },
+  { num: "04", label: "Loneliness",question: "Is connection possible without presence?",         img: "/images/elysium-ai/dark/generated/emotional-space-solitude.webp" },
+  { num: "05", label: "Trust",     question: "What would make you trust an artificial mind?",    img: "/images/elysium-ai/dark/generated/emotional-space-trust.webp" },
+  { num: "06", label: "AI",        question: "What does intelligence look like from outside?",   img: "/images/elysium-ai/dark/generated/emotional-space-ai.webp" },
 ];
 
 export default function EmotionalSpacesGrid() {
@@ -44,7 +20,7 @@ export default function EmotionalSpacesGrid() {
       className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px"
       style={{ background: "rgba(28,37,48,0.6)" }}
     >
-      {SPACES.map(({ label, question, img }) => (
+      {SPACES.map(({ num, label, question, img }) => (
         <motion.div
           key={label}
           initial="hidden"
@@ -54,6 +30,7 @@ export default function EmotionalSpacesGrid() {
           className="relative flex flex-col overflow-hidden group"
           style={{ background: BG }}
         >
+          {/* image */}
           <div className="relative aspect-[3/4] overflow-hidden">
             <Image
               src={img}
@@ -69,8 +46,16 @@ export default function EmotionalSpacesGrid() {
                 background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.45) 45%, transparent 100%)`,
               }}
             />
+            {/* signal space number marker */}
+            <div className="absolute top-2.5 left-2.5 z-20">
+              <span className="text-[6px] tracking-[0.3em] uppercase font-medium text-[#E2E8EE]/28 group-hover:text-[#E2E8EE]/55 transition-colors duration-300">
+                {num}
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col gap-1.5 px-3 py-3 border-t border-[#1C2530]/50 transition-colors duration-300 group-hover:border-[#1C2530]/80">
+
+          {/* label + question */}
+          <div className="flex flex-col gap-1.5 px-3 py-3 border-t border-[#1C2530]/50 transition-colors duration-300 group-hover:border-[#E2E8EE]/10">
             <span className="text-[9px] tracking-[0.28em] uppercase text-[#969CA2] font-medium">
               {label}
             </span>

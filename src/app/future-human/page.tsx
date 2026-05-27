@@ -158,7 +158,10 @@ export default function FutureHumanPage() {
                   { t: "London Launch",           live: false },
                 ].map(({ t, live }) => (
                   <span key={t} className="flex items-center gap-1.5 text-[7.5px] tracking-[0.22em] uppercase text-[#7B8188]">
-                    <span className={`w-1 h-1 rounded-full flex-shrink-0 ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+                    <span
+                      className={`w-1 h-1 rounded-full flex-shrink-0 ${live ? "bg-[#E2E8EE]/65" : "bg-[#3B4550]"}`}
+                      style={live ? { boxShadow: "0 0 3px 1px rgba(226,232,238,0.12)" } : undefined}
+                    />
                     {t}
                   </span>
                 ))}

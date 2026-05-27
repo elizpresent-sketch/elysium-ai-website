@@ -14,15 +14,22 @@ export default function CurrentSignalModule() {
       className="border border-[#1C2530]/60"
       style={{ background: "#080808" }}
     >
-      {/* header */}
+      {/* ── header ── */}
       <motion.div
         variants={fadeUp}
         className="flex items-center justify-between px-4 py-2.5 border-b border-[#1C2530]/50"
       >
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] flex-shrink-0" />
-          <span className="text-[7.5px] tracking-[0.28em] uppercase font-medium text-[#4ADE80]">
+          <span
+            className="w-1.5 h-1.5 rounded-full bg-[#E2E8EE]/70 flex-shrink-0 animate-pulse"
+            style={{ boxShadow: "0 0 5px 1px rgba(226,232,238,0.15)" }}
+          />
+          <span className="text-[7.5px] tracking-[0.28em] uppercase font-medium text-[#B8BEC4]">
             Active Signal
+          </span>
+          <span className="w-px h-2.5 bg-[#1C2530]" />
+          <span className="text-[7px] tracking-[0.22em] uppercase text-[#4B5560] font-medium">
+            Recording
           </span>
         </div>
         <span className="text-[7.5px] tracking-[0.22em] uppercase text-[#6B7278] font-medium">
@@ -30,7 +37,7 @@ export default function CurrentSignalModule() {
         </span>
       </motion.div>
 
-      {/* theme + statistic */}
+      {/* ── theme + statistic ── */}
       <motion.div
         variants={fadeUp}
         className="grid grid-cols-[1fr_auto] gap-6 px-4 py-3.5 border-b border-[#1C2530]/40"
@@ -56,7 +63,7 @@ export default function CurrentSignalModule() {
         </div>
       </motion.div>
 
-      {/* signal statement */}
+      {/* ── signal statement ── */}
       <motion.div
         variants={fadeUp}
         className="px-4 py-3.5 border-b border-[#1C2530]/40"
@@ -70,7 +77,7 @@ export default function CurrentSignalModule() {
         </p>
       </motion.div>
 
-      {/* prompt */}
+      {/* ── prompt ── */}
       <motion.div
         variants={fadeUp}
         className="px-4 py-3.5 border-b border-[#1C2530]/40"
@@ -81,10 +88,10 @@ export default function CurrentSignalModule() {
         <p className="text-[12.5px] text-[#AAB0B6] leading-snug italic">{sig.prompt}</p>
       </motion.div>
 
-      {/* response dimensions */}
+      {/* ── response dimensions ── */}
       <motion.div
         variants={fadeUp}
-        className="flex flex-wrap items-center gap-3 px-4 py-3"
+        className="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-[#1C2530]/40"
       >
         <span className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278] font-medium whitespace-nowrap">
           Response Dimensions
@@ -98,6 +105,20 @@ export default function CurrentSignalModule() {
             {REACTION_LABELS[r]}
           </span>
         ))}
+      </motion.div>
+
+      {/* ── signal cycle footer ── */}
+      <motion.div
+        variants={fadeUp}
+        className="flex items-center gap-3 px-4 py-2.5"
+      >
+        <span className="text-[6.5px] tracking-[0.28em] uppercase text-[#3B4550] font-medium">
+          Signal Cycle: Daily
+        </span>
+        <span className="w-px h-2.5 bg-[#1C2530]" />
+        <span className="text-[6.5px] tracking-[0.28em] uppercase text-[#3B4550] font-medium">
+          London Time
+        </span>
       </motion.div>
     </motion.div>
   );

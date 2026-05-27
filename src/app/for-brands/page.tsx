@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, stagger, viewport } from "@/lib/motion";
 import EmotionalSpacesGrid from "@/components/ui/EmotionalSpacesGrid";
+import LiveEmotionalDataPreview from "@/components/ui/LiveEmotionalDataPreview";
 import PrivateAccessStrip from "@/components/ui/PrivateAccessStrip";
 
 const BG = "#050505";
@@ -262,6 +263,35 @@ export default function ForBrandsPage() {
         </div>
       </section>
 
+      {/* ── LIVE RESPONSE DATA ── */}
+      <section style={{ background: "#080808" }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <div className="flex items-center justify-between border-t border-[#1C2530]/60 pt-3.5 mb-8">
+            <span className="text-[9px] tracking-[0.36em] uppercase font-medium text-[#969CA2]">
+              Live Response Data
+            </span>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-10 lg:gap-16 items-start">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-3"
+            >
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#7B8188] leading-relaxed">
+                The ELIZIUM platform is collecting live emotional response to the current signal.
+                This is the category of aggregate audience intelligence available to brand partners —
+                real collective signal, updated continuously.
+              </motion.p>
+              <motion.p variants={fadeUp} className="text-[12px] text-[#6B7278] leading-relaxed">
+                No personal data. No private information. Aggregate collective response only.
+              </motion.p>
+            </motion.div>
+            <div>
+              <LiveEmotionalDataPreview />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── CAPABILITIES ── */}
       <section style={{ background: "#080808" }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
         <div className={W}>
@@ -286,8 +316,11 @@ export default function ForBrandsPage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[8px] tracking-[0.3em] uppercase text-[#6B7278] font-medium">{tag}</span>
-                  <span className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
-                    <span className={`w-1 h-1 rounded-full flex-shrink-0 ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+                  <span className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
+                    <span
+                      className={`w-1 h-1 rounded-full flex-shrink-0 ${live ? "bg-[#E2E8EE]/65" : "bg-[#3B4550]"}`}
+                      style={live ? { boxShadow: "0 0 3px 1px rgba(226,232,238,0.12)" } : undefined}
+                    />
                     {status}
                   </span>
                 </div>

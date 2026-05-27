@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUp, stagger, viewport } from "@/lib/motion";
 import CurrentSignalModule from "@/components/ui/CurrentSignalModule";
+import LiveEmotionalDataPreview from "@/components/ui/LiveEmotionalDataPreview";
 import PrivateAccessStrip from "@/components/ui/PrivateAccessStrip";
 
 const BG = "#050505";
@@ -48,7 +49,10 @@ function SectionHead({ label }: { label: string }) {
 // ─── StatusDot ───────────────────────────────────────────────────────────────
 function StatusDot({ live = false }: { live?: boolean }) {
   return (
-    <span className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${live ? "bg-[#4ADE80]" : "bg-[#3B4550]"}`} />
+    <span
+      className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${live ? "bg-[#E2E8EE]/65 animate-pulse" : "bg-[#3B4550]"}`}
+      style={live ? { boxShadow: "0 0 4px 1px rgba(226,232,238,0.15)" } : undefined}
+    />
   );
 }
 
@@ -163,7 +167,7 @@ export default function MethodPage() {
             </motion.p>
             <motion.div variants={fadeUp} className="flex items-center gap-3">
               <StatusDot live />
-              <span className="text-[8px] tracking-[0.3em] uppercase text-[#4ADE80] font-medium">
+              <span className="text-[8px] tracking-[0.3em] uppercase text-[#B8BEC4] font-medium">
                 Stages 01 – 04 Active
               </span>
             </motion.div>
@@ -214,7 +218,7 @@ export default function MethodPage() {
               { label: "Stage 05",     live: false, status: "Pre-Launch" },
               { label: "Stage 06",     live: false, status: "By Inquiry" },
             ].map(({ label, live, status }) => (
-              <span key={label} className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+              <span key={label} className={`flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium ${live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
                 <StatusDot live={live} />
                 {label}: {status}
               </span>
@@ -239,7 +243,7 @@ export default function MethodPage() {
                 <p className="col-start-2 lg:col-start-3 text-[13px] text-[#7B8188] leading-relaxed mt-2 lg:mt-0">
                   {description}
                 </p>
-                <span className={`hidden lg:flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium justify-end pt-0.5 ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                <span className={`hidden lg:flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium justify-end pt-0.5 ${live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
                   <StatusDot live={live} />
                   {status}
                 </span>
@@ -277,7 +281,7 @@ export default function MethodPage() {
                 <span className="text-[9px] tracking-[0.3em] font-normal text-[#6B7278]/40 pt-0.5">{id}</span>
                 <span className="text-[10px] tracking-[0.18em] uppercase text-[#969CA2] font-medium">{label}</span>
                 <span className="col-start-2 lg:col-start-3 text-[12px] text-[#6B7278] mt-1 lg:mt-0">{note}</span>
-                <span className={`hidden lg:flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium justify-end ${live ? "text-[#4ADE80]" : "text-[#3B4550]"}`}>
+                <span className={`hidden lg:flex items-center gap-1.5 text-[7.5px] tracking-[0.2em] uppercase font-medium justify-end ${live ? "text-[#B8BEC4]" : "text-[#3B4550]"}`}>
                   <StatusDot live={live} />
                   {status}
                 </span>
@@ -310,6 +314,28 @@ export default function MethodPage() {
             </motion.div>
             <div>
               <CurrentSignalModule />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── LIVE RESPONSE DATA ── */}
+      <section style={{ background: BG }} className="py-10 lg:py-16 border-t border-[#1C2530]/50">
+        <div className={W}>
+          <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-10 lg:gap-16 items-start">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
+              className="flex flex-col gap-3"
+            >
+              <SectionHead label="Live Response Data" />
+              <motion.p variants={fadeUp} className="text-[13.5px] text-[#7B8188] leading-relaxed">
+                Stage 01 is live and recording. The aggregate of public emotional responses
+                to the current signal is available here — this is what Stage 03 processes
+                into patterns and Stage 04 translates into insight.
+              </motion.p>
+            </motion.div>
+            <div>
+              <LiveEmotionalDataPreview />
             </div>
           </div>
         </div>
