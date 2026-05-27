@@ -80,6 +80,40 @@ interface InquirySummaryData {
   latest_inquiries:         LatestInquiry[];
 }
 
+interface CalendarSignal {
+  signal_id:     string;
+  date:          string;
+  theme:         string;
+  status:        string;
+  report_status: string;
+}
+
+interface CalendarActiveSignal {
+  signal_id:     string;
+  date:          string;
+  theme:         string;
+  statistic:     string;
+  statement:     string;
+  prompt:        string;
+  status:        string;
+  report_status: string;
+}
+
+interface SignalCalendarData {
+  ok:                   boolean;
+  mode:                 "live" | "fallback";
+  total_signals:        number;
+  active_signals:       number;
+  draft_signals:        number;
+  archived_signals:     number;
+  skipped_signals:      number;
+  report_pending:       number;
+  report_created:       number;
+  latest_active_signal: CalendarActiveSignal | null;
+  upcoming_signals:     CalendarSignal[];
+  all_signals:          CalendarSignal[];
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SMALL COMPONENTS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -122,6 +156,8 @@ export default function SystemPreview() {
   const [insightLoading, setInsightLoading]               = useState(true);
   const [inquirySummary, setInquirySummary]               = useState<InquirySummaryData | null>(null);
   const [inquirySummaryLoading, setInquirySummaryLoading] = useState(true);
+  const [calendarData, setCalendarData]                   = useState<SignalCalendarData | null>(null);
+  const [calendarLoading, setCalendarLoading]             = useState(true);
 
   useEffect(() => {
     setMountedDate(new Date().toISOString().slice(0, 10));
@@ -140,12 +176,18 @@ export default function SystemPreview() {
       .then((data: InquirySummaryData) => { if (data?.ok) setInquirySummary(data); })
       .catch(() => {})
       .finally(() => setInquirySummaryLoading(false));
+    fetch("/api/signal-calendar")
+      .then((r) => r.json())
+      .then((data: SignalCalendarData) => { if (data?.ok) setCalendarData(data); })
+      .catch(() => {})
+      .finally(() => setCalendarLoading(false));
   }, []);
 
   const isLive          = summary?.mode === "live" && (summary?.total_responses ?? 0) > 0;
   const insightIsLive   = insight?.mode === "live" && insight?.report !== null;
   const insightReport   = insight?.report ?? null;
   const inquiryIsLive   = inquirySummary?.mode === "live";
+  const calendarIsLive  = calendarData?.mode === "live";
 
   // Reaction rows — live metrics if available, else zero-value from active signal
   const reactionRows: SummaryMetric[] = summary?.metrics ?? ACTIVE_SIGNAL.reactions.map((r) => ({
@@ -862,6 +904,145 @@ export default function SystemPreview() {
           {!inquirySummaryLoading && !inquiryIsLive && (
             <p className="text-[8px] tracking-[0.18em] uppercase text-[#6B7278]/45 mt-2.5">
               Set INQUIRY_LOG_CSV_URL to enable live Inquiry Pipeline data.
+            </p>
+          )}
+        </section>
+
+        {/* ── §08 Scheduled Signals ──────────────────────────────────────────── */}
+        <section className="mt-10">
+          <SectionLabel label="Scheduled Signals" num="08" />
+
+          {calendarLoading && (
+            <p className="text-[8px] tracking-[0.18em] uppercase text-[#6B7278]/45">
+              Loading…
+            </p>
+          )}
+
+          {!calendarLoading && calendarIsLive && calendarData && (
+            <>
+              {/* Status breakdown */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-6 sm:grid-cols-4">
+                {[
+                  { label: "Total",    value: calendarData.total_signals    },
+                  { label: "Active",   value: calendarData.active_signals   },
+                  { label: "Draft",    value: calendarData.draft_signals    },
+                  { label: "Archived", value: calendarData.archived_signals },
+                  { label: "Skipped",  value: calendarData.skipped_signals  },
+                  { label: "Report Pending", value: calendarData.report_pending },
+                  { label: "Report Created", value: calendarData.report_created },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <p className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278]/50 mb-0.5">
+                      {label}
+                    </p>
+                    <p className="text-[13px] font-light tracking-wide text-[#C8D4DC]">
+                      {value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Latest active signal identity card */}
+              {calendarData.latest_active_signal && (
+                <div
+                  className="mb-6 p-4 rounded"
+                  style={{ background: "rgba(28,37,48,0.45)" }}
+                >
+                  <p className="text-[7px] tracking-[0.32em] uppercase text-[#6B7278]/50 mb-2">
+                    Latest Active Signal
+                  </p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <StatusDot active={true} />
+                    <span className="text-[10px] tracking-[0.22em] uppercase font-medium text-[#C8D4DC]">
+                      {calendarData.latest_active_signal.theme}
+                    </span>
+                    <span className="text-[8px] tracking-[0.18em] text-[#6B7278]/60 ml-auto">
+                      {calendarData.latest_active_signal.signal_id}
+                    </span>
+                  </div>
+                  <p className="text-[8px] tracking-[0.14em] text-[#6B7278]/70 mb-1">
+                    {calendarData.latest_active_signal.date}
+                  </p>
+                  {calendarData.latest_active_signal.statistic && (
+                    <p className="text-[8px] tracking-[0.14em] text-[#C8D4DC]/60 mb-1">
+                      {calendarData.latest_active_signal.statistic}
+                    </p>
+                  )}
+                  {calendarData.latest_active_signal.statement && (
+                    <p className="text-[8px] tracking-[0.12em] italic text-[#6B7278]/55 mb-1">
+                      &ldquo;{calendarData.latest_active_signal.statement}&rdquo;
+                    </p>
+                  )}
+                  {calendarData.latest_active_signal.prompt && (
+                    <p className="text-[8px] tracking-[0.12em] text-[#6B7278]/50">
+                      Prompt: {calendarData.latest_active_signal.prompt}
+                    </p>
+                  )}
+                  <p className="text-[7px] tracking-[0.24em] uppercase text-[#6B7278]/35 mt-2">
+                    Report: {calendarData.latest_active_signal.report_status}
+                  </p>
+                </div>
+              )}
+
+              {/* Upcoming (draft) signals */}
+              {calendarData.upcoming_signals.length > 0 && (
+                <div className="mb-6">
+                  <p className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278]/50 mb-2">
+                    Upcoming Signals
+                  </p>
+                  <div className="space-y-1.5">
+                    {calendarData.upcoming_signals.map((sig) => (
+                      <div key={sig.signal_id} className="flex items-center gap-3">
+                        <StatusDot active={false} />
+                        <span className="text-[8px] tracking-[0.18em] text-[#6B7278]/60 w-24 flex-shrink-0">
+                          {sig.date}
+                        </span>
+                        <span className="text-[8px] tracking-[0.18em] text-[#C8D4DC]/70 flex-1">
+                          {sig.theme}
+                        </span>
+                        <span className="text-[7px] tracking-[0.22em] uppercase text-[#6B7278]/35">
+                          {sig.report_status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* All signals compact table */}
+              {calendarData.all_signals.length > 0 && (
+                <div>
+                  <p className="text-[7px] tracking-[0.28em] uppercase text-[#6B7278]/50 mb-2">
+                    All Signals
+                  </p>
+                  <div className="space-y-1.5">
+                    {calendarData.all_signals.map((sig) => (
+                      <div key={sig.signal_id} className="flex items-center gap-3">
+                        <StatusDot active={sig.status === "active"} />
+                        <span className="text-[8px] tracking-[0.18em] text-[#6B7278]/60 w-24 flex-shrink-0">
+                          {sig.date}
+                        </span>
+                        <span className="text-[8px] tracking-[0.18em] text-[#C8D4DC]/70 flex-1">
+                          {sig.theme}
+                        </span>
+                        <span className="text-[7px] tracking-[0.22em] uppercase text-[#6B7278]/40 w-16 text-right">
+                          {sig.status}
+                        </span>
+                        <span className="text-[7px] tracking-[0.20em] uppercase text-[#6B7278]/30 w-28 text-right">
+                          {sig.report_status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Fallback notice */}
+          {!calendarLoading && !calendarIsLive && (
+            <p className="text-[8px] tracking-[0.18em] uppercase text-[#6B7278]/45 mt-2.5">
+              Set SIGNAL_CALENDAR_CSV_URL to enable live Signal Calendar data.
             </p>
           )}
         </section>

@@ -1,5 +1,5 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-26 — Inquiry Pipeline visibility layer: /api/inquiry-summary + /system-preview §07; both Make automations live; Vercel confirmed; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
+_Last updated: 2026-05-27 — Signal Calendar visibility layer: /api/signal-calendar + /system-preview §08; Inquiry Pipeline visibility layer: /api/inquiry-summary + /system-preview §07; both Make automations live; Vercel confirmed; Inquiry API normalisation; Signal Calendar planning layer; ACTIVE_SIGNAL_MODE refactor_
 
 ---
 
@@ -59,6 +59,93 @@ Do not change:
 - Make webhook connection
 - Google Sheets column structure
 unless a new scoped task is explicitly opened.
+
+
+## ══════════════════════════════════════════════
+## SIGNAL CALENDAR VISIBILITY LAYER — 2026-05-27
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+`/api/signal-calendar` route created. `/system-preview` §08 Scheduled Signals section added. TypeScript: 0 errors. Build: ✓. Only `src/app/api/signal-calendar/route.ts` (new) and `src/app/system-preview/page.tsx` changed.
+
+---
+
+### 2. New File — `src/app/api/signal-calendar/route.ts`
+
+GET handler. `export const dynamic = "force-dynamic"`. Server-side only.
+
+**Env var required:** `SIGNAL_CALENDAR_CSV_URL`
+- How to get: Google Sheets → Signal Calendar tab → File → Share → Publish to web → CSV → copy URL.
+- Locally: add to `.env.local` (do not commit).
+- Vercel: Settings → Environment Variables → `SIGNAL_CALENDAR_CSV_URL` → Preview (and Production when ready).
+
+**Privacy rule (hard):** `reactions`, `image_asset`, `mobile_image_asset`, and `notes` are NEVER included in the response. Only operational metadata is returned.
+
+**CSV columns expected:** `signal_id, date, theme, statistic, statement, prompt, reactions, status, image_asset, mobile_image_asset, report_status, notes`
+
+**Status values counted:** `active`, `draft`, `archived`, `skipped`
+
+**Report status values counted:** `report_pending`, `report_created`
+
+**Response shape:**
+```json
+{
+  "ok": true,
+  "mode": "live" | "fallback",
+  "total_signals": 4,
+  "active_signals": 1,
+  "draft_signals": 1,
+  "archived_signals": 1,
+  "skipped_signals": 1,
+  "report_pending": 1,
+  "report_created": 2,
+  "latest_active_signal": {
+    "signal_id": "signal-2026-05-25",
+    "date": "2026-05-25",
+    "theme": "Human Control",
+    "statistic": "58%...",
+    "statement": "...",
+    "prompt": "...",
+    "status": "active",
+    "report_status": "report_created"
+  },
+  "upcoming_signals": [
+    { "signal_id": "signal-2026-05-26", "date": "2026-05-26", "theme": "Emotional Memory", "status": "draft", "report_status": "report_pending" }
+  ],
+  "all_signals": [
+    { "signal_id": "...", "date": "...", "theme": "...", "status": "...", "report_status": "..." }
+  ]
+}
+```
+
+**Selection logic:**
+- `latest_active_signal` = first row with `status === "active"` (full operational fields, no privacy fields)
+- `upcoming_signals` = all rows with `status === "draft"`, sorted by date ascending (compact shape)
+- `all_signals` = all rows in compact shape (no statistic, statement, prompt, reactions, image_asset, mobile_image_asset, notes)
+
+**Failure paths:** Any error returns `mode:"fallback"` with zero counts, `null` active signal, and empty arrays. Never returns non-2xx.
+
+---
+
+### 3. Updated File — `src/app/system-preview/page.tsx`
+
+Added §08 Scheduled Signals section. Changes:
+- Three new TypeScript interfaces added: `CalendarSignal`, `CalendarActiveSignal`, `SignalCalendarData`
+- Two new state variables: `calendarData`, `calendarLoading`
+- One new parallel fetch in `useEffect`: `/api/signal-calendar`
+- One new derived value: `calendarIsLive`
+- §08 Scheduled Signals section: status/report-status breakdown grid, latest active signal identity card, upcoming signals list, all-signals compact table, fallback notice
+
+---
+
+### 4. Long-term Migration Note
+
+The Signal Calendar tab is currently the planning layer only — it is not yet connected to live site routing. When date-based activation is enabled (`ACTIVE_SIGNAL_MODE = "date"`), the Signal Calendar will be the source of truth for which signal is live. Until then, `ACTIVE_SIGNAL_ID` in `src/lib/signals.ts` controls the active signal manually. Do not change this without a scoped task.
+
+---
+
+Do not change `src/app/api/signal-calendar/route.ts` or the §08 section structure unless a new scoped task is explicitly opened.
 
 
 ## ══════════════════════════════════════════════
