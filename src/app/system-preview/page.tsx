@@ -199,6 +199,16 @@ export default function SystemPreview() {
   const insightConnected       = insight?.mode === "live";
   const allLoaded              = !summaryLoading && !insightLoading && !inquirySummaryLoading && !calendarLoading;
 
+  // Signal archive coverage — derived from static SIGNAL_ARCHIVE, no API needed
+  const archiveCoverageEnd = [...SIGNAL_ARCHIVE].map((s) => s.date).sort().at(-1) ?? "—";
+  const archiveNextGap = archiveCoverageEnd !== "—"
+    ? (() => {
+        const d = new Date(`${archiveCoverageEnd}T00:00:00Z`);
+        d.setUTCDate(d.getUTCDate() + 1);
+        return d.toISOString().slice(0, 10);
+      })()
+    : "—";
+
   const nextActions: string[] = [];
   if (allLoaded) {
     if ((calendarData?.report_pending  ?? 0) > 0)          nextActions.push("Review pending insight report");
@@ -206,6 +216,13 @@ export default function SystemPreview() {
     if ((calendarData?.upcoming_signals.length ?? 0) > 0)  nextActions.push("Prepare next signal");
     const anyFallback = !signalSummaryConnected || !calendarIsLive || !inquiryIsLive || !insightConnected;
     if (anyFallback) nextActions.push("Check CSV env / published sheet connection");
+    if (mountedDate && archiveCoverageEnd !== "—") {
+      const msUntilGap = new Date(`${archiveCoverageEnd}T00:00:00Z`).getTime() - new Date(`${mountedDate}T00:00:00Z`).getTime();
+      const daysUntilGap = Math.ceil(msUntilGap / (1000 * 60 * 60 * 24));
+      if (daysUntilGap <= 7) {
+        nextActions.push(`Signal archive runs out in ${daysUntilGap} day${daysUntilGap !== 1 ? "s" : ""} — extend SIGNAL_ARCHIVE before ${archiveNextGap}`);
+      }
+    }
     if (nextActions.length === 0) nextActions.push("System stable — continue monitoring");
   }
 
@@ -666,6 +683,12 @@ export default function SystemPreview() {
                 value:  ACTIVE_SIGNAL_MODE === "date" ? "Active" : "Prepared",
                 detail: "Resolves by Europe/London date — see signals.ts",
                 active: ACTIVE_SIGNAL_MODE === "date",
+              },
+              {
+                label:  "Signal Coverage",
+                value:  archiveCoverageEnd !== "—" ? `Through ${archiveCoverageEnd}` : "—",
+                detail: archiveNextGap !== "—" ? `Next gap: ${archiveNextGap}` : "Extend SIGNAL_ARCHIVE",
+                active: true,
               },
               {
                 label:  "Insight Reports",

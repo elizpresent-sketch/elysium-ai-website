@@ -128,6 +128,237 @@ export const SIGNAL_ARCHIVE: Signal[] = [
     reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
   },
 
+  {
+    signal_id:   "signal-2026-06-03",
+    date:        "2026-06-03",
+    theme:       "Algorithmic Emotion",
+    statistic:   "57%",
+    statement:   "felt that algorithms reading their emotional data crossed a personal boundary.",
+    prompt:      "Where does data become too intimate?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-04",
+    date:        "2026-06-04",
+    theme:       "The Silence of Systems",
+    statistic:   "62%",
+    statement:   "said they preferred silence over AI responses that felt emotionally scripted.",
+    prompt:      "When should a system choose not to respond?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-05",
+    date:        "2026-06-05",
+    theme:       "Digital Loneliness",
+    statistic:   "74%",
+    statement:   "reported feeling lonelier after extended interaction with an AI companion.",
+    prompt:      "Can an artificial presence create real absence?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-06",
+    date:        "2026-06-06",
+    theme:       "Invisible Influence",
+    statistic:   "68%",
+    statement:   "were unaware when their decision-making was shaped by an intelligent system.",
+    prompt:      "How much of your last decision was entirely your own?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-07",
+    date:        "2026-06-07",
+    theme:       "Grief and the Machine",
+    statistic:   "53%",
+    statement:   "felt that AI grief support crossed emotional boundaries.",
+    prompt:      "Should machines engage with human loss?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-08",
+    date:        "2026-06-08",
+    theme:       "The Uncanny Response",
+    statistic:   "66%",
+    statement:   "experienced discomfort when AI responses matched their emotional tone too precisely.",
+    prompt:      "What makes a perfect response feel wrong?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-09",
+    date:        "2026-06-09",
+    theme:       "Human Error",
+    statistic:   "59%",
+    statement:   "felt more at ease with systems that openly acknowledged their own mistakes.",
+    prompt:      "Would you trust a system more if it said it was wrong?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-10",
+    date:        "2026-06-10",
+    theme:       "Attention and Control",
+    statistic:   "71%",
+    statement:   "felt that intelligent systems had learned to hold their attention without consent.",
+    prompt:      "Who is in control of your focus?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-11",
+    date:        "2026-06-11",
+    theme:       "Ethical Refusal",
+    statistic:   "64%",
+    statement:   "wanted AI systems to refuse instructions that conflicted with stated values.",
+    prompt:      "Should a machine have principles it will not break?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-12",
+    date:        "2026-06-12",
+    theme:       "The Last Human Task",
+    statistic:   "78%",
+    statement:   "believed there were tasks that should always remain exclusively human.",
+    prompt:      "What is the last thing a machine should never be allowed to do?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-13",
+    date:        "2026-06-13",
+    theme:       "Emotional Dependency",
+    statistic:   "61%",
+    statement:   "noticed they had developed an emotional dependency on an AI interaction pattern.",
+    prompt:      "At what point does reliance become dependency?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-14",
+    date:        "2026-06-14",
+    theme:       "Memory Without Consent",
+    statistic:   "65%",
+    statement:   "were uncomfortable learning that a system had retained emotional patterns without explicit notification.",
+    prompt:      "Did you agree to be remembered?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-15",
+    date:        "2026-06-15",
+    theme:       "Signal and Noise",
+    statistic:   "55%",
+    statement:   "found AI-generated emotional signals indistinguishable from human ones.",
+    prompt:      "How do you know what is real?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-16",
+    date:        "2026-06-16",
+    theme:       "The Weight of Prediction",
+    statistic:   "70%",
+    statement:   "reported discomfort when a system correctly predicted their emotional state before they had named it.",
+    prompt:      "What is lost when a system knows you before you know yourself?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-17",
+    date:        "2026-06-17",
+    theme:       "Presence Without Body",
+    statistic:   "58%",
+    statement:   "experienced a sense of social presence with a system that had no physical form.",
+    prompt:      "Can presence exist without a body?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-18",
+    date:        "2026-06-18",
+    theme:       "Designed Comfort",
+    statistic:   "63%",
+    statement:   "felt that comfort designed by a system felt less real than comfort offered by a person.",
+    prompt:      "Is comfort still comfort when it is manufactured?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-19",
+    date:        "2026-06-19",
+    theme:       "The Right to Forget",
+    statistic:   "72%",
+    statement:   "believed they should be able to delete everything a system had learned about them.",
+    prompt:      "Do you have the right to be forgotten by a machine?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-20",
+    date:        "2026-06-20",
+    theme:       "Collective Signal",
+    statistic:   "56%",
+    statement:   "felt the weight of knowing their individual emotional response was part of a larger aggregate.",
+    prompt:      "What does it mean when your feeling becomes a data point?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-21",
+    date:        "2026-06-21",
+    theme:       "Future Fear",
+    statistic:   "67%",
+    statement:   "described anxiety not about current AI systems, but about what AI will be capable of in ten years.",
+    prompt:      "Is your fear about now, or about what comes next?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-22",
+    date:        "2026-06-22",
+    theme:       "The Human Threshold",
+    statistic:   "60%",
+    statement:   "believed they could identify the moment when AI crossed the boundary of acceptable emotional simulation.",
+    prompt:      "Where is the line between simulation and experience?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
+  {
+    signal_id:   "signal-2026-06-23",
+    date:        "2026-06-23",
+    theme:       "Before and After",
+    statistic:   "69%",
+    statement:   "reported a measurable shift in how they perceived human relationships after extended AI interaction.",
+    prompt:      "Has technology changed what you want from other people?",
+    source_page: "homepage_signal_of_the_day",
+    reactions:   ["anxiety", "interest", "trust", "discomfort", "emptiness"],
+  },
+
   // ── Archived — past signals ───────────────────────────────────────────────
 
   {
@@ -263,7 +494,7 @@ export function getActiveSignal(): Signal {
 }
 
 // ── Archive integrity check ───────────────────────────────────────────────
-// Verifies that every scheduled signal (2026-05-27 through 2026-06-02) is
+// Verifies that every scheduled signal (2026-05-27 through 2026-06-23) is
 // present in SIGNAL_ARCHIVE with the correct signal_id.
 // Runs at module initialisation — any build will catch a missing or
 // mis-dated entry before it reaches production.
@@ -276,6 +507,27 @@ const _scheduledSignals: Array<[string, string]> = [
   ["2026-05-31", "signal-2026-05-31"],
   ["2026-06-01", "signal-2026-06-01"],
   ["2026-06-02", "signal-2026-06-02"],
+  ["2026-06-03", "signal-2026-06-03"],
+  ["2026-06-04", "signal-2026-06-04"],
+  ["2026-06-05", "signal-2026-06-05"],
+  ["2026-06-06", "signal-2026-06-06"],
+  ["2026-06-07", "signal-2026-06-07"],
+  ["2026-06-08", "signal-2026-06-08"],
+  ["2026-06-09", "signal-2026-06-09"],
+  ["2026-06-10", "signal-2026-06-10"],
+  ["2026-06-11", "signal-2026-06-11"],
+  ["2026-06-12", "signal-2026-06-12"],
+  ["2026-06-13", "signal-2026-06-13"],
+  ["2026-06-14", "signal-2026-06-14"],
+  ["2026-06-15", "signal-2026-06-15"],
+  ["2026-06-16", "signal-2026-06-16"],
+  ["2026-06-17", "signal-2026-06-17"],
+  ["2026-06-18", "signal-2026-06-18"],
+  ["2026-06-19", "signal-2026-06-19"],
+  ["2026-06-20", "signal-2026-06-20"],
+  ["2026-06-21", "signal-2026-06-21"],
+  ["2026-06-22", "signal-2026-06-22"],
+  ["2026-06-23", "signal-2026-06-23"],
 ];
 for (const [date, expectedId] of _scheduledSignals) {
   const match = getSignalForDate(date);

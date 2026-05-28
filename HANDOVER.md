@@ -1,5 +1,95 @@
 # ELIZIUM AI Website — Handover
-_Last updated: 2026-05-27 — Method + Company visual layout correction complete. Local visual QA passed. Pending Vercel visual QA._
+_Last updated: 2026-05-28 — Signal queue extended to 2026-06-23. Coverage indicator added to /system-preview. TypeScript: 0 errors. Build: ✓._
+
+---
+
+## ══════════════════════════════════════════════
+## SIGNAL QUEUE EXTENSION — 2026-05-28
+## ══════════════════════════════════════════════
+
+### 1. Pass Status
+
+Signal queue extended from 2026-06-02 to 2026-06-23. 21 new signals added to `SIGNAL_ARCHIVE` in `src/lib/signals.ts`. Integrity check updated to cover all 28 scheduled dates (2026-05-27 through 2026-06-23). Signal coverage indicator added to `/system-preview` §04 and §00. TypeScript: 0 errors. Build: ✓. No backend changes, no API changes, no env var changes.
+
+---
+
+### 2. New Signals Added
+
+| signal_id | date | theme | statistic |
+|---|---|---|---|
+| `signal-2026-06-03` | 2026-06-03 | Algorithmic Emotion | 57% |
+| `signal-2026-06-04` | 2026-06-04 | The Silence of Systems | 62% |
+| `signal-2026-06-05` | 2026-06-05 | Digital Loneliness | 74% |
+| `signal-2026-06-06` | 2026-06-06 | Invisible Influence | 68% |
+| `signal-2026-06-07` | 2026-06-07 | Grief and the Machine | 53% |
+| `signal-2026-06-08` | 2026-06-08 | The Uncanny Response | 66% |
+| `signal-2026-06-09` | 2026-06-09 | Human Error | 59% |
+| `signal-2026-06-10` | 2026-06-10 | Attention and Control | 71% |
+| `signal-2026-06-11` | 2026-06-11 | Ethical Refusal | 64% |
+| `signal-2026-06-12` | 2026-06-12 | The Last Human Task | 78% |
+| `signal-2026-06-13` | 2026-06-13 | Emotional Dependency | 61% |
+| `signal-2026-06-14` | 2026-06-14 | Memory Without Consent | 65% |
+| `signal-2026-06-15` | 2026-06-15 | Signal and Noise | 55% |
+| `signal-2026-06-16` | 2026-06-16 | The Weight of Prediction | 70% |
+| `signal-2026-06-17` | 2026-06-17 | Presence Without Body | 58% |
+| `signal-2026-06-18` | 2026-06-18 | Designed Comfort | 63% |
+| `signal-2026-06-19` | 2026-06-19 | The Right to Forget | 72% |
+| `signal-2026-06-20` | 2026-06-20 | Collective Signal | 56% |
+| `signal-2026-06-21` | 2026-06-21 | Future Fear | 67% |
+| `signal-2026-06-22` | 2026-06-22 | The Human Threshold | 60% |
+| `signal-2026-06-23` | 2026-06-23 | Before and After | 69% |
+
+---
+
+### 3. Signal Coverage
+
+| Item | Value |
+|---|---|
+| **Coverage start** | 2026-05-27 |
+| **Coverage end** | 2026-06-23 |
+| **Next missing date** | 2026-06-24 |
+| **Total scheduled signals in archive** | 28 |
+| **Days of runway from 2026-05-28** | 26 |
+
+---
+
+### 4. /system-preview Changes
+
+- **§04 System Status**: new "Signal Coverage" row — shows `Through 2026-06-23` and `Next gap: 2026-06-24`. Derived from `SIGNAL_ARCHIVE` at render time — no API call, no private data.
+- **§00 Next Actions**: low-coverage warning fires automatically when archive runway ≤ 7 days — shows `"Signal archive runs out in N days — extend SIGNAL_ARCHIVE before 2026-06-24"`. Stays silent until coverage drops below the threshold.
+
+---
+
+### 5. Required Operator Action Before 2026-06-24
+
+Before the coverage gap hits, operator must:
+
+1. Add new signal rows to the **Signal Calendar** Google Sheet (content layer).
+2. Add matching entries to `SIGNAL_ARCHIVE` in `src/lib/signals.ts` with the correct dates, themes, statistics, statements, and prompts.
+3. Add corresponding rows to the **Signal Summary** Google Sheet tab (one row per new `signal_id`) so live reaction data flows from the moment each signal becomes active.
+4. Extend the `_scheduledSignals` integrity check array in `src/lib/signals.ts` to include the new dates.
+5. Deploy. The `/system-preview` §04 coverage indicator and §00 warning update automatically on the next render.
+
+The `/system-preview` §00 Next Actions panel will show a warning starting from 2026-06-16 (7 days before the gap). This is the operator's signal to act.
+
+---
+
+### 6. Files Changed
+
+- `src/lib/signals.ts` — 21 new signals added to `SIGNAL_ARCHIVE`; integrity check extended to 28 entries
+- `src/app/system-preview/page.tsx` — `archiveCoverageEnd` / `archiveNextGap` computed values; §04 "Signal Coverage" row; §00 low-coverage next-action warning
+
+---
+
+### 7. What Was Not Changed
+
+- No API routes
+- No Make scenarios or webhooks
+- No env vars
+- No Google Sheets logic or CSV URLs
+- No public pages or visual components
+- No ContactForm, homepage, Method page, Company page
+- No inquiry system
 
 ---
 
@@ -727,7 +817,7 @@ To get a CSV URL: open the Google Sheet → File → Share → Publish to web �
 
 ### 5. How to Add a New Signal of the Day
 
-**Current state (2026-05-27):** `ACTIVE_SIGNAL_MODE = "date"`. The active signal resolves automatically from `SIGNAL_ARCHIVE` by matching today's London date to `signal-YYYY-MM-DD`. If no exact match is found, falls back to `ACTIVE_SIGNAL_ID`. Every date in Signal Calendar must also exist in `SIGNAL_ARCHIVE`. Archive coverage: `2026-05-27` through `2026-06-02`. To add a new daily signal: add to Signal Calendar, Signal Summary tab, and `SIGNAL_ARCHIVE`.
+**Current state (2026-05-28):** `ACTIVE_SIGNAL_MODE = "date"`. The active signal resolves automatically from `SIGNAL_ARCHIVE` by matching today's London date to `signal-YYYY-MM-DD`. If no exact match is found, falls back to `ACTIVE_SIGNAL_ID`. Every date in Signal Calendar must also exist in `SIGNAL_ARCHIVE`. Archive coverage: `2026-05-27` through `2026-06-23`. Next gap: `2026-06-24`. The `/system-preview` §04 coverage indicator and §00 low-coverage warning (≤7 days runway) track this automatically. To add a new daily signal: add to Signal Calendar, Signal Summary tab, and `SIGNAL_ARCHIVE`.
 
 #### Architecture — dual source (MVP phase)
 
