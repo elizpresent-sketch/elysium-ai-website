@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ClarityScript from "@/components/ClarityScript";
+import GA4Script from "@/components/GA4Script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${cinzel.variable}`}>
       <body className="antialiased bg-porcelain text-graphite">
         <ClarityScript />
+        <GA4Script />
         <Navbar />
         <main>{children}</main>
         <Footer />
