@@ -475,6 +475,14 @@ export default function Home() {
                 <p className="text-[14px] text-[#C8CDD2] leading-relaxed max-w-[340px]">
                   {ACTIVE_SIGNAL.statement}
                 </p>
+                <div className="flex flex-col gap-2 pt-2 border-t border-[#1C2530]/45">
+                  <span className="text-[7.5px] tracking-[0.38em] uppercase text-[#6B7278] font-medium">
+                    Active Question
+                  </span>
+                  <p className="text-[15px] text-[#B4BAC0] leading-relaxed max-w-[340px]">
+                    &ldquo;{ACTIVE_SIGNAL.prompt}&rdquo;
+                  </p>
+                </div>
                 <Rule />
               </motion.div>
             </motion.div>
