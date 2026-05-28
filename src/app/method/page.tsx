@@ -226,10 +226,10 @@ export default function MethodPage() {
         <div className={W}>
           <div className="grid grid-cols-3 lg:grid-cols-6" style={{ gap: "1px", background: "rgba(28,37,48,0.45)" }}>
             {STAGES.map(({ num, name }) => (
-              <div key={num} className="flex flex-col gap-2 px-4 lg:px-5 py-6 lg:py-8" style={{ background: BG }}>
-                <div className="w-px h-4 bg-[#1C2530]/70" />
-                <span className="text-[8px] tracking-[0.28em] uppercase text-[#6B7278]/50 font-medium">{num}</span>
-                <span className="text-[8.5px] tracking-[0.18em] uppercase text-[#969CA2] font-medium">{name}</span>
+              <div key={num} className="flex flex-col gap-2 px-4 lg:px-5 py-6 lg:py-8" style={{ background: "rgba(255,255,255,0.04)" }}>
+                <div className="w-px h-4 bg-[#2A3848]" />
+                <span className="text-[8px] tracking-[0.28em] uppercase text-[#8A9098] font-medium">{num}</span>
+                <span className="text-[8.5px] tracking-[0.18em] uppercase text-[#B0B6BC] font-medium">{name}</span>
               </div>
             ))}
           </div>

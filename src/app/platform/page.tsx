@@ -186,6 +186,11 @@ export default function PlatformPage() {
             className="absolute inset-x-0 bottom-0 h-40"
             style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.75) 55%, transparent 100%)` }}
           />
+          {/* Mobile — stronger uniform overlay so full-width text stays legible */}
+          <div
+            className="absolute inset-0 pointer-events-none lg:hidden"
+            style={{ background: "rgba(5,5,5,0.55)" }}
+          />
         </div>
 
         <div className={`relative z-10 flex-1 flex items-center w-full ${W} pt-24 pb-8 lg:pt-32 lg:pb-14`}>
@@ -489,6 +494,11 @@ export default function PlatformPage() {
           style={{
             background: `linear-gradient(to right, ${BG} 0%, ${BG} 24%, rgba(5,5,5,0.88) 45%, rgba(5,5,5,0.20) 72%, transparent 100%)`,
           }}
+        />
+        {/* Mobile — image is full-bleed; additional overlay ensures text legibility */}
+        <div
+          className="absolute inset-0 pointer-events-none lg:hidden"
+          style={{ background: "rgba(5,5,5,0.58)" }}
         />
         <div className={`relative z-10 ${W}`}>
           <SectionHead label="Experience Deployment" num="05" />

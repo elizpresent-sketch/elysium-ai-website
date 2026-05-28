@@ -154,9 +154,9 @@ export default function ContactPage() {
       </section>
 
       {/* ── INQUIRY FORM ── */}
-      <section id="inquiry-form" style={{ background: "#080808" }} className="py-10 lg:py-20 border-t border-[#1C2530]/50">
+      <section id="inquiry-form" style={{ background: "#080808" }} className="py-14 lg:py-20 border-t border-[#1C2530]/50">
         <div className={W}>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
@@ -197,8 +197,8 @@ export default function ContactPage() {
             </motion.div>
 
             <div className="lg:col-span-8">
-              <div className="flex items-center justify-between border-t border-[#1C2530]/60 pt-3.5 mb-6">
-                <span className="text-[9px] tracking-[0.36em] uppercase font-medium text-[#969CA2]">
+              <div className="flex items-center justify-between border-t border-[#1C2530]/60 pt-4 mb-8">
+                <span className="text-[9px] tracking-[0.36em] uppercase font-medium text-[#C8CDD2]">
                   Inquiry Form
                 </span>
                 <span className="flex items-center gap-1.5 text-[7.5px] tracking-[0.22em] uppercase font-medium text-[#B8BEC4]">

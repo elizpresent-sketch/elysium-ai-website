@@ -714,28 +714,29 @@ export default function Home() {
                 How the<br />System Works
               </motion.h2>
               <motion.p variants={fadeUp} className="text-[13px] text-[#AAB0B6] leading-relaxed max-w-sm">
-                A five-stage interaction cycle where human emotion becomes the input
-                that drives the entire system.
+                A six-stage operating cycle — from daily emotional signal
+                to live experience to structured partner intelligence.
               </motion.p>
             </motion.div>
 
-            {/* 5-col gap-px method cards — per-card symbol backgrounds */}
+            {/* 6-stage operating interface — 2×3 on mobile, 3×2 on sm, 6-col on desktop */}
             <motion.div
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
-              className="flex overflow-x-auto sm:grid sm:grid-cols-5 gap-px"
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px"
               style={{ background: GRID_BG }}
             >
               {[
-                { n: "01", label: "Read",    img: "1", desc: "Emotional signals captured from every audience member in real time" },
-                { n: "02", label: "Process", img: "2", desc: "AI layers interpret collective state and generate a live narrative response" },
-                { n: "03", label: "Respond", img: "3", desc: "The environment, narrative and outcome shift to the audience's emotional field" },
-                { n: "04", label: "Record",  img: "4", desc: "Every interaction enters the participant's personal pathway archive" },
-                { n: "05", label: "Scale",   img: "5", desc: "The system is designed to deploy in any venue, city or cultural context" },
+                { n: "01", label: "Signal",      img: "1", desc: "A daily emotional provocation published to the platform — a real statistic about AI-human experience, active for 24 hours" },
+                { n: "02", label: "Response",    img: "2", desc: "The audience responds emotionally in real time — reactions captured without friction at the point of encounter" },
+                { n: "03", label: "Pattern",     img: "3", desc: "Individual responses aggregate into collective patterns — distributions calculated, dominant reactions identified" },
+                { n: "04", label: "Insight",     img: "4", desc: "Pattern data is processed into structured Insight Reports — AI-assisted analysis of collective emotional response" },
+                { n: "05", label: "Experience",  img: "5", desc: "Platform intelligence directly informs the design of live AI-human experiences. Future Human is the first deployment" },
+                { n: "06", label: "Application", img: "5", desc: "Partners, venues and institutions receive structured intelligence output — emotional archives and insight reports" },
               ].map((item) => (
                 <motion.div
                   key={item.n}
                   variants={fadeUp}
-                  className="relative overflow-hidden p-4 lg:p-5 flex-shrink-0 w-[130px] sm:w-auto"
+                  className="relative overflow-hidden p-4 lg:p-5"
                   style={{ background: BG }}
                 >
                   {/* Per-card symbol image — centered, visible but subtle */}
@@ -745,7 +746,7 @@ export default function Home() {
                       alt="" fill aria-hidden
                       className="object-contain"
                       style={{ objectPosition: "center 40%" }}
-                      sizes="(max-width: 640px) 100vw, 20vw"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 17vw"
                     />
                   </div>
                   <div className="relative flex flex-col gap-3">
@@ -763,7 +764,7 @@ export default function Home() {
               initial="hidden" whileInView="visible" viewport={viewport} variants={stagger}
               className="grid grid-cols-2 sm:grid-cols-4 gap-1.5"
             >
-              {["Emotional Read", "Live Processing", "System Response", "Personal Archive"].map((t) => (
+              {["Signal Layer", "Response Capture", "Insight Reports", "Live Experience"].map((t) => (
                 <motion.div key={t} variants={fadeUp}><ModBox>{t}</ModBox></motion.div>
               ))}
             </motion.div>
@@ -854,7 +855,7 @@ export default function Home() {
             <div
               className="absolute inset-0 pointer-events-none z-10 lg:hidden"
               style={{
-                background: "linear-gradient(to right, rgba(5,5,5,0.88) 0%, rgba(5,5,5,0.70) 40%, rgba(5,5,5,0.45) 65%, rgba(5,5,5,0.20) 85%, transparent 100%)",
+                background: "linear-gradient(to right, rgba(5,5,5,0.97) 0%, rgba(5,5,5,0.90) 28%, rgba(5,5,5,0.76) 52%, rgba(5,5,5,0.52) 72%, rgba(5,5,5,0.22) 90%, transparent 100%)",
               }}
             />
             {/* Text — left, over gradient */}
