@@ -328,18 +328,21 @@ export default function Home() {
 
       {/* Mobile hero — centred question over full-bleed warm image */}
       <section className="lg:hidden relative flex flex-col overflow-hidden" style={{ background: BG, minHeight: "90vh" }}>
-        {/* Full-bleed background image */}
+        {/* Full-bleed background video */}
         <div className="absolute inset-0">
-          <Image
-            src="/images/elysium-ai/dark/generated/elizium-hero-question-mobile-warm-4x5.webp"
-            alt="ELIZIUM — What remains of the human when the system learns to understand them"
-            fill
-            priority
-            className="object-cover"
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/images/elysium-ai/dark/generated/elizium-hero-question-mobile-warm-4x5.webp"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{ objectPosition: "center 35%" }}
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "rgba(5,5,5,0.48)" }} />
+          >
+            <source src="/images/elysium-ai/dark/generated/perfectdoor.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "rgba(5,5,5,0.26)" }} />
           <div
             className="absolute inset-x-0 top-0 h-24 pointer-events-none"
             style={{ background: `linear-gradient(to bottom, ${BG} 0%, rgba(5,5,5,0.55) 55%, transparent 100%)` }}
@@ -383,24 +386,27 @@ export default function Home() {
       {/* Desktop hero — centred question-led screen */}
       <section className="hidden lg:flex relative min-h-[90vh] flex-col overflow-hidden" style={{ background: BG }}>
         <div className="absolute inset-0">
-          <Image
-            src="/images/elysium-ai/dark/generated/elizium-hero-question-wide-warm.webp"
-            alt=""
-            fill
-            priority
-            className="object-cover"
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/images/elysium-ai/dark/generated/elizium-hero-question-wide-warm.webp"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{ objectPosition: "center 42%" }}
-            sizes="100vw"
             aria-hidden
-          />
-          <div className="absolute inset-0" style={{ background: "rgba(5,5,5,0.38)" }} />
+          >
+            <source src="/images/elysium-ai/dark/generated/perfectdoor.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0" style={{ background: "rgba(5,5,5,0.20)" }} />
           <div
             className="absolute inset-x-0 top-0 h-44"
             style={{ background: `linear-gradient(to bottom, ${BG} 0%, rgba(5,5,5,0.62) 40%, transparent 100%)` }}
           />
           <div
             className="absolute inset-x-0 bottom-0 h-36"
-            style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.82) 50%, transparent 100%)` }}
+            style={{ background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.65) 50%, transparent 100%)` }}
           />
         </div>
 
@@ -441,15 +447,21 @@ export default function Home() {
           Eye image full-section bg; metric left, readout rows right
       ═══════════════════════════════════════════════════════════════════ */}
       <section id="signal-of-the-day" style={{ background: BG, scrollMarginTop: "80px" }} className="py-12 lg:py-24 border-t border-[#1C2530]/50 relative overflow-hidden">
-        {/* Eye image — full section background */}
+        {/* Eye video — full section background */}
         <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.72 }}>
-          <Image
-            src="/images/elysium-ai/dark/generated/elizium-signal-eye-data-optimised.webp"
-            alt="" fill aria-hidden
-            className="object-cover"
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/images/elysium-ai/dark/generated/elizium-signal-eye-data-optimised.webp"
+            aria-hidden
+            className="absolute inset-0 w-full h-full object-cover"
             style={{ objectPosition: "center center" }}
-            sizes="100vw"
-          />
+          >
+            <source src="/images/elysium-ai/dark/generated/finaleye-vid.mp4" type="video/mp4" />
+          </video>
         </div>
         {/* Soft overlay — text stays legible, image clearly visible */}
         <div
